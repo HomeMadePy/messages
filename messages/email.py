@@ -129,7 +129,7 @@ class Email:
     def get_session(self):
         """Start session with email server."""
         session = smtplib.SMTP_SSL(self.server_name, self.server_port)
-        session.login(self.From, self.password)
+        session.login(self.from_, self.password)
         return session
 
 
