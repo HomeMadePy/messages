@@ -11,7 +11,7 @@ Messages: Create and send messages fast!
     :target: https://coveralls.io/github/messages/messages?branch=master
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
-    :target: https://github.com/trp07/messages/master/LICENSE
+    :target: https://github.com/trp07/messages/blob/master/LICENSE
 
 
 **Messages** is a package designed to make sending messages easy and efficient!
@@ -70,4 +70,4 @@ Contributing
 ------------
 - **Help Wanted!**
 - All contributions are welcome to build upon the package!
-- Please read `CONTRIBUTING <https://github.com/trp07/messages/master/CONTRIBUTING.md>`_ for guidelines.
+- Please read `CONTRIBUTING <https://github.com/trp07/messages/blob/master/CONTRIBUTING.md>`_ for guidelines.
