@@ -20,10 +20,10 @@ class Email:
         server_name: str, i.e. 'smtp.gmail.com'
         server_port: int, i.e. 465
         password: str
-        From: str, i.e. 'me@here.com'
-        To: str or list, i.e. 'you@there.com' or ['a@there.com', 'b@there.com']
-        Cc: str or list
-        Bcc: str or list
+        from_: str, i.e. 'me@here.com'
+        to: str or list, i.e. 'you@there.com' or ['a@there.com', 'b@there.com']
+        cc: str or list
+        bcc: str or list
         subject: str
         body_text: str
         attachments: list, i.e. ['/home/you/file1.txt', '/home/you/file2.pdf']
