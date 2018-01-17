@@ -71,7 +71,7 @@ class Email:
 
     def __repr__(self):
         """repr(Email(**args)) method."""
-        return('{}({},{},{},{},{},{},{},{},{},{})'
+        return('{}({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'
                .format(self.__class__.__name__, self.server_name,
                        self.server_port, self.password, self.from_,
                        self.to, self.cc, self.bcc, self.subject,
