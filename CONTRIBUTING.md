@@ -15,4 +15,3 @@
 - All added features must be tested.
 - Ensure all tests pass before committing code.
 - Bug fixes must include added tests.
-
