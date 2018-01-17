@@ -48,8 +48,8 @@ Email
 
     >>> from messages import Email
     >>> msg = 'Hello,\n\tTry this new package called "messages"!'
-    >>> m = Email('smtp.google.com', 465, 'password', From='me@here.com',
-                  To='you@there.com', Cc=None, Bcc=None, subject='Hello',
+    >>> m = Email('smtp.gmail.com', 465, 'password', from_='me@here.com',
+                  to='you@there.com', cc=None, bcc=None, subject='Hello',
                   body_text=msg, attachments=['./file1.txt', '~/Documents/file2.pdf'])
     >>> m.send()
 
