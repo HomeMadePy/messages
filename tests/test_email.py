@@ -1,5 +1,6 @@
 """messages.email tests."""
 
+import os
 import pytest
 import smtplib
 
@@ -20,6 +21,12 @@ def get_email():
     return Email('smtp.gmail.com', 465, 'password', 'me@here.com',
                  'you@there.com', 'someone@there.com', 'them@there.com',
                  'subject', 'message', ['file1', 'file2'])
+
+
+# skip this test if on travs-ci
+travis = pytest.mark.skipif("TRAVIS" in os.environ and
+                    os.environ["TRAVIS"] == "true",
+                    reason='skipping test if on travis-ci')
 
 
 ##############################################################################
@@ -170,6 +177,7 @@ def test_add_body(header_mock, attach_mock, mime_attach_mock, get_email):
 # TESTS: Email.add_attachments()
 ##############################################################################
 
+@travis
 @patch.object(MIMEMultipart, 'attach')
 @patch.object(Email, 'add_header')
 @patch.object(Email, 'add_body')
