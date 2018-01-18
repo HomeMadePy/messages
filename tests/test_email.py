@@ -7,7 +7,7 @@ from collections import deque
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
 from messages.email import Email
 
