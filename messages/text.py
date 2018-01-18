@@ -6,6 +6,8 @@ Module designed to make creating and sending text messages easy.
      in order to use.  Go to https://www.twilio.com to register.
 """
 
+from collections import deque
+
 from twilio.rest import Client
 
 
@@ -34,11 +36,11 @@ class Twilio:
         self.acct_sid = acct_sid
         self.auth_token = auth_token
         self.client = Client(self.acct_sid, self.auth_token) #verify creds here and raise exception if bad
-        self.to = to
         self.from_ = from_
+        self.to = to
         self.body = body
         self.media_url = None or media_url
-        self.sid = None
+        self.sent_texts = deque()
 
 
     def __str__(self):
@@ -53,7 +55,7 @@ class Twilio:
 
     def __repr__(self):
         """repr(Twilio(**args)) method."""
-        return('{}({},{},{},{},{},{})'
+        return('{}({}, {}, {}, {}, {}, {})'
                .format(self.__class__.__name__, self.acct_sid,
                        self.auth_token, self.from_, self.to,
                        self.body, self.media_url))
