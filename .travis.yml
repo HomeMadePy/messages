@@ -9,6 +9,6 @@ env:
 install:
   - pip install .
   - pip install twilio pytest-cov pytest-pep8 coveralls
-script: py.test --cov=messages --pep8
+script: py.test --cov=messages
 after_success:
 - coveralls

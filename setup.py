@@ -23,7 +23,8 @@ setup(
     author="Tim Phillips",
     author_email="phillipstr@gmail.com",
 
-    description="A package designed to make sending messages easy and efficient!",
+    description=("A package designed to make sending messages "
+                 "easy and efficient!"),
     long_description=readme,
 
     packages=find_packages(include=['messages']),
