@@ -8,7 +8,7 @@ Messages: Create and send messages fast!
     :target: https://travis-ci.org/trp07/messages
 
 .. image:: https://coveralls.io/repos/github/trp07/messages/badge.svg?branch=master
-    :target: https://coveralls.io/github/messages/messages?branch=master
+    :target: https://coveralls.io/github/trp07/messages?branch=master
 
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target: https://github.com/trp07/messages/blob/master/LICENSE
