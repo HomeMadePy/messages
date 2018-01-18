@@ -6,6 +6,8 @@ Module designed to make creating and sending text messages easy.
      in order to use.  Go to https://www.twilio.com to register.
 """
 
+import sys
+
 from collections import deque
 
 from twilio.rest import Client
@@ -40,6 +42,7 @@ class Twilio:
         self.to = to
         self.body = body
         self.media_url = None or media_url
+        self.sid = None
         self.sent_texts = deque()
 
 
@@ -65,6 +68,7 @@ class Twilio:
         """
         Send the SMS/MMS message.
         Set self.sid to return code of message.
+        Append the (sid, message) tuple to self.sent_texts
         """
         msg = self.client.messages.create(
             to = self.to,
@@ -73,3 +77,5 @@ class Twilio:
             media_url = self.media_url,
             )
         self.sid = msg.sid
+        print('Message sent...', file=sys.stdout)
+        self.sent_texts.append((msg.sid, repr(self)))
