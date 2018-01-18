@@ -14,7 +14,10 @@ Messages: Create and send messages fast!
     :target: https://github.com/trp07/messages/blob/master/LICENSE
 
 
-**Messages** is a package designed to make sending messages easy and efficient!
+Purpose
+-------
+- **Messages** is a package designed to make sending messages easy!
+- **Messages** incorporates various standard library module, third-party module, web app API calls, etc. all in one package.
 
 
 Installation
@@ -40,9 +43,9 @@ Upcoming Messages
     - Slack
 
 
-Usage
------
-Email
+Examples
+--------
+**Email**
 
 .. code-block:: python
 
@@ -55,7 +58,7 @@ Email
 
 
 
-Text Message
+**Text Message**
 
 .. code-block:: python
 
