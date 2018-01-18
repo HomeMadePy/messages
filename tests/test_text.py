@@ -69,7 +69,7 @@ def test_twilio_str(get_twilio, capsys):
 # TESTS: Twilio.__repr__
 ##############################################################################
 
-def test_twilio_str(get_twilio, capsys):
+def test_twilio_repr(get_twilio, capsys):
     """
     GIVEN a valid Twilio object
     WHEN the user calls repr(t) or `>>> t` on the Twilio object

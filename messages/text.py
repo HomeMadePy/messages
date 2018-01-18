@@ -37,7 +37,7 @@ class Twilio:
     def __init__(self, acct_sid, auth_token, from_, to, body, media_url):
         self.acct_sid = acct_sid
         self.auth_token = auth_token
-        self.client = Client(self.acct_sid, self.auth_token) #verify creds here and raise exception if bad
+        self.client = Client(self.acct_sid, self.auth_token)
         self.from_ = from_
         self.to = to
         self.body = body
@@ -45,16 +45,14 @@ class Twilio:
         self.sid = None
         self.sent_texts = deque()
 
-
     def __str__(self):
         """print(Twilio(**args)) method."""
         return('Twilio Text Message:'
-              '\n\tFrom: {}'
-              '\n\tTo: {}'
-              '\n\tbody: {}...'
-              '\n\tmedia_url: {}'
-              .format(self.from_, self.to, self.body, self.media_url))
-
+               '\n\tFrom: {}'
+               '\n\tTo: {}'
+               '\n\tbody: {}...'
+               '\n\tmedia_url: {}'
+               .format(self.from_, self.to, self.body, self.media_url))
 
     def __repr__(self):
         """repr(Twilio(**args)) method."""
@@ -63,7 +61,6 @@ class Twilio:
                        self.auth_token, self.from_, self.to,
                        self.body, self.media_url))
 
-
     def send(self):
         """
         Send the SMS/MMS message.
@@ -71,10 +68,10 @@ class Twilio:
         Append the (sid, message) tuple to self.sent_texts
         """
         msg = self.client.messages.create(
-            to = self.to,
-            from_ = self.from_,
-            body = self.body,
-            media_url = self.media_url,
+              to = self.to,
+              from_ = self.from_,
+              body = self.body,
+              media_url = self.media_url,
             )
         self.sid = msg.sid
         print('Message sent...', file=sys.stdout)

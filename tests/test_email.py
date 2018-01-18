@@ -5,8 +5,6 @@ import smtplib
 
 from collections import deque
 from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.mime.application import MIMEApplication
 from unittest.mock import patch
 
 from messages.email import Email
@@ -202,7 +200,7 @@ def test_get_session(gen_email_mock, smtpssl_mock, get_email):
     """
     e = get_email
     e.generate_email()
-    session = e.get_session()
+    e.get_session()
     assert smtpssl_mock.call_count == 1
 
 
