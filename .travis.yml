@@ -5,7 +5,7 @@ python:
   - "3.6"
 env:
   global:
-    - PYTHONPATH="/home/travis/build/trp07/jsonflatten"
+    - PYTHONPATH="/home/travis/build/trp07/messages"
 install:
   - pip install .
   - pip install twilio pytest-cov pytest-pep8 coveralls
