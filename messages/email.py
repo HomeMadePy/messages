@@ -6,7 +6,9 @@ Module designed to make creating and sending emails easy.
 """
 
 import smtplib
+import sys
 
+from collections import deque
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
@@ -51,6 +53,7 @@ class Email:
         self.body_text = body_text
         self.attachments = attachments
         self.email = 'Email not yet created'
+        self.sent_emails = deque()
 
 
     def __str__(self):
@@ -151,9 +154,5 @@ class Email:
 
         session.sendmail(self.from_, recipients, self.email.as_string())
         session.quit()
-        print('Message sent...'
-              '\n\tTo: {}'
-              '\n\tCc: {}'
-              '\n\tBcc: {}'
-              '\n\tAttachments: {}'
-              .format(self.to, self.cc, self.bcc, self.attachments))
+        print('Message sent...', file=sys.stdout)
+        self.sent_emails.append(repr(self))
