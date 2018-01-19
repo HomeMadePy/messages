@@ -15,16 +15,17 @@ with open('README.rst', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 setup(
-    name="messages",
+    name='messages',
     version=version,
-    url="https://github.com/trp07/messages",
-    keywords=[],
+    url='https://github.com/trp07/messages',
+    keywords=['message', 'messages', 'email', 'text', 'SMS', 'MMS',
+              'chat', 'chats'],
 
-    author="Tim Phillips",
-    author_email="phillipstr@gmail.com",
+    author='Tim Phillips',
+    author_email='phillipstr@gmail.com',
 
-    description=("A package designed to make sending messages "
-                 "easy and efficient!"),
+    description=('A package designed to make sending messages '
+                 'easy and efficient!'),
     long_description=readme,
 
     packages=find_packages(include=['messages']),
