@@ -33,7 +33,7 @@ Supported Messages
     - SMTP
 
 - Text Messages (SMS/MMS)
-    - Twilio API
+    - Twilio API (must have API keys)
 
 
 Upcoming Messages
