@@ -84,6 +84,8 @@ class Email:
         Format the recipient for the MIMEMultipart() email type.
         If the recipient is a list, then it returns the list as a
         comma separated string.
+        example: input=['you@here.com', 'her@there.com']
+                 output='you@there.com, her@there.com'
         """
         if recipient:
             if isinstance(recipient, list):
