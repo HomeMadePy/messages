@@ -55,6 +55,7 @@ class Email:
         self.email = 'Email not yet created'
         self.sent_emails = deque()
 
+
     def __str__(self):
         """print(Email(**args)) method."""
         return('MIMEMultipart Email:'
@@ -70,6 +71,7 @@ class Email:
                        self.cc, self.bcc, self.subject, self.body_text[0:40],
                        self.attachments))
 
+
     def __repr__(self):
         """repr(Email(**args)) method."""
         return('{}({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'
@@ -77,6 +79,7 @@ class Email:
                        self.server_port, self.password, self.from_,
                        self.to, self.cc, self.bcc, self.subject,
                        self.body_text, self.attachments))
+
 
     @staticmethod
     def list_to_string(recipient):
@@ -92,6 +95,7 @@ class Email:
                 return ', '.join(recipient)
             return recipient
 
+
     def generate_email(self):
         """Put the parts of the email together."""
         self.email = MIMEMultipart()
@@ -99,10 +103,12 @@ class Email:
         self.add_body()
         self.add_attachments()
 
+
     def add_header(self):
         """Add email header info."""
         self.email['From'] = self.from_
         self.email['Subject'] = self.subject
+
 
     def add_body(self):
         """Add body content of email."""
@@ -110,6 +116,7 @@ class Email:
             body = MIMEText('text', 'plain')
             body.set_payload(self.body_text)
             self.email.attach(body)
+
 
     def add_attachments(self):
         """Add required attachments."""
@@ -123,11 +130,13 @@ class Email:
                 num_attached += 1
         return num_attached
 
+
     def get_session(self):
         """Start session with email server."""
         session = smtplib.SMTP_SSL(self.server_name, self.server_port)
         session.login(self.from_, self.password)
         return session
+
 
     def send(self):
         """Send the message."""
@@ -149,3 +158,8 @@ class Email:
         session.quit()
         print('Message sent...', file=sys.stdout)
         self.sent_emails.append(repr(self))
+
+
+    def send_message(self):
+        """schedule message to be sent."""
+        pass

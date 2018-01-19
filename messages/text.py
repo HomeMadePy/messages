@@ -45,6 +45,7 @@ class Twilio:
         self.sid = None
         self.sent_texts = deque()
 
+
     def __str__(self):
         """print(Twilio(**args)) method."""
         return('Twilio Text Message:'
@@ -54,12 +55,14 @@ class Twilio:
                '\n\tmedia_url: {}'
                .format(self.from_, self.to, self.body, self.media_url))
 
+
     def __repr__(self):
         """repr(Twilio(**args)) method."""
         return('{}({}, {}, {}, {}, {}, {})'
                .format(self.__class__.__name__, self.acct_sid,
                        self.auth_token, self.from_, self.to,
                        self.body, self.media_url))
+
 
     def send(self):
         """
