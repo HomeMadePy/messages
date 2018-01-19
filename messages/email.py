@@ -158,8 +158,3 @@ class Email:
         session.quit()
         print('Message sent...', file=sys.stdout)
         self.sent_emails.append(repr(self))
-
-
-    def send_message(self):
-        """schedule message to be sent."""
-        pass
