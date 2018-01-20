@@ -4,6 +4,7 @@
 ## Contributing Code and Docs
 ### Style Guidelines
 
+- Fork the repository and create a branch to add your contributions.
 - [PEP8 Style Python Code](https://www.python.org/dev/peps/pep-0008/).
 - reStructuredText (reST) for Documentation.
 
