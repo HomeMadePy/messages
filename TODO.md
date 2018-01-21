@@ -4,6 +4,9 @@ This is a just some items that I would like the package to be able to do; howeve
 ## General:
 1.  Create a nice logo that captures the intent of the package: messages via python.
 2.  Ensure the **asynchronous** event loop is robust enough to handle all types of messages and API calls.
+3.  Allow users to configure server, account, passwords, etc. in a config file to make sending messages even easier by streamlining the number of args to input to each class. (jsonconfig-tool, keyring)
+4.  Commandline Interface (using Click) so messages can be sent via commandline.
+5.  Improve any area in this package that can be improved, made more efficient, made more compatible, etc.
 
 ## Email module:
 1.  Ensure that all file types can be attached and sent.
@@ -13,7 +16,7 @@ This is a just some items that I would like the package to be able to do; howeve
 1.  Add other web API services.
 
 ## Chat module:
-1.  Add other web API services.
+1.  Add other web API services.  (Telegram, etc.)
 2.  IRC.
 
 ## Other modules:
