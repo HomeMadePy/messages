@@ -26,11 +26,10 @@ class MessageLoop:
 
     def send_loop(self):
         """start event loop."""
-        tasks = []
         while self.messages:
             msg = self.messages.popleft()
             if hasattr(msg, 'send'):
-                tasks.append(gevent.spawn(msg.send))
+                gevent.spawn(msg.send)
 
 
 MESSAGELOOP = MessageLoop()
