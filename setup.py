@@ -40,6 +40,7 @@ setup(
     ],
 
     install_requires=[
+        'gevent',
         'twilio',
     ],
 
