@@ -12,6 +12,8 @@ from collections import deque
 
 from twilio.rest import Client
 
+from .eventloop import MESSAGELOOP
+
 
 class Twilio:
     """
@@ -68,7 +70,7 @@ class Twilio:
         """
         Send the SMS/MMS message.
         Set self.sid to return code of message.
-        Append the (sid, message) tuple to self.sent_texts
+        Append the (sid, message) tuple to self.sent_texts as a history.
         """
         msg = self.client.messages.create(
               to = self.to,
@@ -79,3 +81,8 @@ class Twilio:
         self.sid = msg.sid
         print('Message sent...', file=sys.stdout)
         self.sent_texts.append((msg.sid, repr(self)))
+
+
+    def send_async(self):
+        """Send message asynchronously."""
+        MESSAGELOOP.add_message(self)
