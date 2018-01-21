@@ -14,9 +14,10 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
 from .eventloop import MESSAGELOOP
+from ._interface import Message
 
 
-class Email:
+class Email(Message):
     """
     Create and send emails using the built-in email package.
 

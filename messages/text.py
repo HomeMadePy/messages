@@ -13,9 +13,10 @@ from collections import deque
 from twilio.rest import Client
 
 from .eventloop import MESSAGELOOP
+from ._interface import Message
 
 
-class Twilio:
+class Twilio(Message):
     """
     Create and send text SMS/MMS text messages using the Twilio API.
 
