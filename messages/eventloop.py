@@ -16,7 +16,6 @@ class MessageLoop:
 
     def __init__(self):
         self.messages = deque()
-        self.loop = None
 
 
     def add_message(self, message):
@@ -33,8 +32,6 @@ class MessageLoop:
             msg = self.messages.popleft()
             if hasattr(msg, 'send'):
                 tasks.append(gevent.spawn(msg.send))
-                print('task spawned')
-        print('task complete')
 
 
 MESSAGELOOP = MessageLoop()
