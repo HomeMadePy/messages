@@ -26,7 +26,6 @@ class MessageLoop:
 
     def send_loop(self):
         """start event loop."""
-        #self.loop = asyncio.get_event_loop()
         tasks = []
         while self.messages:
             msg = self.messages.popleft()
