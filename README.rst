@@ -18,6 +18,7 @@ Purpose
 -------
 - **Messages** is a package designed to make sending messages easy!
 - **Messages** incorporates various standard library module, third-party module, web app API calls, etc. all in one package.
+- **Messages** can send messages asynchronously.
 
 
 Installation
@@ -54,7 +55,9 @@ Examples
     >>> m = Email('smtp.gmail.com', 465, 'password', from_='me@here.com',
                   to='you@there.com', cc=None, bcc=None, subject='Hello',
                   body_text=msg, attachments=['./file1.txt', '~/Documents/file2.pdf'])
-    >>> m.send()
+    >>>
+    >>> m.send()        # send synchronously
+    >>> m.send_async()  # send asynchronously
 
 
 
@@ -66,7 +69,9 @@ Examples
     >>> msg = 'Hello,\n\tTry this new package called "messages"!'
     >>> t = Twilio('api_acct_sid', 'api_auth_token', from_='+16198675309',
                    to='+16195551212', body=msg, media_url='https://imgs.xkcd.com/comics/python.png')
-    >>> t.send()
+    >>>
+    >>> t.send()        # send synchronously
+    >>> t.send_async()  # send asynchronously
 
 
 Contributing

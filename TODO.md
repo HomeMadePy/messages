@@ -2,8 +2,8 @@
 This is a just some items that I would like the package to be able to do; however, please feel free to add features that are not on this list!
 
 ## General:
-1.  Make messages **asynchronous**.  I would like each message to be non-blocking, so any application or program using this package does not get held-up waiting for network I/O.
-2.  Create a nice logo that captures the intent of the package: messages via python.
+1.  Create a nice logo that captures the intent of the package: messages via python.
+2.  Ensure the **asynchronous** event loop is robust enough to handle all types of messages and API calls.
 
 ## Email module:
 1.  Ensure that all file types can be attached and sent.
