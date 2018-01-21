@@ -1,4 +1,4 @@
-"""messages.email tests."""
+"""messages.email_ tests."""
 
 import os
 import pytest
@@ -8,7 +8,8 @@ from collections import deque
 from email.mime.multipart import MIMEMultipart
 from unittest.mock import patch
 
-from messages.email import Email
+from messages.email_ import Email
+from messages.eventloop import MESSAGELOOP
 
 
 ##############################################################################
@@ -61,7 +62,7 @@ def test_email_init(get_email):
 
 
 ##############################################################################
-# TESTS: Email.__str__()
+# TESTS: Email.__str__
 ##############################################################################
 
 def test_email_str(get_email, capsys):
@@ -87,7 +88,7 @@ def test_email_str(get_email, capsys):
 
 
 ##############################################################################
-# TESTS: Email.__repr__()
+# TESTS: Email.__repr__
 ##############################################################################
 
 def test_email_repr(get_email, capsys):
@@ -107,7 +108,7 @@ def test_email_repr(get_email, capsys):
 
 
 ##############################################################################
-# TESTS: Email.list_to_string()
+# TESTS: Email.list_to_string
 ##############################################################################
 
 def test_list_to_string(get_email):
@@ -122,7 +123,7 @@ def test_list_to_string(get_email):
 
 
 ##############################################################################
-# TESTS: Email.generate_email()
+# TESTS: Email.generate_email
 ##############################################################################
 
 @patch.object(Email, 'add_attachments')
@@ -143,7 +144,7 @@ def test_generate_email(header_mock, body_mock, attach_mock, get_email):
 
 
 ##############################################################################
-# TESTS: Email.add_header()
+# TESTS: Email.add_header
 ##############################################################################
 
 @patch.object(Email, 'add_attachments')
@@ -161,7 +162,7 @@ def test_add_header(body_mock, attach_mock, get_email):
 
 
 ##############################################################################
-# TESTS: Email.add_body()
+# TESTS: Email.add_body
 ##############################################################################
 
 @patch.object(MIMEMultipart, 'attach')
@@ -179,7 +180,7 @@ def test_add_body(header_mock, attach_mock, mime_attach_mock, get_email):
 
 
 ##############################################################################
-# TESTS: Email.add_attachments()
+# TESTS: Email.add_attachments
 ##############################################################################
 
 @travis
@@ -220,7 +221,7 @@ def test_add_attachments_travis(body_mock, header_mock, mime_attach_mock,
 
 
 ##############################################################################
-# TESTS: Email.get_session()
+# TESTS: Email.get_session
 ##############################################################################
 
 @patch.object(smtplib, 'SMTP_SSL')
@@ -238,7 +239,7 @@ def test_get_session(gen_email_mock, smtpssl_mock, get_email):
 
 
 ##############################################################################
-# TESTS: Email.send()
+# TESTS: Email.send
 ##############################################################################
 
 @patch.object(Email, 'get_session')
@@ -249,7 +250,7 @@ def test_send(header_mock, body_mock, attach_mock, session_mock,
               get_email, capsys):
     """
     GIVEN a valid Email object
-    WHEN Email.sent() is called
+    WHEN Email.send() is called
     THEN assert the correct functions are called and correct attributes
         updated
     """
@@ -259,3 +260,19 @@ def test_send(header_mock, body_mock, attach_mock, session_mock,
     assert out == 'Message sent...\n'
     assert err == ''
     assert e.sent_emails[0] == repr(e)
+
+
+##############################################################################
+# TESTS: Email.send_async
+##############################################################################
+
+@patch.object(MESSAGELOOP, 'add_message')
+def test_send_async(msg_loop_mock, get_email):
+    """
+    GIVEN a valid Email object
+    WHEN Email.send_async() is called
+    THEN assert it is added to the event loop for async sending
+    """
+    e = get_email
+    e.send_async()
+    assert msg_loop_mock.call_count == 1

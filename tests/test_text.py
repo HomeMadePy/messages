@@ -5,8 +5,10 @@ import pytest
 from collections import deque
 from unittest.mock import patch
 
-from messages.text import Twilio
 from twilio.rest import Client
+
+from messages.text import Twilio
+from messages.eventloop import MESSAGELOOP
 
 
 ##############################################################################
@@ -104,3 +106,19 @@ def test_send(messages_mock, get_twilio, capsys):
     assert out == 'Message sent...\n'
     assert err == ''
     assert len(t.sent_texts) == 1
+
+
+##############################################################################
+# TESTS: Twilio.send_async
+##############################################################################
+
+@patch.object(MESSAGELOOP, 'add_message')
+def test_send_async(msg_loop_mock, get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN Twilio.send_async() is called
+    THEN assert it is added to the event loop for async sending
+    """
+    t = get_twilio
+    t.send_async()
+    assert msg_loop_mock.call_count == 1
