@@ -8,4 +8,4 @@ from .email_ import Email
 from .text import Twilio
 
 
-__version__ = '0.0.0'
+__version__ = '0.1.0'
