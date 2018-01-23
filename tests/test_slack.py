@@ -62,9 +62,9 @@ def test_slack_construct_message(add_mock, req_mock, get_slack):
 # TESTS: SlackWebHook.add_attachments
 ##############################################################################
 
-def test_slack_add_attachments(get_slack):
+def test_slack_add_attachments_list(get_slack):
     """
-    GIVEN a valid SlackWebHook object
+    GIVEN a valid SlackWebHook object with self.attach_urls = list
     WHEN add_attachments() is called
     THEN assert the urls are properly attached to the message
     """
@@ -72,6 +72,19 @@ def test_slack_add_attachments(get_slack):
     s.add_attachments()
     expected = [{'image_url': 'url1', 'author_name': ''},
                 {'image_url': 'url2', 'author_name': ''}]
+    assert s.message['attachments'] == expected
+
+
+def test_slack_add_attachments_str(get_slack):
+    """
+    GIVEN a valid SlackWebHook object with self.attach_urls = str
+    WHEN add_attachments() is called
+    THEN assert the urls are properly attached to the message
+    """
+    s = get_slack
+    s.attach_urls = 'url1'
+    s.add_attachments()
+    expected = [{'image_url': 'url1', 'author_name': ''}]
     assert s.message['attachments'] == expected
 
 
