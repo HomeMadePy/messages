@@ -36,12 +36,13 @@ Supported Messages
 - Text Messages (SMS/MMS)
     - Twilio API (must have API keys)
 
+- Slack
+    - Inbound Webhook API
+
 
 Upcoming Messages
 -----------------
-- Chats
-    - WhatsApp
-    - Slack
+- WhatsApp
 
 
 Examples
