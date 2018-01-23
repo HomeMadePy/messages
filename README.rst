@@ -75,6 +75,19 @@ Examples
     >>> t.send_async()  # send asynchronously
 
 
+
+**Slack - Inbound Webhook API**
+
+.. code-block:: python
+
+    >>> from messages import SlackWebHook
+    >>> msg = 'Hello,\n\tTry this new package called "messages"!'
+    >>> s = SlackWebHook('webhook_url', msg, attach_urls='https://imgs.xkcd.com/comics/python.png')
+    >>>
+    >>> s.send()        # send synchronously
+    >>> s.send_async()  # send asynchronously
+
+
 Contributing
 ------------
 - **Help Wanted!**
