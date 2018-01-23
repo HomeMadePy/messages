@@ -1,9 +1,11 @@
 """
 Module designed to make creating and sending text messages easy.
 
-1. Twilio classes uses the Twilio API to send text messages.
-   * Must have an account_sid, auth_token, and a twilio phone number
-     in order to use.  Go to https://www.twilio.com to register.
+1.  Twilio
+    - Uses the Twilio API to send text messages.
+    - Must have an account_sid, auth_token, and a twilio phone number
+      in order to use.
+    - Go to https://www.twilio.com to register.
 """
 
 import sys
@@ -30,7 +32,7 @@ class Twilio(Message):
 
     Usage:
         Create a text message (SMS/MMS) object with required Args above.
-        Send text message with self.send() method.
+        Send text message with self.send() or self.send_async() methods.
 
     Notes:
         For API description:

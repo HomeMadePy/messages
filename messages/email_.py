@@ -1,8 +1,9 @@
 """
 Module designed to make creating and sending emails easy.
 
-1. Email class uses the Python 3 standard library MIMEMultipart email
-   object to construct the email.
+1.  Email
+    - Uses the Python 3 standard library MIMEMultipart email
+      object to construct the email.
 """
 
 import smtplib
@@ -35,7 +36,7 @@ class Email(Message):
 
     Usage:
         Create an email object with required Args above.
-        Send email with self.send() method.
+        Send email with self.send() or self.send_async() methods.
 
     Note:
         Some email servers may require you to modify security setting, such as
