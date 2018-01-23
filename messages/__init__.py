@@ -2,9 +2,8 @@
 messages - A package designed to make sending various types of messages easy.
 """
 
-from .chat import WhatsApp
-from .chat import Slack
 from .email_ import Email
+from .slack import SlackWebHook
 from .text import Twilio
 
 
