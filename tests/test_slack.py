@@ -88,6 +88,21 @@ def test_slack_add_attachments_str(get_slack):
     assert s.message['attachments'] == expected
 
 
+def test_slack_add_attachments_with_params(get_slack):
+    """
+    GIVEN a valid SlackWebhook object with extra attachment params
+    WHEN add_attachments() is called
+    THEN assert the extra params are properly added
+    """
+    s = get_slack
+    s.attach_urls = 'url1'
+    s.params = {'author_name': 'me', 'text': 'image of me'}
+    s.add_attachments()
+    expected = [{'image_url': 'url1', 'author_name': 'me',
+                'text': 'image of me'}]
+    assert s.message['attachments'] == expected
+
+
 ##############################################################################
 # TESTS: SlackWebhook.send
 ##############################################################################

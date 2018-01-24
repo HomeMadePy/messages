@@ -26,6 +26,9 @@ class SlackWebhook(Message):
         webhook_url: str, webhook url for installed slack app.
         body: str, message to send.
         attach_urls: str or list, each item is a url to attach
+        params: dict, additional attributes to add to each attachment,
+            i.e. author_name, title, text, etc., see API for information
+            on which attributes are possible.
 
     Attributes:
         message: dict, current form of the message to be constructed
@@ -44,6 +47,8 @@ class SlackWebhook(Message):
     webhook_url = attr.ib(validator=instance_of(str))
     body = attr.ib(validator=instance_of(str))
     attach_urls = attr.ib()
+    params = attr.ib(validator=instance_of(dict),
+                     default=attr.Factory(dict))
     message = {}
     sent_messages = deque()
 
@@ -66,6 +71,9 @@ class SlackWebhook(Message):
 
             self.message['attachments'] = [{'image_url': url, 'author_name': ''}
                                            for url in self.attach_urls]
+            if self.params:
+                for attachment in self.message['attachments']:
+                    attachment.update(self.params)
 
 
     def send(self):
