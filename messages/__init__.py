@@ -3,7 +3,7 @@ messages - A package designed to make sending various types of messages easy.
 """
 
 from .email_ import Email
-from .slack import SlackWebHook
+from .slack import SlackWebhook
 from .text import Twilio
 
 

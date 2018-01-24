@@ -1,7 +1,7 @@
 """
 Module designed to make creating and sending chat messages easy.
 
-1.  SlackWebHook
+1.  SlackWebhook
     - Send messages via the Incoming Webhooks feature
     - https://api.slack.com/incoming-webhooks
 """
@@ -18,7 +18,7 @@ from .eventloop import MESSAGELOOP
 
 
 @attr.s
-class SlackWebHook(Message):
+class SlackWebhook(Message):
     """
     Create and send Slack message via the Incoming WebHooks API.
 
@@ -29,11 +29,11 @@ class SlackWebHook(Message):
 
     Attributes:
         message: dict, current form of the message to be constructed
-        sent_messages: deque, all messages sent with current SlackWebHook
+        sent_messages: deque, all messages sent with current SlackWebhook
             object, acting as a log of messages sent in the current session.
 
     Usage:
-        Create a SlackWebHook object with required Args above.
+        Create a SlackWebhook object with required Args above.
         Send message with self.send() or self.send_async() methods.
 
     Note:

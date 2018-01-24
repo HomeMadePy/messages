@@ -3,7 +3,7 @@ Change Log
 
 0.1.1
 -----
-- Adds **Slack Inbound Webhook API** functionality via **SlackWebHook** class.
+- Adds **Slack Inbound Webhook API** functionality via **SlackWebhook** class.
 - Incorporates **attrs** package for code brevity.
 
 

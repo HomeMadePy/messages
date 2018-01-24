@@ -80,9 +80,9 @@ Examples
 
 .. code-block:: python
 
-    >>> from messages import SlackWebHook
+    >>> from messages import SlackWebhook
     >>> msg = 'Hello,\n\tTry this new package called "messages"!'
-    >>> s = SlackWebHook('webhook_url', body=msg, attach_urls='https://imgs.xkcd.com/comics/python.png')
+    >>> s = SlackWebhook('webhook_url', body=msg, attach_urls='https://imgs.xkcd.com/comics/python.png')
     >>>
     >>> s.send()        # send synchronously
     >>> s.send_async()  # send asynchronously
