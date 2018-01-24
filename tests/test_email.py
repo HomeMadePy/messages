@@ -167,10 +167,11 @@ def test_add_body(header_mock, attach_mock, mime_attach_mock, get_email):
 @patch.object(MIMEMultipart, 'attach')
 @patch.object(Email, 'add_header')
 @patch.object(Email, 'add_body')
-def test_add_attachments_local(body_mock, header_mock, mime_attach_mock,
+def test_add_attachments_list_local(body_mock, header_mock, mime_attach_mock,
                                get_email):
     """
     GIVEN a valid Email object, where Email.generate_email() has been called
+        and Email.attachments is a list
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
     """
@@ -185,10 +186,11 @@ def test_add_attachments_local(body_mock, header_mock, mime_attach_mock,
 @patch.object(MIMEMultipart, 'attach')
 @patch.object(Email, 'add_header')
 @patch.object(Email, 'add_body')
-def test_add_attachments_travis(body_mock, header_mock, mime_attach_mock,
+def test_add_attachments_list_travis(body_mock, header_mock, mime_attach_mock,
                                 get_email):
     """
     GIVEN a valid Email object, where Email.generate_email() has been called
+         and Email.attachments is a list
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
     """
@@ -198,6 +200,43 @@ def test_add_attachments_travis(body_mock, header_mock, mime_attach_mock,
                      PATH + 'file3.pdf', PATH + 'file4.xlsx']
     e.generate_email()
     assert mime_attach_mock.call_count == 4
+
+
+@travis
+@patch.object(MIMEMultipart, 'attach')
+@patch.object(Email, 'add_header')
+@patch.object(Email, 'add_body')
+def test_add_attachments_str_local(body_mock, header_mock, mime_attach_mock,
+                               get_email):
+    """
+    GIVEN a valid Email object, where Email.generate_email() has been called
+        and Email.attachments is a str
+    WHEN Email.add_attachments() is called
+    THEN assert correct attachments are attached
+    """
+    e = get_email
+    e.attachments = './data/file1.txt'
+    e.generate_email()
+    assert mime_attach_mock.call_count == 1
+
+
+@not_travis
+@patch.object(MIMEMultipart, 'attach')
+@patch.object(Email, 'add_header')
+@patch.object(Email, 'add_body')
+def test_add_attachments_str_travis(body_mock, header_mock, mime_attach_mock,
+                                get_email):
+    """
+    GIVEN a valid Email object, where Email.generate_email() has been called
+         and Email.attachments is a str
+    WHEN Email.add_attachments() is called
+    THEN assert correct attachments are attached
+    """
+    e = get_email
+    PATH = '/home/travis/build/trp07/messages/tests/data/'
+    e.attachments = PATH + 'file1.txt'
+    e.generate_email()
+    assert mime_attach_mock.call_count == 1
 
 
 ##############################################################################

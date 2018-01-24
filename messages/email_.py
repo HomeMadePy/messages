@@ -14,6 +14,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
 import attr
+from attr.validators import instance_of
 
 from .eventloop import MESSAGELOOP
 from ._interface import Message
@@ -34,7 +35,8 @@ class Email(Message):
         bcc: str or list
         subject: str
         body: str, body text of the message to send
-        attachments: list, i.e. ['/home/you/file1.txt', '/home/you/file2.pdf']
+        attachments: str or list, i.e. './file1',
+            ['/home/you/file1.txt', '/home/you/file2.pdf']
 
     Attributes:
         message: MIMEMultipart, current form of the message to be constructed
@@ -51,15 +53,15 @@ class Email(Message):
         failure may occur when attempting to send.
     """
 
-    server_name = attr.ib()
-    server_port = attr.ib()
-    password = attr.ib()
-    from_ = attr.ib()
-    to = attr.ib()
+    server_name = attr.ib(validator=instance_of(str))
+    server_port = attr.ib(validator=instance_of(int))
+    password = attr.ib(validator=instance_of(str))
+    from_ = attr.ib(validator=instance_of(str))
+    to = attr.ib(validator=instance_of(str))
     cc = attr.ib()
     bcc = attr.ib()
-    subject = attr.ib()
-    body = attr.ib()
+    subject = attr.ib(validator=instance_of(str))
+    body = attr.ib(validator=instance_of(str))
     attachments = attr.ib()
     message = None
     sent_messages = deque()
@@ -122,6 +124,9 @@ class Email(Message):
         """Add required attachments."""
         num_attached = 0
         if self.attachments:
+            if isinstance(self.attachments, str):
+                self.attachments = [self.attachments]
+
             for item in self.attachments:
                 doc = MIMEApplication(open(item, 'rb').read())
                 doc.add_header('Content-Disposition', 'attachment',

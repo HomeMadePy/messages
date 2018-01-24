@@ -12,6 +12,7 @@ import sys
 from collections import deque
 
 import attr
+from attr.validators import instance_of
 from twilio.rest import Client
 
 from .eventloop import MESSAGELOOP
@@ -44,12 +45,12 @@ class Twilio(Message):
         https://www.twilio.com/docs/api/messaging/send-messages
     """
 
-    acct_sid = attr.ib()
-    auth_token = attr.ib()
-    from_ = attr.ib()
-    to = attr.ib()
-    body = attr.ib()
-    media_url = attr.ib()
+    acct_sid = attr.ib(validator=instance_of(str))
+    auth_token = attr.ib(validator=instance_of(str))
+    from_ = attr.ib(validator=instance_of(str))
+    to = attr.ib(validator=instance_of(str))
+    body = attr.ib(validator=instance_of(str))
+    media_url = attr.ib(validator=instance_of(str))
     client = Client(acct_sid, auth_token)
     sid = None
     sent_messages = deque()
