@@ -7,4 +7,4 @@ from .slack import SlackWebHook
 from .text import Twilio
 
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
