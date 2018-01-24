@@ -8,16 +8,18 @@ Module designed to make creating and sending emails easy.
 
 import smtplib
 import sys
-
 from collections import deque
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
+import attr
+
 from .eventloop import MESSAGELOOP
 from ._interface import Message
 
 
+@attr.s
 class Email(Message):
     """
     Create and send emails using the built-in email package.
@@ -31,8 +33,13 @@ class Email(Message):
         cc: str or list
         bcc: str or list
         subject: str
-        body_text: str
+        body: str, body text of the message to send
         attachments: list, i.e. ['/home/you/file1.txt', '/home/you/file2.pdf']
+
+    Attributes:
+        message: MIMEMultipart, current form of the message to be constructed
+        sent_messages: deque, all messages sent with current SlackWebHook
+            object, acting as a log of messages sent in the current session.
 
     Usage:
         Create an email object with required Args above.
@@ -44,20 +51,18 @@ class Email(Message):
         failure may occur when attempting to send.
     """
 
-    def __init__(self, server_name, server_port, password,
-                 from_, to, cc, bcc, subject, body_text, attachments):
-        self.server_name = server_name
-        self.server_port = server_port
-        self.password = password
-        self.from_ = from_
-        self.to = self.list_to_string(to)
-        self.cc = self.list_to_string(cc)
-        self.bcc = self.list_to_string(bcc)
-        self.subject = subject
-        self.body_text = body_text
-        self.attachments = attachments
-        self.email = 'Email not yet created'
-        self.sent_emails = deque()
+    server_name = attr.ib()
+    server_port = attr.ib()
+    password = attr.ib()
+    from_ = attr.ib()
+    to = attr.ib()
+    cc = attr.ib()
+    bcc = attr.ib()
+    subject = attr.ib()
+    body = attr.ib()
+    attachments = attr.ib()
+    message = None
+    sent_messages = deque()
 
 
     def __str__(self):
@@ -69,20 +74,11 @@ class Email(Message):
                '\n\tCc: {}'
                '\n\tBcc: {}'
                '\n\tSubject: {}'
-               '\n\tbody_text: {}...'
+               '\n\tbody: {}...'
                '\n\tattachments: {}'
                .format(self.server_name, self.server_port, self.from_, self.to,
-                       self.cc, self.bcc, self.subject, self.body_text[0:40],
+                       self.cc, self.bcc, self.subject, self.body[0:40],
                        self.attachments))
-
-
-    def __repr__(self):
-        """repr(Email(**args)) method."""
-        return('{}({}, {}, {}, {}, {}, {}, {}, {}, {}, {})'
-               .format(self.__class__.__name__, self.server_name,
-                       self.server_port, self.password, self.from_,
-                       self.to, self.cc, self.bcc, self.subject,
-                       self.body_text, self.attachments))
 
 
     @staticmethod
@@ -102,7 +98,7 @@ class Email(Message):
 
     def generate_email(self):
         """Put the parts of the email together."""
-        self.email = MIMEMultipart()
+        self.message = MIMEMultipart()
         self.add_header()
         self.add_body()
         self.add_attachments()
@@ -110,16 +106,16 @@ class Email(Message):
 
     def add_header(self):
         """Add email header info."""
-        self.email['From'] = self.from_
-        self.email['Subject'] = self.subject
+        self.message['From'] = self.from_
+        self.message['Subject'] = self.subject
 
 
     def add_body(self):
         """Add body content of email."""
-        if self.body_text:
-            body = MIMEText('text', 'plain')
-            body.set_payload(self.body_text)
-            self.email.attach(body)
+        if self.body:
+            b = MIMEText('text', 'plain')
+            b.set_payload(self.body)
+            self.message.attach(b)
 
 
     def add_attachments(self):
@@ -130,7 +126,7 @@ class Email(Message):
                 doc = MIMEApplication(open(item, 'rb').read())
                 doc.add_header('Content-Disposition', 'attachment',
                                filename=item)
-                self.email.attach(doc)
+                self.message.attach(doc)
                 num_attached += 1
         return num_attached
 
@@ -145,26 +141,26 @@ class Email(Message):
     def send(self):
         """
         Send the message.
-        Append the repr(self) to self.sent_emails as a history.
+        Append the repr(self) to self.sent_messages as a history.
         """
         self.generate_email()
         session = self.get_session()
 
         recipients = []
         if self.to:
-            self.email['To'] = self.to
-            recipients += self.to.split(', ')
+            self.message['To'] = self.list_to_string(self.to)
+            recipients += self.to
         if self.cc:
-            self.email['Cc'] = self.cc
-            recipients += self.cc.split(', ')
+            self.message['Cc'] = self.list_to_string(self.cc)
+            recipients += self.cc
         if self.bcc:
-            self.email['Bcc'] = self.bcc
-            recipients += self.bcc.split(', ')
+            self.message['Bcc'] = self.list_to_string(self.bcc)
+            recipients += self.bcc
 
-        session.sendmail(self.from_, recipients, self.email.as_string())
+        session.sendmail(self.from_, recipients, self.message.as_string())
         session.quit()
         print('Message sent...')
-        self.sent_emails.append(repr(self))
+        self.sent_messages.append(repr(self))
 
 
     def send_async(self):

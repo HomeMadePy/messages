@@ -55,7 +55,7 @@ Examples
     >>> msg = 'Hello,\n\tTry this new package called "messages"!'
     >>> m = Email('smtp.gmail.com', 465, 'password', from_='me@here.com',
                   to='you@there.com', cc=None, bcc=None, subject='Hello',
-                  body_text=msg, attachments=['./file1.txt', '~/Documents/file2.pdf'])
+                  body=msg, attachments=['./file1.txt', '~/Documents/file2.pdf'])
     >>>
     >>> m.send()        # send synchronously
     >>> m.send_async()  # send asynchronously
@@ -82,7 +82,7 @@ Examples
 
     >>> from messages import SlackWebHook
     >>> msg = 'Hello,\n\tTry this new package called "messages"!'
-    >>> s = SlackWebHook('webhook_url', msg, attach_urls='https://imgs.xkcd.com/comics/python.png')
+    >>> s = SlackWebHook('webhook_url', body=msg, attach_urls='https://imgs.xkcd.com/comics/python.png')
     >>>
     >>> s.send()        # send synchronously
     >>> s.send_async()  # send asynchronously

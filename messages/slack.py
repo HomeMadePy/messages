@@ -24,8 +24,13 @@ class SlackWebHook(Message):
 
     Args:
         webhook_url: str, webhook url for installed slack app.
-        text: str, message to send.
+        body: str, message to send.
         attach_urls: str or list, each item is a url to attach
+
+    Attributes:
+        message: dict, current form of the message to be constructed
+        sent_messages: deque, all messages sent with current SlackWebHook
+            object, acting as a log of messages sent in the current session.
 
     Usage:
         Create a SlackWebHook object with required Args above.
@@ -37,7 +42,7 @@ class SlackWebHook(Message):
     """
 
     webhook_url = attr.ib(validator=instance_of(str))
-    text = attr.ib(validator=instance_of(str))
+    body = attr.ib(validator=instance_of(str))
     attach_urls = attr.ib()
     message = {}
     sent_messages = deque()
@@ -45,7 +50,7 @@ class SlackWebHook(Message):
 
     def construct_message(self):
         """Build the message params."""
-        self.message['text'] = self.text
+        self.message['text'] = self.body
         self.add_attachments()
         headers = {'Content-Type': 'application/json'}
         req = urllib.request.Request(self.webhook_url, headers=headers,

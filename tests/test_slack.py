@@ -33,7 +33,7 @@ def test_slack_init(get_slack):
     """
     s = get_slack
     assert s.webhook_url == 'test_url'
-    assert s.text == 'message'
+    assert s.body == 'message'
     assert s.attach_urls == ['url1', 'url2']
     assert isinstance(s.message, dict)
     assert isinstance(s.sent_messages, deque)

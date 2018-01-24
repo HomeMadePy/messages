@@ -55,10 +55,10 @@ def test_email_init(get_email):
     assert e.cc == 'someone@there.com'
     assert e.bcc == 'them@there.com'
     assert e.subject == 'subject'
-    assert e.body_text == 'message'
+    assert e.body == 'message'
     assert e.attachments == ['file1', 'file2']
-    assert e.email == 'Email not yet created'
-    assert isinstance(e.sent_emails, deque)
+    assert e.message is None
+    assert isinstance(e.sent_messages, deque)
 
 
 ##############################################################################
@@ -79,29 +79,9 @@ def test_email_str(get_email, capsys):
                 '\n\tCc: someone@there.com'
                 '\n\tBcc: them@there.com'
                 '\n\tSubject: subject'
-                '\n\tbody_text: message...'
+                '\n\tbody: message...'
                 '\n\tattachments: [\'file1\', \'file2\']\n')
     print(e)
-    out, err = capsys.readouterr()
-    assert out == expected
-    assert err == ''
-
-
-##############################################################################
-# TESTS: Email.__repr__
-##############################################################################
-
-def test_email_repr(get_email, capsys):
-    """
-    GIVEN a valid Email object
-    WHEN the user calls repr(e) or `>>> e` on the Email object
-    THEN assert the correct format prints
-    """
-    e = get_email
-    expected = ("Email(smtp.gmail.com, 465, password, "
-                "me@here.com, you@there.com, someone@there.com, "
-                "them@there.com, subject, message, ['file1', 'file2'])\n")
-    print(repr(e))
     out, err = capsys.readouterr()
     assert out == expected
     assert err == ''
@@ -137,7 +117,7 @@ def test_generate_email(header_mock, body_mock, attach_mock, get_email):
     """
     e = get_email
     e.generate_email()
-    assert isinstance(e.email, MIMEMultipart)
+    assert isinstance(e.message, MIMEMultipart)
     assert header_mock.call_count == 1
     assert body_mock.call_count == 1
     assert attach_mock.call_count == 1
@@ -157,8 +137,8 @@ def test_add_header(body_mock, attach_mock, get_email):
     """
     e = get_email
     e.generate_email()
-    assert e.email['From'] == 'me@here.com'
-    assert e.email['Subject'] == 'subject'
+    assert e.message['From'] == 'me@here.com'
+    assert e.message['Subject'] == 'subject'
 
 
 ##############################################################################
@@ -259,7 +239,7 @@ def test_send(header_mock, body_mock, attach_mock, session_mock,
     out, err = capsys.readouterr()
     assert out == 'Message sent...\n'
     assert err == ''
-    assert e.sent_emails[0] == repr(e)
+    assert e.sent_messages[0] == repr(e)
 
 
 ##############################################################################

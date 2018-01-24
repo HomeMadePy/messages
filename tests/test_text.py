@@ -42,7 +42,7 @@ def test_twilio_init(get_twilio):
     assert t.to == '+16195551212'
     assert t.body == 'test text!'
     assert t.media_url == 'https://imgs.xkcd.com/comics/python.png'
-    assert isinstance(t.sent_texts, deque)
+    assert isinstance(t.sent_messages, deque)
 
 
 ##############################################################################
@@ -68,26 +68,6 @@ def test_twilio_str(get_twilio, capsys):
 
 
 ##############################################################################
-# TESTS: Twilio.__repr__
-##############################################################################
-
-def test_twilio_repr(get_twilio, capsys):
-    """
-    GIVEN a valid Twilio object
-    WHEN the user calls repr(t) or `>>> t` on the Twilio object
-    THEN assert the correct format prints
-    """
-    t = get_twilio
-    expected = ('Twilio(test_acct_sid, test_auth_token, +16198675309, '
-                '+16195551212, test text!, '
-                'https://imgs.xkcd.com/comics/python.png)\n')
-    print(repr(t))
-    out, err = capsys.readouterr()
-    assert out == expected
-    assert err == ''
-
-
-##############################################################################
 # TESTS: Twilio.send
 ##############################################################################
 
@@ -105,7 +85,7 @@ def test_send(messages_mock, get_twilio, capsys):
     out, err = capsys.readouterr()
     assert out == 'Message sent...\n'
     assert err == ''
-    assert len(t.sent_texts) == 1
+    assert len(t.sent_messages) == 1
 
 
 ##############################################################################

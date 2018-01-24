@@ -9,15 +9,16 @@ Module designed to make creating and sending text messages easy.
 """
 
 import sys
-
 from collections import deque
 
+import attr
 from twilio.rest import Client
 
 from .eventloop import MESSAGELOOP
 from ._interface import Message
 
 
+@attr.s
 class Twilio(Message):
     """
     Create and send text SMS/MMS text messages using the Twilio API.
@@ -30,6 +31,10 @@ class Twilio(Message):
         body: str, message to send
         media_url: str, url of any image to send along with message
 
+    Attributes:
+        client: Client, twilio.rest client for authentication
+        sid: str, return value from send, record of sent message
+
     Usage:
         Create a text message (SMS/MMS) object with required Args above.
         Send text message with self.send() or self.send_async() methods.
@@ -39,16 +44,15 @@ class Twilio(Message):
         https://www.twilio.com/docs/api/messaging/send-messages
     """
 
-    def __init__(self, acct_sid, auth_token, from_, to, body, media_url):
-        self.acct_sid = acct_sid
-        self.auth_token = auth_token
-        self.client = Client(self.acct_sid, self.auth_token)
-        self.from_ = from_
-        self.to = to
-        self.body = body
-        self.media_url = None or media_url
-        self.sid = None
-        self.sent_texts = deque()
+    acct_sid = attr.ib()
+    auth_token = attr.ib()
+    from_ = attr.ib()
+    to = attr.ib()
+    body = attr.ib()
+    media_url = attr.ib()
+    client = Client(acct_sid, auth_token)
+    sid = None
+    sent_messages = deque()
 
 
     def __str__(self):
@@ -61,19 +65,11 @@ class Twilio(Message):
                .format(self.from_, self.to, self.body, self.media_url))
 
 
-    def __repr__(self):
-        """repr(Twilio(**args)) method."""
-        return('{}({}, {}, {}, {}, {}, {})'
-               .format(self.__class__.__name__, self.acct_sid,
-                       self.auth_token, self.from_, self.to,
-                       self.body, self.media_url))
-
-
     def send(self):
         """
         Send the SMS/MMS message.
         Set self.sid to return code of message.
-        Append the (sid, message) tuple to self.sent_texts as a history.
+        Append the (sid, message) tuple to self.sent_messages as a history.
         """
         msg = self.client.messages.create(
               to = self.to,
@@ -83,7 +79,7 @@ class Twilio(Message):
             )
         self.sid = msg.sid
         print('Message sent...', file=sys.stdout)
-        self.sent_texts.append((msg.sid, repr(self)))
+        self.sent_messages.append((msg.sid, repr(self)))
 
 
     def send_async(self):
