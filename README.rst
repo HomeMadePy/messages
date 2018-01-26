@@ -13,6 +13,9 @@ Messages: Create and send messages fast!
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target: https://github.com/trp07/messages/blob/master/LICENSE
 
+.. image:: docs/logos/Slack_RGB.svg
+    :target: https://messages-py.slack.com
+
 
 Purpose
 -------
