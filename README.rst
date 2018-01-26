@@ -15,6 +15,7 @@ Messages: Create and send messages fast!
 
 .. image:: docs/logos/Slack_RGB.svg
     :scale: 15 %
+    :align: left
     :target: https://messages-py.slack.com
 
 
