@@ -14,7 +14,7 @@ Messages: Create and send messages fast!
     :target: https://github.com/trp07/messages/blob/master/LICENSE
 
 .. image:: docs/logos/Slack_RGB.svg
-    :scale: 15 %
+    :scale: 5 %
     :align: left
     :target: https://messages-py.slack.com
 
