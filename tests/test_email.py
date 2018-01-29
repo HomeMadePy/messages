@@ -98,8 +98,8 @@ def test_list_to_string(get_email):
     THEN assert the list is returned as a single string
     """
     e = get_email
-    e.to = e.list_to_string(['her@there.com', 'him@there.com'])
-    assert e.to == 'her@there.com, him@there.com'
+    output = e.list_to_string(['her@there.com', 'him@there.com'])
+    assert output == 'her@there.com, him@there.com'
 
 
 ##############################################################################
