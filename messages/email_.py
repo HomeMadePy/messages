@@ -26,21 +26,21 @@ class Email(Message):
     Create and send emails using the built-in email package.
 
     Args:
-        server_name: str, i.e. 'smtp.gmail.com'
-        server_port: int, i.e. 465
-        password: str
-        from_: str, i.e. 'me@here.com'
-        to: str or list, i.e. 'you@there.com' or ['a@there.com', 'b@there.com']
-        cc: str or list
-        bcc: str or list
-        subject: str
-        body: str, body text of the message to send
-        attachments: str or list, i.e. './file1',
+        :server_name: str, i.e. 'smtp.gmail.com'
+        :server_port: int, i.e. 465
+        :password: str
+        :from_: str, i.e. 'me@here.com'
+        :to: str or list, i.e. 'you@there.com' or ['a@there.com', 'b@there.com']
+        :cc: str or list
+        :bcc: str or list
+        :subject: str
+        :body: str, body text of the message to send
+        :attachments: str or list, i.e. './file1',
             ['/home/you/file1.txt', '/home/you/file2.pdf']
 
     Attributes:
-        message: MIMEMultipart, current form of the message to be constructed
-        sent_messages: deque, all messages sent with current SlackWebHook
+        :message: MIMEMultipart, current form of the message to be constructed
+        :sent_messages: deque, all messages sent with current SlackWebHook
             object, acting as a log of messages sent in the current session.
 
     Usage:
@@ -60,8 +60,8 @@ class Email(Message):
     to = attr.ib(validator=instance_of(str))
     cc = attr.ib()
     bcc = attr.ib()
-    subject = attr.ib(validator=instance_of(str))
-    body = attr.ib(validator=instance_of(str))
+    subject = attr.ib()
+    body = attr.ib()
     attachments = attr.ib()
     message = None
     sent_messages = deque()
