@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.1.2
+-----
+- Adds input validation via the `validus <https://github.com/shopnilsazal/validus>`_ package, which uses regular expressions to verify formatting (i.e. email addresses, urls, etc).
+
+
 0.1.1
 -----
 - Adds **Slack Inbound Webhook API** functionality via **SlackWebhook** class.
