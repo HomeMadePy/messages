@@ -43,6 +43,7 @@ setup(
         'attrs',
         'gevent',
         'twilio',
+        'validus',
     ],
 
     test_suite='tests',
