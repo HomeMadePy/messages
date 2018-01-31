@@ -8,7 +8,7 @@ from collections import deque
 from unittest.mock import patch
 
 from messages.slack import SlackWebhook
-from messages.eventloop import MESSAGELOOP
+from messages._eventloop import MESSAGELOOP
 
 
 ##############################################################################

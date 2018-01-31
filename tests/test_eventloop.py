@@ -5,8 +5,7 @@ import gevent
 
 from collections import deque
 from unittest.mock import patch
-
-from messages.eventloop import MessageLoop
+from messages._eventloop import MessageLoop
 
 
 ##############################################################################

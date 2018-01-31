@@ -15,7 +15,7 @@ import attr
 from attr.validators import instance_of
 from twilio.rest import Client
 
-from .eventloop import MESSAGELOOP
+from ._eventloop import MESSAGELOOP
 from ._interface import Message
 
 

@@ -8,7 +8,7 @@ from unittest.mock import patch
 from twilio.rest import Client
 
 from messages.text import Twilio
-from messages.eventloop import MESSAGELOOP
+from messages._eventloop import MESSAGELOOP
 
 
 ##############################################################################

@@ -20,7 +20,7 @@ def test_MessageInputError(capsys):
         raise MessageInputError('Email', 'from_', 'email address')
         out, err = capsys.readouterr()
         expected = 'Invalid input for specified message class: Email'
-        expected += '\n\targument: "from_"'
-        expected += 'input type must be: email address\n'
+        expected += '\n\t* argument: "from_"'
+        expected += '\n\t* input type must be: email address\n'
         assert out == expected
         assert err == ''

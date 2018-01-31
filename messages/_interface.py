@@ -4,7 +4,7 @@
 from abc import ABCMeta
 from abc import abstractmethod
 
-from .utils import VALIDATOR
+from ._utils import VALIDATOR
 
 
 class Message(metaclass=ABCMeta):

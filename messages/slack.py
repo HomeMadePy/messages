@@ -14,7 +14,7 @@ import attr
 from attr.validators import instance_of
 
 from ._interface import Message
-from .eventloop import MESSAGELOOP
+from ._eventloop import MESSAGELOOP
 
 
 @attr.s

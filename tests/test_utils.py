@@ -1,11 +1,11 @@
-"""messages.utils tests."""
+"""messages._utils tests."""
 
 import pytest
 from unittest.mock import patch
 
 from messages.exceptions import MessageInputError
-from messages.utils import Validator
-from messages.utils import validus
+from messages._utils import Validator
+from messages._utils import validus
 
 
 ##############################################################################
@@ -113,7 +113,6 @@ def test_isvalid_true(isemail_mock, get_validator, get_testemail):
     isemail_mock.return_value = True
     result = v._is_valid('EMAIL', 'from_', 'you@there.com')
     assert result == True
-    assert isemail_mock.call_count == 1
 
 
 @patch.object(validus, 'isemail')
@@ -128,4 +127,3 @@ def test_isvalid_false(isemail_mock, get_validator, get_testemail):
     isemail_mock.return_value = False
     result = v._is_valid('EMAIL', 'from_', 'bademail')
     assert result == False
-    assert isemail_mock.call_count == 1

@@ -9,7 +9,7 @@ from email.mime.multipart import MIMEMultipart
 from unittest.mock import patch
 
 from messages.email_ import Email
-from messages.eventloop import MESSAGELOOP
+from messages._eventloop import MESSAGELOOP
 
 
 ##############################################################################
