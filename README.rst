@@ -96,4 +96,4 @@ Contributing
 - **Help Wanted!**
 - All contributions are welcome to build upon the package!
 - If it's a **message**, add it to messages!
-- Please read `CONTRIBUTING <https://github.com/trp07/messages/wiki/CONTRIBUTING>`_ for guidelines, as well as a `TODO List <https://github.com/trp07/messages/wiki/TODO>`_ for ideas on where to get started.
+- Please read `CONTRIBUTING <https://github.com/trp07/messages/wiki/1.--CONTRIBUTING>`_ for guidelines, as well as a `TODO List <https://github.com/trp07/messages/wiki/2.--TODO>`_ for ideas on where to get started.
