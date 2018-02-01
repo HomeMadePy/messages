@@ -69,7 +69,8 @@ class SlackWebhook(Message):
             if not isinstance(self.attach_urls, list):
                 self.attach_urls = [self.attach_urls]
 
-            self.message['attachments'] = [{'image_url': url, 'author_name': ''}
+            self.message['attachments'] = [{'image_url': url,
+                                            'author_name': ''}
                                            for url in self.attach_urls]
             if self.params:
                 for attachment in self.message['attachments']:

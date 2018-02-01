@@ -73,10 +73,10 @@ class Twilio(Message):
         Append the (sid, message) tuple to self.sent_messages as a history.
         """
         msg = self.client.messages.create(
-              to = self.to,
-              from_ = self.from_,
-              body = self.body,
-              media_url = self.media_url,
+              to=self.to,
+              from_=self.from_,
+              body=self.body,
+              media_url=self.media_url,
             )
         self.sid = msg.sid
         print('Message sent...', file=sys.stdout)

@@ -19,19 +19,49 @@ from .exceptions import MessageInputError
 class Validator:
     """Input validation class."""
 
-    EMAIL = {'from_': {'command': validus.isemail, 'type': 'email address'},
-             'to': {'command': validus.isemail, 'type': 'email address'},
-             'cc': {'command': validus.isemail, 'type': 'email address or list of email addresses'},
-             'bcc': {'command': validus.isemail, 'type': 'email address or list of email addresses'},
-             }
+    EMAIL = {
+             'from_': {
+                       'command': validus.isemail,
+                       'type': 'email address',
+                       },
+             'to': {
+                    'command': validus.isemail,
+                    'type': 'email address',
+                    },
+             'cc': {
+                    'command': validus.isemail,
+                    'type': 'email address or list of email addresses',
+                    },
+             'bcc': {
+                     'command': validus.isemail,
+                     'type': 'email address or list of email addresses',
+                     },
+            }
 
-    TWILIO = {'from_': {'command': validus.isphone, 'type': 'phone number'},
-              'to': {'command': validus.isphone, 'type': 'phone number'},
-              'media_url': {'command': validus.isurl, 'type': 'url'},
-              }
+    TWILIO = {
+              'from_': {
+                        'command': validus.isphone,
+                        'type': 'phone number',
+                        },
+              'to': {
+                     'command': validus.isphone,
+                     'type': 'phone number',
+                     },
+              'media_url': {
+                            'command': validus.isurl,
+                            'type': 'url',
+                    },
+            }
 
-    SLACKWEBHOOK = {'webhook_url': {'command': validus.isurl, 'type': 'url'},
-                    'attach_urls': {'command': validus.isurl, 'type': 'url or list of urls'},
+    SLACKWEBHOOK = {
+                    'webhook_url': {
+                                    'command': validus.isurl,
+                                    'type': 'url',
+                                    },
+                    'attach_urls': {
+                                    'command': validus.isurl,
+                                    'type': 'url or list of urls',
+                                    },
                     }
 
     def __init__(self):

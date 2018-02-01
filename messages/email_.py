@@ -7,7 +7,6 @@ Module designed to make creating and sending emails easy.
 """
 
 import smtplib
-import sys
 from collections import deque
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -30,7 +29,8 @@ class Email(Message):
         :server_port: int, i.e. 465
         :password: str
         :from_: str, i.e. 'me@here.com'
-        :to: str or list, i.e. 'you@there.com' or ['a@there.com', 'b@there.com']
+        :to: str or list, i.e. 'you@there.com' or
+            ['her@there.com', 'him@there.com']
         :cc: str or list
         :bcc: str or list
         :subject: str
