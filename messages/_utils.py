@@ -17,7 +17,11 @@ from .exceptions import MessageInputError
 
 
 class Validator:
-    """Input validation class."""
+    """
+    Input validation class.
+
+    Each message classe's 'command' should be a command that returns a bool.
+    """
 
     EMAIL = {
              'from_': {
@@ -80,6 +84,10 @@ class Validator:
                 i.e. e = Email(*args)
             :attr: str, the attribute to validate
 
+        Returns:
+            None, but raises MessageInputError if Validator._is_valid()
+                returns False.
+
         Usage:
             This is used by the __setattr__ override in the
             _interface.Message class, inherited by message classes.
@@ -113,8 +121,13 @@ class Validator:
             :attr:, str, the attribute to validate
             :val:, str, the value of that attribute (attr)
 
+        Returns:
+            bool, from operation of `command(val)`.  i.e. True if the
+                'val' is valid, False otherwise.
+
         Example inputs:
             Validator._is_valid('EMAIL', 'from_', 'me@here.com')
+            returns True
         """
         msgtype = getattr(Validator, msgtype)
         command = msgtype[attr]['command']
