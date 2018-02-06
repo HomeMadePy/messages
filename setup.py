@@ -40,6 +40,7 @@ setup(
 
     install_requires=[
         'attrs',
+        'click>=6.0',
         'gevent',
         'twilio',
         'validus',
@@ -53,5 +54,10 @@ setup(
     ],
 
     setup_requires=['pytest-runner'],
+
+    entry_points={
+        'console_scripts': ['messages='
+                            'messages.cli:main']
+    },
 
 )
