@@ -1,5 +1,5 @@
 """
-Utility Module - classes and functions useful to all other modules.
+Utility Module - globals, classes, and functions useful to all other modules.
 
 1.  Validator
     - Class used to validate user input for each message class.
