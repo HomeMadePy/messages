@@ -10,7 +10,9 @@ from click.testing import CliRunner
 
 import messages.cli
 from messages.cli import main
+from messages.cli import _message_factory
 from messages.exceptions import MessageTypeError
+from messages.email_ import Email
 
 
 ##############################################################################
@@ -55,3 +57,28 @@ def test_unsupported_message_types():
     runner = CliRunner()
     with pytest.raises(MessageTypeError):
         runner.invoke(main, ['-t', 'bad_type'], catch_exceptions=False)
+
+
+##############################################################################
+# TESTS: cli._message_factory
+##############################################################################
+
+def test_msg_factory_email():
+    """
+    GIVEN a call to _message_factory with the given CLI args
+    WHEN 'type'==Email
+    THEN assert an Email instance is created
+    """
+    args = {'type': 'EMAIL', 'from': 'me@here.com', 'recipient': ('you@there.com',),
+    'carboncopy': (), 'blindcopy': (), 'subject': 'test message',
+    'body': 'ABCDEFG', 'attach': ['file1', 'file2'], 'credentials': ['smtp.google.com', '465', 'password']}
+    msg = _message_factory(**args)
+    assert isinstance(msg, Email)
+
+
+def test_msg_factory_twilio():
+    pass
+
+
+def test_msg_factory_slackwebhook():
+    pass
