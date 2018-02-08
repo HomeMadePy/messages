@@ -57,7 +57,7 @@ class Email(Message):
     server_port = attr.ib(validator=instance_of(int))
     password = attr.ib(validator=instance_of(str))
     from_ = attr.ib(validator=instance_of(str))
-    to = attr.ib(validator=instance_of(str))
+    to = attr.ib()
     cc = attr.ib()
     bcc = attr.ib()
     subject = attr.ib()
