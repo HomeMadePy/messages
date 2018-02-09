@@ -53,10 +53,10 @@ class Email(Message):
         failure may occur when attempting to send.
     """
 
-    server_name = attr.ib(validator=instance_of(str))
-    server_port = attr.ib(validator=instance_of(int))
-    password = attr.ib(validator=instance_of(str))
-    from_ = attr.ib(validator=instance_of(str))
+    server_name = attr.ib()
+    server_port = attr.ib()
+    password = attr.ib()
+    from_ = attr.ib()
     to = attr.ib()
     cc = attr.ib()
     bcc = attr.ib()
@@ -154,13 +154,13 @@ class Email(Message):
         recipients = []
         if self.to:
             self.message['To'] = self.list_to_string(self.to)
-            recipients += self.to
+            recipients.append(self.to)
         if self.cc:
             self.message['Cc'] = self.list_to_string(self.cc)
-            recipients += self.cc
+            recipients.append(self.cc)
         if self.bcc:
             self.message['Bcc'] = self.list_to_string(self.bcc)
-            recipients += self.bcc
+            recipients.append(self.bcc)
 
         session.sendmail(self.from_, recipients, self.message.as_string())
         session.quit()
