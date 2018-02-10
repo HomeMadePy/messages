@@ -2,9 +2,9 @@
 
 import pytest
 
+from messages import MESSAGES
 from messages.exceptions import MessageInputError
 from messages.exceptions import MessageTypeError
-from messages.exceptions import MESSAGES
 
 
 ##############################################################################

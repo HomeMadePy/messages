@@ -1,7 +1,6 @@
 """Custom Exceptions Module."""
 
-"""Supported message types."""
-MESSAGES = ('email', 'twilio', 'slackwebhook')
+import messages
 
 
 class MessageInputError(ValueError):
@@ -21,6 +20,6 @@ class MessageTypeError(TypeError):
     def __init__(self, msg_type):
         self.err = 'Invalid message type: ' + msg_type
         self.err += '\n\t* Support Message Types: '
-        self.err += str(MESSAGES)
+        self.err += str(messages.MESSAGES)
 
         super(MessageTypeError, self).__init__(self.err)

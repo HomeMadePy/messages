@@ -6,32 +6,12 @@ import sys
 import click
 from click import option
 
+from messages import MESSAGES
+from .api import send
 from .exceptions import MessageTypeError
-from .exceptions import MESSAGES
 from .email_ import Email
 from .text import Twilio
 from .slack import SlackWebhook
-
-
-def _message_factory(**args):
-    """
-    Factory function that creates the desired message type with the
-    given **args as arguments.
-    """
-    if args['type'].lower() == 'email':
-        return Email(server_name=args['credentials'][0],
-                server_port=int(args['credentials'][1]),
-                password=args['credentials'][2],
-                from_=args['from'],
-                to=list(args['recipient']) or None,
-                cc=list(args['carboncopy']) or None,
-                bcc=list(args['blindcopy']) or None,
-                subject=args['subject'],
-                body=args['body'],
-                attachments=list(args['attach']) or None)
-
-
-
 
 
 
@@ -54,8 +34,8 @@ def _message_factory(**args):
     help='Specify one or more filepaths or urls to attach.')
 @option('-C', '--configure',
     help='Configure and preset default values.')
-@option('-X', '--credentials', multiple=True,
-    help='Credentials for given service.')
+@option('-U', '--user',
+    help='Specify pre-configured user account name.')
 @click.version_option(version='0.1.2', prog_name='Messages')
 @click.pass_context
 def main(ctx, **kwds):
@@ -86,6 +66,4 @@ def main(ctx, **kwds):
         if os.path.isfile(kwds['body']):
             message = open(kwds['body'], 'r').read()
 
-    msg = _message_factory(**kwds)
-    print(msg)      #just for debugging
-    #msg.send_async()
+
