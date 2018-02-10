@@ -42,8 +42,7 @@ class Twilio(Message):
         https://www.twilio.com/docs/api/messaging/send-messages
     """
 
-    def __init__(self, acct_sid, auth_token, from_, to, body,
-                 media_url):
+    def __init__(self, acct_sid, auth_token, from_, to, body, media_url):
         self.acct_sid = acct_sid
         self.auth_token = auth_token
         self.from_ = from_
