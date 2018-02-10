@@ -10,29 +10,25 @@ import json
 import urllib
 from collections import deque
 
-import attr
-from attr.validators import instance_of
-
 from ._interface import Message
 from ._eventloop import MESSAGELOOP
 
 
-@attr.s
 class SlackWebhook(Message):
     """
     Create and send Slack message via the Incoming WebHooks API.
 
     Args:
-        :webhook_url: str, webhook url for installed slack app.
-        :body: str, message to send.
-        :attach_urls: str or list, each item is a url to attach
-        :params: dict, additional attributes to add to each attachment,
+        :webhook_url: (str) webhook url for installed slack app.
+        :body: (str) message to send.
+        :attach_urls: (str or list) each item is a url to attach
+        :params: (dict) additional attributes to add to each attachment,
             i.e. author_name, title, text, etc., see API for information
             on which attributes are possible.
 
     Attributes:
-        :message: dict, current form of the message to be constructed
-        :sent_messages: deque, all messages sent with current SlackWebhook
+        :message: (dict) current form of the message to be constructed
+        :sent_messages: (deque) all messages sent with current SlackWebhook
             object, acting as a log of messages sent in the current session.
 
     Usage:
@@ -44,13 +40,13 @@ class SlackWebhook(Message):
         https://api.slack.com/incoming-webhooks
     """
 
-    webhook_url = attr.ib(validator=instance_of(str))
-    body = attr.ib()
-    attach_urls = attr.ib()
-    params = attr.ib(validator=instance_of(dict),
-                     default=attr.Factory(dict))
-    message = {}
-    sent_messages = deque()
+    def __init__(self, webhook_url, body, attach_urls, params={}):
+        self.webhook_url = webhook_url
+        self.body = body
+        self.attach_urls = attach_urls
+        self.params = params
+        self.message = {}
+        self.sent_messages = deque()
 
 
     def construct_message(self):

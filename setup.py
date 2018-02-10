@@ -39,7 +39,6 @@ setup(
     ],
 
     install_requires=[
-        'attrs',
         'click>=6.0',
         'gevent',
         'twilio',

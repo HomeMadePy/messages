@@ -12,14 +12,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
-import attr
-from attr.validators import instance_of
-
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
 
 
-@attr.s
 class Email(Message):
     """
     Create and send emails using the built-in email package.
@@ -53,18 +49,20 @@ class Email(Message):
         failure may occur when attempting to send.
     """
 
-    server_name = attr.ib()
-    server_port = attr.ib()
-    password = attr.ib()
-    from_ = attr.ib()
-    to = attr.ib()
-    cc = attr.ib()
-    bcc = attr.ib()
-    subject = attr.ib()
-    body = attr.ib()
-    attachments = attr.ib()
-    message = None
-    sent_messages = deque()
+    def __init__(self, server_name, server_port, password, from_,
+                 to, cc, bcc, subject, body, attachments):
+        self.server_name = server_name
+        self.server_port = server_port
+        self.password = password
+        self.from_ = from_
+        self.to = to
+        self.cc = cc
+        self.bcc = bcc
+        self.subject = subject
+        self.body = body
+        self.attachments = attachments
+        self.message = None
+        self.sent_messages = deque()
 
 
     def __str__(self):
