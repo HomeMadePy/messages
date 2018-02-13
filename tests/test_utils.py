@@ -3,7 +3,7 @@
 import pytest
 from unittest.mock import patch
 
-from messages.exceptions import MessageInputError
+from messages.exceptions import InvalidMessageInputError
 from messages._utils import Validator
 from messages._utils import validus
 
@@ -70,13 +70,13 @@ def test_val_input_singular_raiseError(isval_mock, get_validator,
     GIVEN a valid Validator object
     WHEN validate_input() is called on a message object
         whose attribute is a singular invalid input
-    THEN assert MessageInputError is raised
+    THEN assert InvalidMessageInputError is raised
     """
     v = get_validator
     e = get_testemail
     e.from_ = 'bademail'
     isval_mock.return_value = False
-    with pytest.raises(MessageInputError):
+    with pytest.raises(InvalidMessageInputError):
         v.validate_input(e, 'from_')
 
 
@@ -87,13 +87,13 @@ def test_val_input_list_raiseError(isval_mock, get_validator,
     GIVEN a valid Validator object
     WHEN validate_input() is called on a message object
         whose attribute is a list of invalid inputs
-    THEN assert MessageInputError is raised
+    THEN assert InvalidMessageInputError is raised
     """
     v = get_validator
     e = get_testemail
     e.from_ = ['bademail1', 'bademail2']
     isval_mock.return_value = False
-    with pytest.raises(MessageInputError):
+    with pytest.raises(InvalidMessageInputError):
         v.validate_input(e, 'from_')
 
 

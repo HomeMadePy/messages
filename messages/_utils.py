@@ -10,10 +10,11 @@ Utility Module - globals, classes, and functions useful to all other modules.
 """
 
 import functools
+import inspect
 
 import validus
 
-from .exceptions import MessageInputError
+from .exceptions import InvalidMessageInputError
 
 
 class Validator:
@@ -85,7 +86,7 @@ class Validator:
             :attr: str, the attribute to validate
 
         Returns:
-            None, but raises MessageInputError if Validator._is_valid()
+            None, but raises InvalidMessageInputError if Validator._is_valid()
                 returns False.
 
         Usage:
@@ -100,11 +101,11 @@ class Validator:
             if isinstance(inputs, list):
                 for i in inputs:
                     if not self._is_valid(msgtype, attr, i):
-                        raise MessageInputError(msg.__class__.__name__,
+                        raise InvalidMessageInputError(msg.__class__.__name__,
                             i, getattr(Validator, msgtype)[attr]['type'])
             else:
                 if not self._is_valid(msgtype, attr, inputs):
-                    raise MessageInputError(msg.__class__.__name__,
+                    raise InvalidMessageInputError(msg.__class__.__name__,
                             inputs, getattr(Validator, msgtype)[attr]['type'])
 
 
@@ -135,3 +136,10 @@ class Validator:
 
 
 VALIDATOR = Validator()
+
+
+def custom_repr(target):
+    """Custom repr for the 'target' class."""
+    args = [arg for arg in inspect.getargspec(target).args if arg!='self']
+    output = target.__class__.__name__ + '('
+    pass

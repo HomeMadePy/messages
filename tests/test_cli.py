@@ -10,7 +10,7 @@ from click.testing import CliRunner
 
 import messages.cli
 from messages.cli import main
-from messages.exceptions import MessageTypeError
+from messages.exceptions import UnsupportedMessageTypeError
 from messages.email_ import Email
 
 
@@ -51,8 +51,8 @@ def test_unsupported_message_types():
     """
     GIVEN a call to messages on the CLI
     WHEN an unsupported message type is called
-    THEN assert MessageTypeError is raised
+    THEN assert UnsupportedMessageTypeError is raised
     """
     runner = CliRunner()
-    with pytest.raises(MessageTypeError):
+    with pytest.raises(UnsupportedMessageTypeError):
         runner.invoke(main, ['-t', 'bad_type'], catch_exceptions=False)

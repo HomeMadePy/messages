@@ -2,23 +2,22 @@
 
 import pytest
 
-from messages import MESSAGES
-from messages.exceptions import MessageInputError
-from messages.exceptions import MessageTypeError
+from messages.exceptions import InvalidMessageInputError
+from messages.exceptions import UnsupportedMessageTypeError
 
 
 ##############################################################################
 # TESTS: MessageInputError
 ##############################################################################
 
-def test_MessageInputError(capsys):
+def test_InvalidMessageInputError(capsys):
     """
     GIVEN no object instantiated, just raise the exception
     WHEN the exception is raised with given args
     THEN assert it raises exception and prints proper output
     """
-    with pytest.raises(MessageInputError):
-        raise MessageInputError('Email', 'from_', 'email address')
+    with pytest.raises(InvalidMessageInputError):
+        raise InvalidMessageInputError('Email', 'from_', 'email address')
         out, err = capsys.readouterr()
         expected = 'Invalid input for specified message class: Email'
         expected += '\n\t* argument: "from_"'
@@ -27,17 +26,15 @@ def test_MessageInputError(capsys):
         assert err == ''
 
 
-def test_MessageTypeError(capsys):
+def test_UnsupportedMessageTypeError(capsys):
     """
     GIVEN no object instantiated, just raise the exception
     WHEN the exception is raised with given args
     THEN assert it raises exception and prints proper output
     """
-    with pytest.raises(MessageTypeError):
-        raise MessageTypeError('BadType')
+    with pytest.raises(UnsupportedMessageTypeError):
+        raise UnsupportedMessageTypeError('BadType')
         out, err = capsys.readouterr()
-        expected = 'Invalid input for specified message class: BadType'
-        expected += '\n\t* Supported Message Types: '
-        expected += (str(MESSAGES) + '\n')
+        expected = 'Invalid input for specified message class: BadType\n'
         assert out == expected
         assert err == ''

@@ -8,7 +8,7 @@ from click import option
 
 from messages import MESSAGES
 from .api import send
-from .exceptions import MessageTypeError
+from .exceptions import UnsupportedMessageTypeError
 from .email_ import Email
 from .text import Twilio
 from .slack import SlackWebhook
@@ -60,7 +60,7 @@ def main(ctx, **kwds):
         pass
 
     if kwds['type'].lower() not in MESSAGES:
-        raise MessageTypeError(kwds['type'])
+        raise UnsupportedMessageTypeError(kwds['type'])
 
     if kwds['body']:
         if os.path.isfile(kwds['body']):
