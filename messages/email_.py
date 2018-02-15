@@ -11,9 +11,18 @@ from collections import deque
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+from getpass import getpass
+
+from jsonconfig import Config
 
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+
+
+SMTP_SERVERS = {
+    'gmail': ('smtp.gmail.com', 465),
+    'yahoo': ('smtp.yahoo.com', 465),
+    }
 
 
 class Email(Message):
@@ -21,22 +30,31 @@ class Email(Message):
     Create and send emails using the built-in email package.
 
     Args:
-        :server_name: str, i.e. 'smtp.gmail.com'
-        :server_port: int, i.e. 465
-        :password: str
-        :from_: str, i.e. 'me@here.com'
-        :to: str or list, i.e. 'you@there.com' or
-            ['her@there.com', 'him@there.com']
-        :cc: str or list
-        :bcc: str or list
-        :subject: str
-        :body: str, body text of the message to send
-        :attachments: str or list, i.e. './file1',
-            ['/home/you/file1.txt', '/home/you/file2.pdf']
+        :from_: (str) originating email address
+            i.e. 'me@here.com'
+        :to: (str or list) primary message recipients
+             i.e. 'you@there.com' or
+                  ['her@there.com', 'him@there.com']
+        :server: (str) url of smtp server
+            i.e. 'smtp.gmail.com'
+        :port: (int) smtp server port
+            i.e. 465 or 587
+        :password: (str) password for email account
+        :cc: (str or list) carbon-copy recipients
+        :bcc: (str or list) blind carbon-copy recipients
+        :subject: (str) email message subject line
+        :body: (str) body text of the message to send
+        :attachments: (str or list) files to attach
+            i.e. './file1', or
+                ['/home/you/file1.txt', '/home/you/file2.pdf']
+        :name: (str) use a separate account profile specified by name
+        :save: (bool) save pertinent values in the messages config file,
+            such as from_, server, port, password (encrypted keyring) to make
+            sending messages faster.
 
     Attributes:
-        :message: MIMEMultipart, current form of the message to be constructed
-        :sent_messages: deque, all messages sent with current SlackWebHook
+        :message: (MIMEMultipart) current form of the message to be constructed
+        :sent_messages: (deque) all messages sent with current SlackWebHook
             object, acting as a log of messages sent in the current session.
 
     Usage:
@@ -49,20 +67,48 @@ class Email(Message):
         failure may occur when attempting to send.
     """
 
-    def __init__(self, server_name, server_port, password, from_,
-                 to, cc, bcc, subject, body, attachments):
-        self.server_name = server_name
-        self.server_port = server_port
-        self.password = password
-        self.from_ = from_
-        self.to = to
-        self.cc = cc
-        self.bcc = bcc
+    def __init__(
+        self, from_, to=None, server='localhost', port=465,
+        password=None, cc=None, bcc=None, subject='', body='',
+        attachments=None, name=None, save=False
+    ):
+
+        msg = 'email'
+
+        if name is None:
+            profile = 'messages'
+        else:
+            profile = 'messages_' + name
+
+        with Config(profile) as cfg:
+            if msg not in cfg.data.keys():
+                cfg.data[msg] = {}
+            self.from_ = cfg.data[msg].get('from_', from_)
+            self.to, self.cc, self.bcc = to, cc, bcc
+            self.server = (server or
+                    cfg.data[msg].get('server', self.get_server(self.from_)))
+            self.port = cfg.data[msg].get('port', port)
+
+            self.password = password or cfg.pwd.get(name + '_' + msg, None)
+            if self.password is None:
+                self.password = getpass('\nPassword: ')
+
+            if save:
+                for key in ['from_', 'server', 'port']:
+                    cfg.data[msg][key] = getattr(self, key)
+
+                cfg.pwd[name + '_' + msg] = self.password
+                cfg.kwargs['dump']['indent'] = 4
+
         self.subject = subject
         self.body = body
-        self.attachments = attachments
+        self.attachments = attachments or []
         self.message = None
         self.sent_messages = deque()
+
+
+    def __repr__(self):
+        return '<messages.Email class> at: ' + str(id(self))
 
 
     def __str__(self):
@@ -76,9 +122,16 @@ class Email(Message):
                '\n\tSubject: {}'
                '\n\tbody: {}...'
                '\n\tattachments: {}'
-               .format(self.server_name, self.server_port, self.from_, self.to,
+               .format(self.server, self.port, self.from_, self.to,
                        self.cc, self.bcc, self.subject, self.body[0:40],
                        self.attachments))
+
+
+    @staticmethod
+    def get_server(address):
+        """Return an SMTP servername guess from outgoing email address."""
+        domain = address.split('@')[1]
+        return 'smtp.' + domain
 
 
     @staticmethod
@@ -136,8 +189,25 @@ class Email(Message):
 
     def get_session(self):
         """Start session with email server."""
-        session = smtplib.SMTP_SSL(self.server_name, self.server_port)
+        if self.port == 465:
+            session = self.get_ssl()
+        elif self.port == 587:
+            session = self.get_tls()
         session.login(self.from_, self.password)
+        return session
+
+
+    def get_ssl(self):
+        """Get an SMTP session with SSL."""
+        return smtplib.SMTP_SSL(self.server, self.port)
+
+
+    def get_tls(self):
+        """Get an SMTP session with TLS."""
+        session = smtplib.SMTP(self.server, self.port)
+        session.ehlo()
+        session.starttls()
+        session.ehlo()
         return session
 
 

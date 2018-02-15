@@ -1,5 +1,6 @@
 """messages.email_ tests."""
 
+import getpass
 import os
 import pytest
 import smtplib
@@ -8,6 +9,7 @@ from collections import deque
 from email.mime.multipart import MIMEMultipart
 from unittest.mock import patch
 
+import messages
 from messages.email_ import Email
 from messages._eventloop import MESSAGELOOP
 
@@ -17,11 +19,13 @@ from messages._eventloop import MESSAGELOOP
 ##############################################################################
 
 @pytest.fixture()
-def get_email():
+def get_email(cfg_mock):
     """Return a valid Email object."""
-    return Email('smtp.gmail.com', 465, 'password', 'me@here.com',
-                 'you@there.com', 'someone@there.com', 'them@there.com',
-                 'subject', 'message', ['file1', 'file2'])
+    return Email(from_='me@here.com', to='you@there.com',
+             server='smtp.gmail.com', port=465, password='password',
+             cc='someone@there.com', bcc='them@there.com',
+             subject='subject', body='message', attachments=['file1', 'file2'],
+             name='myName', save=False)
 
 
 # skip this test if on travs-ci
@@ -39,7 +43,7 @@ not_travis = pytest.mark.skipif("TRAVIS" not in os.environ,
 # TESTS: Email.__init__
 ##############################################################################
 
-def test_email_init(get_email):
+def test_email_init_normal(get_email):
     """
     GIVEN a need to create an Email object
     WHEN the user instantiates a new object with required args
@@ -47,8 +51,8 @@ def test_email_init(get_email):
     """
     e = get_email
     assert e is not None
-    assert e.server_name == 'smtp.gmail.com'
-    assert e.server_port == 465
+    assert e.server == 'smtp.gmail.com'
+    assert e.port == 465
     assert e.password == 'password'
     assert e.from_ == 'me@here.com'
     assert e.to == 'you@there.com'
@@ -59,6 +63,38 @@ def test_email_init(get_email):
     assert e.attachments == ['file1', 'file2']
     assert e.message is None
     assert isinstance(e.sent_messages, deque)
+
+
+@patch.object(messages.email_, 'getpass')
+def test_email_init_no_password_save_True(getpass_mock, get_email):
+    """
+    GIVEN a need to create an Email object
+    WHEN the user instantiates a new object with required args
+    THEN assert Email object is created with given args
+    """
+    e = Email(from_='me@here.com', to='you@there.com',
+             server='smtp.gmail.com', port=465, password=None,
+             cc='someone@there.com', bcc='them@there.com',
+             subject='subject', body='message', attachments=['file1', 'file2'],
+             name='myName', save=True)
+    assert getpass_mock.call_count == 1
+
+
+##############################################################################
+# TESTS: Email.__repr__
+##############################################################################
+
+def test_email_repr(get_email, capsys):
+    """
+    GIVEN a valid Email object
+    WHEN the user calls repr() or `>>> e`
+    THEN assert the correct format prints
+    """
+    e = get_email
+    print(repr(e))
+    out, err = capsys.readouterr()
+    assert '<messages.Email class> at: ' in out
+    assert err == ''
 
 
 ##############################################################################
@@ -85,6 +121,21 @@ def test_email_str(get_email, capsys):
     out, err = capsys.readouterr()
     assert out == expected
     assert err == ''
+
+
+##############################################################################
+# TESTS: Email.get_server
+##############################################################################
+
+def test_get_server(get_email):
+    """
+    GIVEN a valid Email object
+    WHEN get_server() is called with an email address
+    THEN assert an smtp server guess is returned
+    """
+    e = get_email
+    server = e.get_server('me@test.com')
+    assert server == 'smtp.test.com'
 
 
 ##############################################################################
@@ -243,9 +294,9 @@ def test_add_attachments_str_travis(body_mock, header_mock, mime_attach_mock,
 # TESTS: Email.get_session
 ##############################################################################
 
-@patch.object(smtplib, 'SMTP_SSL')
+@patch.object(Email, 'get_ssl')
 @patch.object(Email, 'generate_email')
-def test_get_session(gen_email_mock, smtpssl_mock, get_email):
+def test_get_session_ssl(gen_email_mock, getssl_mock, get_email):
     """
     GIVEN a valid Email object
     WHEN Email.get_session() is called
@@ -254,7 +305,56 @@ def test_get_session(gen_email_mock, smtpssl_mock, get_email):
     e = get_email
     e.generate_email()
     e.get_session()
+    assert getssl_mock.call_count == 1
+
+
+@patch.object(Email, 'get_tls')
+@patch.object(Email, 'generate_email')
+def test_get_session_tls(gen_email_mock, gettls_mock, get_email):
+    """
+    GIVEN a valid Email object
+    WHEN Email.get_session() is called
+    THEN assert the correct functions are called
+    """
+    e = get_email
+    e.port = 587
+    e.generate_email()
+    e.get_session()
+    assert gettls_mock.call_count == 1
+
+
+##############################################################################
+# TESTS: Email.get_ssl
+##############################################################################
+
+@patch.object(smtplib, 'SMTP_SSL')
+def test_get_ssl(smtpssl_mock, get_email):
+    """
+    GIVEN a valid Email object
+    WHEN Email.get_ssl() is called
+    THEN assert an SMTP_SSL instance is invoked
+    """
+    e = get_email
+    e.get_ssl()
     assert smtpssl_mock.call_count == 1
+
+
+@patch.object(smtplib, 'SMTP')
+def test_get_tls(smtp_mock, get_email):
+    """
+    GIVEN a valid Email object
+    WHEN Email.get_tls() is called
+    THEN assert an SMTP instance is invoked
+    """
+    e = get_email
+    e.get_tls()
+    assert smtp_mock.call_count == 1
+
+
+##############################################################################
+# TESTS: Email.get_tls
+##############################################################################
+
 
 
 ##############################################################################

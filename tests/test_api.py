@@ -17,7 +17,7 @@ from messages.text import Twilio
 
 @pytest.fixture()
 def email_kwargs():
-    return {'server_name': 'smtp.gmail.com', 'server_port': 465,
+    return {'server': 'smtp.gmail.com', 'port': 465,
             'password': 'passw0rd', 'from_': 'me@here.com',
             'to': 'you@there.com', 'cc': None, 'bcc': None,
             'subject': 'TEST', 'body': 'this is a message',
@@ -43,6 +43,11 @@ def twilio_kwargs():
 
 @patch.object(messages.api, 'message_factory')
 def test_send_async_false(fact_mock, email_kwargs):
+    """
+    GIVEN a need to create and send an email message
+    WHEN api.send() is called
+    THEN assert first the factory function returns a valid message instance
+    """
     kwargs = email_kwargs
     send('email', **kwargs)
     assert fact_mock.call_count == 1
@@ -50,6 +55,11 @@ def test_send_async_false(fact_mock, email_kwargs):
 
 @patch.object(messages.api, 'message_factory')
 def test_send_async_true(fact_mock, email_kwargs):
+    """
+    GIVEN a need to create and send an email message
+    WHEN api.send() is called
+    THEN assert first the factory function returns a valid message instance
+    """
     kwargs = email_kwargs
     send('email', send_async=True, **kwargs)
     assert fact_mock.call_count == 1
@@ -59,7 +69,7 @@ def test_send_async_true(fact_mock, email_kwargs):
 # TESTS: message_factory
 ##############################################################################
 
-def test_message_factory_email(email_kwargs):
+def test_message_factory_email(email_kwargs, cfg_mock):
     """
     GIVEN a need to create an email message with the specified kwargs
     WHEN message_factory is called

@@ -1,4 +1,5 @@
 click>=6.0
 gevent
+jsonconfig-tool
 twilio
 validus

@@ -35,11 +35,11 @@ def send(msg_type, send_async=False, **kwargs):
 
     Example:
         >>> kwargs = {
-                      server_name: 'smtp.google.com',
-                      server_port: 465,
-                      password: 'yourPassword',
                       from_: 'me@here.com',
                       to: 'you@there.com',
+                      password: 'yourPassword',
+                      server: 'smtp.google.com',
+                      port: 465,
                       cc: None,
                       bcc: None,
                       subject: 'Email Subject',
