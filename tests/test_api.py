@@ -7,6 +7,7 @@ import messages.api
 from messages.api import send
 from messages.api import message_factory
 from messages.email_ import Email
+from messages.exceptions import UnsupportedMessageTypeError
 from messages.slack import SlackWebhook
 from messages.text import Twilio
 
@@ -68,6 +69,17 @@ def test_send_async_true(fact_mock, email_kwargs):
 ##############################################################################
 # TESTS: message_factory
 ##############################################################################
+
+def test_message_factory_keyerror(email_kwargs, cfg_mock):
+    """
+    GIVEN a need to create a message object
+    WHEN message_factory is called with an unsupported message type
+    THEN assert UnsupportedMessageTypeError is raised
+    """
+    kwargs = email_kwargs
+    with pytest.raises(UnsupportedMessageTypeError):
+        msg = message_factory('bad', **kwargs)
+
 
 def test_message_factory_email(email_kwargs, cfg_mock):
     """

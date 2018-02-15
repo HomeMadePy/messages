@@ -14,6 +14,9 @@ class InvalidMessageInputError(ValueError):
 class UnsupportedMessageTypeError(TypeError):
     """Exception for declaring unsupported message types."""
 
-    def __init__(self, msg_type):
+    def __init__(self, msg_type, msg_types=None):
         self.err = 'Invalid message type: ' + msg_type
+        if msg_types:
+            self.err += '\n\t* Supported message types: '
+            self.err += str(msg_types)
         super(UnsupportedMessageTypeError, self).__init__(self.err)

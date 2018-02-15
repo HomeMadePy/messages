@@ -26,7 +26,7 @@ def test_InvalidMessageInputError(capsys):
         assert err == ''
 
 
-def test_UnsupportedMessageTypeError(capsys):
+def test_UnsupportedMessageTypeError_default(capsys):
     """
     GIVEN no object instantiated, just raise the exception
     WHEN the exception is raised with given args
@@ -36,5 +36,21 @@ def test_UnsupportedMessageTypeError(capsys):
         raise UnsupportedMessageTypeError('BadType')
         out, err = capsys.readouterr()
         expected = 'Invalid input for specified message class: BadType\n'
+        assert out == expected
+        assert err == ''
+
+
+def test_UnsupportedMessageTypeError_listarg(capsys):
+    """
+    GIVEN no object instantiated, just raise the exception
+    WHEN the exception is raised with given args
+    THEN assert it raises exception and prints proper output
+    """
+    with pytest.raises(UnsupportedMessageTypeError):
+        raise UnsupportedMessageTypeError('BadType', {'m1', 'm2'})
+        out, err = capsys.readouterr()
+        expected = 'Invalid input for specified message class: BadType'
+        expected += '\n\t* Supported message types: '
+        expected += "{'m1', 'm2'}\n"
         assert out == expected
         assert err == ''

@@ -7,20 +7,14 @@ from .email_ import Email
 from .slack import SlackWebhook
 from .text import Twilio
 
-
-MSG = {'email': {'args': {arg:None for arg in inspect.getargspec(Email).args
-                                   if arg!='self'},
-                 'class': Email},
-       'slackwebhook': {'args': {arg:None for arg in inspect.getargspec(SlackWebhook).args
-                                          if arg!='self'},
-                        'class': SlackWebhook},
-       'twilio': {'args': {arg:None for arg in inspect.getargspec(Twilio).args
-                                    if arg!='self'},
-                  'class': Twilio},
-            }
+from .exceptions import UnsupportedMessageTypeError
 
 
-def send(msg_type, send_async=False, **kwargs):
+MESSAGE_CLASSES = {Email, SlackWebhook, Twilio}
+MESSAGE_TYPES = {i.__name__.lower(): i for i in MESSAGE_CLASSES}
+
+
+def send(msg_type, msg_types=MESSAGE_TYPES, send_async=False, *args, **kwargs):
     """
     Constructs a message class and sends the message.
     Defaults to sending synchronously.  Set send_async=True to send
@@ -49,7 +43,7 @@ def send(msg_type, send_async=False, **kwargs):
         >>> messages.send('email', **kwargs)
         Message sent...
     """
-    message = message_factory(msg_type, **kwargs)
+    message = message_factory(msg_type, *args, **kwargs)
 
     if send_async:
         message.send_async()
@@ -57,8 +51,9 @@ def send(msg_type, send_async=False, **kwargs):
         message.send()
 
 
-def message_factory(msg_type, **kwargs):
+def message_factory(msg_type, msg_types=MESSAGE_TYPES, *args, **kwargs):
     """Factory function to return the specified message instance."""
-    args = copy.copy(MSG[msg_type.lower()]['args'])
-    args.update(kwargs)
-    return MSG[msg_type.lower()]['class'](**args)
+    try:
+        return msg_types[msg_type.lower()](*args, **kwargs)
+    except KeyError:
+        raise UnsupportedMessageTypeError(msg_type, msg_types)
