@@ -14,7 +14,7 @@ MESSAGE_CLASSES = {Email, SlackWebhook, Twilio}
 MESSAGE_TYPES = {i.__name__.lower(): i for i in MESSAGE_CLASSES}
 
 
-def send(msg_type, msg_types=MESSAGE_TYPES, send_async=False, *args, **kwargs):
+def send(msg_type, send_async=False, *args, **kwargs):
     """
     Constructs a message class and sends the message.
     Defaults to sending synchronously.  Set send_async=True to send
@@ -52,7 +52,16 @@ def send(msg_type, msg_types=MESSAGE_TYPES, send_async=False, *args, **kwargs):
 
 
 def message_factory(msg_type, msg_types=MESSAGE_TYPES, *args, **kwargs):
-    """Factory function to return the specified message instance."""
+    """
+    Factory function to return the specified message instance.
+
+    Args:
+        :msg_type: (str) the type of message to send, i.e. 'Email'
+        :msg_types: (str, list, or set) the supported message types
+        :kwargs: (dict) keywords arguments that are required for the
+            various message types.  See docstrings for each type.
+            i.e. help(messages.Email), help(messages.Twilio), etc.
+    """
     try:
         return msg_types[msg_type.lower()](*args, **kwargs)
     except KeyError:
