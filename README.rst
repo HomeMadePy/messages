@@ -13,8 +13,11 @@ Messages: Create and send messages fast!
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target: https://github.com/trp07/messages/blob/master/LICENSE
 
+.. image:: https://messages-py.herokuapp.com/badge.svg
+    :target: https://messages-py.herokuapp.com
 
-Join the conversation in the `Messages Slack Team <https://messages-py.slack.com>`_
+
+Join the conversation in the `Messages Slack Team <https://messages-py.herokuapp.com>`_
 
 
 Purpose
