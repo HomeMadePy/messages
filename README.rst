@@ -13,7 +13,7 @@ Messages: Create and send messages fast!
 .. image:: https://img.shields.io/badge/license-MIT-blue.svg
     :target: https://github.com/trp07/messages/blob/master/LICENSE
 
-.. image:: https://messages-py.slack.com/badge.svg
+.. image:: https://messages-py.herokuapp.com/badge.svg
     :target: https://messages-py.herokuapp.com
 
 
