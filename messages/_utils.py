@@ -136,10 +136,3 @@ class Validator:
 
 
 VALIDATOR = Validator()
-
-
-def custom_repr(target):
-    """Custom repr for the 'target' class."""
-    args = [arg for arg in inspect.getargspec(target).args if arg!='self']
-    output = target.__class__.__name__ + '('
-    pass
