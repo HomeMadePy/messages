@@ -68,7 +68,7 @@ class Email(Message):
     """
 
     def __init__(
-        self, from_, to=None, server='localhost', port=465,
+        self, from_, to=None, server=None, port=465,
         password=None, cc=None, bcc=None, subject='', body='',
         attachments=None, name=None, save=False
     ):
