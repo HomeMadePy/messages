@@ -10,7 +10,9 @@ Module designed to make creating and sending text messages easy.
 
 import sys
 from collections import deque
+from getpass import getpass
 
+from jsonconfig import Config
 from twilio.rest import Client
 
 from ._eventloop import MESSAGELOOP
@@ -22,12 +24,16 @@ class Twilio(Message):
     Create and send text SMS/MMS text messages using the Twilio API.
 
     Args:
-        :acct_sid: (str) api credential from twilio
-        :auth_token: (str) api credential from twilio
         :from_: (str) phone number of originating text, e.g. '+15558675309'
         :to: (str) phone number of destination text, e.g. '+15558675309'
+        :acct_sid: (str) api credential from twilio
+        :auth_token: (str) api credential from twilio
         :body: (str) message to send
-        :media_url: (str) url of any image to send along with message
+        :attachments: (str) url of any image to send along with message
+        :name: (str) use a separate account profile specified by name
+        :save: (bool) save pertinent values in the messages config file,
+            such as from_, server, port, password (encrypted keyring) to make
+            sending messages faster.
 
     Attributes:
         :client: (Client) twilio.rest client for authentication
@@ -42,13 +48,38 @@ class Twilio(Message):
         https://www.twilio.com/docs/api/messaging/send-messages
     """
 
-    def __init__(self, acct_sid, auth_token, from_, to, body, media_url):
-        self.acct_sid = acct_sid
-        self.auth_token = auth_token
-        self.from_ = from_
+    def __init__(
+        self, from_=None, to=None, acct_sid=None, auth_token=None,
+        body='', attachments=None, name=None, save=False
+    ):
+
+        msg = 'twilio'
+
+        if name is None:
+            profile = 'messages'
+        else:
+            profile = 'messages_' + name
+
+        with Config(profile) as cfg:
+            if msg not in cfg.data.keys():
+                cfg.data[msg] = {}
+            self.from_ = cfg.data[msg].get('from_', from_)
+            self.acct_sid = cfg.data[msg].get('acct_sid', acct_sid)
+            self.auth_token = (auth_token or
+                    cfg.pwd.get((name or 'messages') + '_' + msg, None))
+
+            if self.auth_token is None:
+                self.auth_token= getpass('\nAuth_Token: ')
+
+        if save:
+            for key in ['from_', 'acct_sid']:
+                cfg.data[msg][key] = getattr(self, key)
+            cfg.pwd[(name or 'messages') + '_' + msg] = self.auth_token
+            cfg.kwargs['dump']['indent'] = 4
+
         self.to = to
         self.body = body
-        self.media_url = media_url
+        self.attachments = attachments
         self.client = Client(self.acct_sid, self.auth_token)
         self.sid = None
         self.sent_messages = deque()
@@ -60,8 +91,8 @@ class Twilio(Message):
                '\n\tFrom: {}'
                '\n\tTo: {}'
                '\n\tbody: {}...'
-               '\n\tmedia_url: {}'
-               .format(self.from_, self.to, self.body, self.media_url))
+               '\n\tattachments: {}'
+               .format(self.from_, self.to, self.body, self.attachments))
 
 
     def send(self):
@@ -74,7 +105,7 @@ class Twilio(Message):
               to=self.to,
               from_=self.from_,
               body=self.body,
-              media_url=self.media_url,
+              media_url=self.attachments,
             )
         self.sid = msg.sid
         print('Message sent...', file=sys.stdout)
