@@ -35,7 +35,7 @@ def slackwebhook_kwargs():
 def twilio_kwargs():
     return {'acct_sid': 'your sid', 'auth_token': 'your token',
             'from_': '+19998675309', 'to': '+19998675309', 'body': 'Test!',
-            'media_url': 'https://www.google.com'}
+            'attachments': 'https://www.google.com'}
 
 
 ##############################################################################
@@ -92,7 +92,7 @@ def test_message_factory_email(email_kwargs, cfg_mock):
     assert isinstance(msg, Email)
 
 
-def test_message_factory_slackwebhook(slackwebhook_kwargs):
+def test_message_factory_slackwebhook(slackwebhook_kwargs, cfg_mock):
     """
     GIVEN a need to create a slackwebhook message with the specified kwargs
     WHEN message_factory is called
@@ -103,7 +103,7 @@ def test_message_factory_slackwebhook(slackwebhook_kwargs):
     assert isinstance(msg, SlackWebhook)
 
 
-def test_message_factory_twilio(twilio_kwargs):
+def test_message_factory_twilio(twilio_kwargs, cfg_mock):
     """
     GIVEN a need to create a twilio message with the specified kwargs
     WHEN message_factory is called
