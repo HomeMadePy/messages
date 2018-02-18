@@ -66,7 +66,7 @@ def test_email_init_normal(get_email):
 
 
 @patch.object(messages.email_, 'getpass')
-def test_email_init_no_password_save_True(getpass_mock, get_email):
+def test_email_init_no_password_save_True(getpass_mock, get_email, cfg_mock):
     """
     GIVEN a need to create an Email object
     WHEN the user instantiates a new object with required args
@@ -76,7 +76,7 @@ def test_email_init_no_password_save_True(getpass_mock, get_email):
              server='smtp.gmail.com', port=465, password=None,
              cc='someone@there.com', bcc='them@there.com',
              subject='subject', body='message', attachments=['file1', 'file2'],
-             name='myName', save=True)
+             name=None, save=True)
     assert getpass_mock.call_count == 1
 
 

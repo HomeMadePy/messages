@@ -84,22 +84,23 @@ class Email(Message):
             if msg not in cfg.data.keys():
                 cfg.data[msg] = {}
             self.from_ = cfg.data[msg].get('from_', from_)
-            self.to, self.cc, self.bcc = to, cc, bcc
             self.server = (server or
                     cfg.data[msg].get('server', self.get_server(self.from_)))
             self.port = cfg.data[msg].get('port', port)
 
-            self.password = password or cfg.pwd.get(name + '_' + msg, None)
+            self.password = (password or
+                    cfg.pwd.get((name or 'messages') + '_' + msg, None))
+
             if self.password is None:
                 self.password = getpass('\nPassword: ')
 
             if save:
                 for key in ['from_', 'server', 'port']:
                     cfg.data[msg][key] = getattr(self, key)
-
-                cfg.pwd[name + '_' + msg] = self.password
+                cfg.pwd[(name or 'messages') + '_' + msg] = self.password
                 cfg.kwargs['dump']['indent'] = 4
 
+        self.to, self.cc, self.bcc = to, cc, bcc
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
