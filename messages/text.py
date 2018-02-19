@@ -71,11 +71,11 @@ class Twilio(Message):
             if self.auth_token is None:
                 self.auth_token= getpass('\nAuth_Token: ')
 
-        if save:
-            for key in ['from_', 'acct_sid']:
-                cfg.data[msg][key] = getattr(self, key)
-            cfg.pwd[(name or 'messages') + '_' + msg] = self.auth_token
-            cfg.kwargs['dump']['indent'] = 4
+            if save:
+                for key in ['from_', 'acct_sid']:
+                    cfg.data[msg][key] = getattr(self, key)
+                cfg.pwd[(name or 'messages') + '_' + msg] = self.auth_token
+                cfg.kwargs['dump']['indent'] = 4
 
         self.to = to
         self.body = body

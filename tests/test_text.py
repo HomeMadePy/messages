@@ -17,7 +17,7 @@ from messages._eventloop import MESSAGELOOP
 ##############################################################################
 
 @pytest.fixture()
-def get_twilio():
+def get_twilio(cfg_mock):
     """Return a valid Twilio object."""
     return Twilio(from_='+16198675309', to='+16195551212', acct_sid='test_sid',
         auth_token='test_token', body='test text!',
