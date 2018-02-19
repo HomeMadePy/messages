@@ -24,3 +24,8 @@ class Message(metaclass=ABCMeta):
         """Validate attribute inputs after assignment."""
         self.__dict__[attr] = val
         VALIDATOR.validate_input(self, attr)
+
+
+    def __repr__(self):
+        return ('<messages.' + self.__class__.__name__ +
+                ' class> at: ' + str(id(self)))
