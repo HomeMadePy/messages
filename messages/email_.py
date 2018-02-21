@@ -108,10 +108,6 @@ class Email(Message):
         self.sent_messages = deque()
 
 
-    def __repr__(self):
-        return '<messages.Email class> at: ' + str(id(self))
-
-
     def __str__(self):
         """print(Email(**args)) method."""
         return('MIMEMultipart Email:'
