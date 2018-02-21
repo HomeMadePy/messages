@@ -3,33 +3,28 @@ Module that will handle asynchronous message sending, so each message will
 be non-blocking.
 """
 
-from collections import deque
+import asyncio
 
-import gevent
-from gevent import monkey
-
-monkey.patch_all()
+from .exceptions import UnsupportedMessageTypeError
 
 
 class MessageLoop:
     """Asynchronous message sending loop."""
 
     def __init__(self):
-        self.messages = deque()
+        self.loop = asyncio.get_event_loop()
 
 
     def add_message(self, message):
-        """add a message to the event loop."""
-        self.messages.append(message)
-        self.send_loop()
+        """Add a message to the event loop."""
+        if not hasattr(message, 'send'):
+            raise UnsupportedMessageTypeError(message.__class__.__name__)
+        self.send_loop(message)
 
 
-    def send_loop(self):
-        """start event loop."""
-        while self.messages:
-            msg = self.messages.popleft()
-            if hasattr(msg, 'send'):
-                gevent.spawn(msg.send)
+    def send_loop(self, msg, executor=None):
+        """Send the message via the event loop."""
+        self.loop.run_in_executor(executor, msg.send)
 
 
 MESSAGELOOP = MessageLoop()

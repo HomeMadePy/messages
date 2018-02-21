@@ -1,11 +1,12 @@
 """messages.eventloop tests."""
 
 import pytest
-import gevent
 
+import asyncio
 from collections import deque
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from messages._eventloop import MessageLoop
+from messages.exceptions import UnsupportedMessageTypeError
 
 
 ##############################################################################
@@ -40,7 +41,7 @@ def test_init(get_messageloop):
     THEN assert MessageLoop object is created with given args
     """
     ml = get_messageloop
-    assert isinstance(ml.messages, deque)
+    assert ml is not None
 
 
 ##############################################################################
@@ -48,42 +49,40 @@ def test_init(get_messageloop):
 ##############################################################################
 
 @patch.object(MessageLoop, 'send_loop')
-def test_add_message(send_loop_mock, get_messageloop):
+def test_add_message_msgGood(send_loop_mock, get_messageloop):
     """
     GIVEN a valid MessageLoop object
-    WHEN a message is added with the add_message method
+    WHEN a valid message is added with the add_message method
     THEN assert it is added and send_loop() is called
     """
     ml = get_messageloop
-    ml.add_message('message')
-    assert len(ml.messages) == 1
+    ml.add_message(MsgGood())
     assert send_loop_mock.call_count == 1
+
+
+@patch.object(MessageLoop, 'send_loop')
+def test_add_message_msgBad(send_loop_mock, get_messageloop):
+    """
+    GIVEN a valid MessageLoop object
+    WHEN an invalid message is added with the add_message method
+    THEN assert UnsupportedMessageTypeError is raised
+    """
+    ml = get_messageloop
+    with pytest.raises(UnsupportedMessageTypeError):
+        ml.add_message(MsgBad())
+
 
 ##############################################################################
 # TESTS: MessageLoop.send_loop
 ##############################################################################
 
-@patch.object(gevent, 'spawn')
-def test_send_loop_MessageGood(spawn_mock, get_messageloop):
+def test_send_loop_MessageGood(get_messageloop):
     """
     GIVEN a valid MessageLoop object
     WHEN a send_loop() is initiated with a valid message
-    THEN assert the message is spawned via gevent
+    THEN assert the loop.run_in_executor is called to send the message
     """
     ml = get_messageloop
-    ml.messages.append(MsgGood())
-    ml.send_loop()
-    spawn_mock.call_count == 1
-
-
-@patch.object(gevent, 'spawn')
-def test_send_loop_MessageBad(spawn_mock, get_messageloop):
-    """
-    GIVEN a valid MessageLoop object
-    WHEN a send_loop() is initiated without a valid message
-    THEN assert the message is NOT spawned via gevent
-    """
-    ml = get_messageloop
-    ml.messages.append(MsgBad())
-    ml.send_loop()
-    spawn_mock.call_count == 0
+    ml.loop = Mock()
+    ml.add_message(MsgGood())
+    assert ml.loop.run_in_executor.call_count == 1
