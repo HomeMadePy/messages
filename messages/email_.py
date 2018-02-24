@@ -7,21 +7,20 @@ Module designed to make creating and sending emails easy.
 """
 
 import smtplib
+import sys
 from collections import deque
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
-from getpass import getpass
 
-from jsonconfig import Config
-
+from .config import configure
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
 
 
 SMTP_SERVERS = {
-    'gmail': ('smtp.gmail.com', 465),
-    'yahoo': ('smtp.yahoo.com', 465),
+    'gmail.com': ('smtp.gmail.com', 465),
+    'yahoo.com': ('smtp.yahoo.com', 465),
     }
 
 
@@ -47,7 +46,7 @@ class Email(Message):
         :attachments: (str or list) files to attach
             i.e. './file1', or
                 ['/home/you/file1.txt', '/home/you/file2.pdf']
-        :name: (str) use a separate account profile specified by name
+        :profile: (str) use a separate account profile specified by name
         :save: (bool) save pertinent values in the messages config file,
             such as from_, server, port, password (encrypted keyring) to make
             sending messages faster.
@@ -68,37 +67,17 @@ class Email(Message):
     """
 
     def __init__(
-        self, from_, to=None, server=None, port=465,
+        self, from_=None, to=None, server=None, port=465,
         password=None, cc=None, bcc=None, subject='', body='',
-        attachments=None, name=None, save=False
+        attachments=None, profile=None, save=False
     ):
 
-        msg = 'email'
+        config_kwargs = {'from_': from_, 'server': server,
+                'port': port, 'password': password, 'profile': profile,
+                'save': save}
 
-        if name is None:
-            profile = 'messages'
-        else:
-            profile = 'messages_' + name
-
-        with Config(profile) as cfg:
-            if msg not in cfg.data.keys():
-                cfg.data[msg] = {}
-            self.from_ = cfg.data[msg].get('from_', from_)
-            self.server = (server or
-                    cfg.data[msg].get('server', self.get_server(self.from_)))
-            self.port = cfg.data[msg].get('port', port)
-
-            self.password = (password or
-                    cfg.pwd.get((name or 'messages') + '_' + msg, None))
-
-            if self.password is None:
-                self.password = getpass('\nPassword: ')
-
-            if save:
-                for key in ['from_', 'server', 'port']:
-                    cfg.data[msg][key] = getattr(self, key)
-                cfg.pwd[(name or 'messages') + '_' + msg] = self.password
-                cfg.kwargs['dump']['indent'] = 4
+        configure(self, params=config_kwargs,
+                to_save={'from_', 'server', 'port'}, credentials={'password'})
 
         self.to, self.cc, self.bcc = to, cc, bcc
         self.subject = subject
@@ -229,7 +208,7 @@ class Email(Message):
 
         session.sendmail(self.from_, recipients, self.message.as_string())
         session.quit()
-        print('Message sent...')
+        print('Message sent...', file=sys.stdout)
         self.sent_messages.append(repr(self))
 
 

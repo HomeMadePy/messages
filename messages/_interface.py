@@ -29,3 +29,7 @@ class Message(metaclass=ABCMeta):
     def __repr__(self):
         return ('<messages.' + self.__class__.__name__ +
                 ' class> at: ' + str(id(self)))
+
+
+    def __iter__(self):
+        return iter(self.__dict__)

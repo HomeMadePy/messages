@@ -9,6 +9,7 @@ from twilio.rest import Client
 
 import messages.text
 from messages.text import Twilio
+from messages.text import configure
 from messages._eventloop import MESSAGELOOP
 
 
@@ -17,12 +18,18 @@ from messages._eventloop import MESSAGELOOP
 ##############################################################################
 
 @pytest.fixture()
-def get_twilio(cfg_mock):
+@patch.object(messages.text, 'configure')
+def get_twilio(config_mock):
     """Return a valid Twilio object."""
-    return Twilio(from_='+16198675309', to='+16195551212', acct_sid='test_sid',
+    t = Twilio(from_='+16198675309', to='+16195551212', acct_sid='test_sid',
         auth_token='test_token', body='test text!',
         attachments='https://imgs.xkcd.com/comics/python.png',
-        name='tester', save=False)
+        profile='tester', save=False)
+    t.from_ = '+16198675309'
+    t.acct_sid = 'test_sid'
+    t.auth_token = 'test_token'
+    t.profile = 'tester'
+    return t
 
 
 ##############################################################################
@@ -42,22 +49,8 @@ def test_twilio_init(get_twilio, cfg_mock):
     assert t.auth_token == 'test_token'
     assert t.body == 'test text!'
     assert t.attachments == 'https://imgs.xkcd.com/comics/python.png'
-    assert isinstance(t.client, Client)
+    assert t.client is None
     assert isinstance(t.sent_messages, deque)
-
-
-@patch.object(messages.text, 'getpass')
-def test_twilio_init_no_password_save_True(getpass_mock, get_twilio, cfg_mock):
-    """
-    GIVEN a need to create an Twilio object
-    WHEN the user instantiates a new object with required args
-    THEN assert Twilio object is created with given args
-    """
-    e = Twilio(from_='+16198675309', to='+16195551212', acct_sid='test_sid',
-        auth_token=None, body='test text!',
-        attachments='https://imgs.xkcd.com/comics/python.png',
-        name=None, save=True)
-    assert getpass_mock.call_count == 1
 
 
 ##############################################################################
@@ -80,6 +73,22 @@ def test_twilio_str(get_twilio,cfg_mock, capsys):
     out, err = capsys.readouterr()
     assert out == expected
     assert err == ''
+
+
+##############################################################################
+# TESTS: Twilio.get_client
+##############################################################################
+
+@patch.object(messages.text, 'Client')
+def test_get_client(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN Twilio.get_client is called
+    THEN assert a twilio.rest.Client is returned (a Mock object)
+    """
+    t = get_twilio
+    client = t.get_client()
+    assert client is not None
 
 
 ##############################################################################

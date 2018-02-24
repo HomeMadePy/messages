@@ -10,11 +10,10 @@ Module designed to make creating and sending text messages easy.
 
 import sys
 from collections import deque
-from getpass import getpass
 
-from jsonconfig import Config
 from twilio.rest import Client
 
+from .config import configure
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
 
@@ -30,7 +29,7 @@ class Twilio(Message):
         :auth_token: (str) api credential from twilio
         :body: (str) message to send
         :attachments: (str) url of any image to send along with message
-        :name: (str) use a separate account profile specified by name
+        :profile: (str) use a separate account profile specified by name
         :save: (bool) save pertinent values in the messages config file,
             such as from_, server, port, password (encrypted keyring) to make
             sending messages faster.
@@ -50,37 +49,19 @@ class Twilio(Message):
 
     def __init__(
         self, from_=None, to=None, acct_sid=None, auth_token=None,
-        body='', attachments=None, name=None, save=False
+        body='', attachments=None, profile=None, save=False
     ):
 
-        msg = 'twilio'
+        config_kwargs = {'from_': from_, 'acct_sid': acct_sid,
+                'auth_token': auth_token, 'profile': profile, 'save': save}
 
-        if name is None:
-            profile = 'messages'
-        else:
-            profile = 'messages_' + name
-
-        with Config(profile) as cfg:
-            if msg not in cfg.data.keys():
-                cfg.data[msg] = {}
-            self.from_ = cfg.data[msg].get('from_', from_)
-            self.acct_sid = cfg.data[msg].get('acct_sid', acct_sid)
-            self.auth_token = (auth_token or
-                    cfg.pwd.get((name or 'messages') + '_' + msg, None))
-
-            if self.auth_token is None:
-                self.auth_token= getpass('\nAuth_Token: ')
-
-            if save:
-                for key in ['from_', 'acct_sid']:
-                    cfg.data[msg][key] = getattr(self, key)
-                cfg.pwd[(name or 'messages') + '_' + msg] = self.auth_token
-                cfg.kwargs['dump']['indent'] = 4
+        configure(self, params=config_kwargs,
+                to_save={'from_', 'acct_sid'}, credentials={'auth_token'})
 
         self.to = to
         self.body = body
         self.attachments = attachments
-        self.client = Client(self.acct_sid, self.auth_token)
+        self.client = None
         self.sid = None
         self.sent_messages = deque()
 
@@ -95,12 +76,18 @@ class Twilio(Message):
                .format(self.from_, self.to, self.body, self.attachments))
 
 
+    def get_client(self):
+        """Return a twilio.rest client."""
+        return Client(self.acct_sid, self.auth_token)
+
     def send(self):
         """
         Send the SMS/MMS message.
         Set self.sid to return code of message.
         Append the (sid, message) tuple to self.sent_messages as a history.
         """
+        if self.client is None:
+            self.client = self.get_client()
         msg = self.client.messages.create(
               to=self.to,
               from_=self.from_,
