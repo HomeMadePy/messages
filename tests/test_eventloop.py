@@ -60,8 +60,7 @@ def test_add_message_msgGood(send_loop_mock, get_messageloop):
     assert send_loop_mock.call_count == 1
 
 
-@patch.object(MessageLoop, 'send_loop')
-def test_add_message_msgBad(send_loop_mock, get_messageloop):
+def test_add_message_msgBad(get_messageloop):
     """
     GIVEN a valid MessageLoop object
     WHEN an invalid message is added with the add_message method

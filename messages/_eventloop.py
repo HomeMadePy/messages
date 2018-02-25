@@ -17,9 +17,10 @@ class MessageLoop:
 
     def add_message(self, message):
         """Add a message to the event loop."""
-        if not hasattr(message, 'send'):
+        try:
+            self.send_loop(message)
+        except AttributeError:
             raise UnsupportedMessageTypeError(message.__class__.__name__)
-        self.send_loop(message)
 
 
     def send_loop(self, msg, executor=None):
