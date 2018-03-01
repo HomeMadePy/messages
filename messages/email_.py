@@ -67,14 +67,15 @@ class Email(Message):
     """
 
     def __init__(
-        self, from_=None, to=None, server=None, port=465,
+        self, from_=None, to=None, server=None, port=None,
         password=None, cc=None, bcc=None, subject='', body='',
         attachments=None, profile=None, save=False
     ):
 
-        config_kwargs = {'from_': from_, 'server': server,
-                'port': port, 'password': password, 'profile': profile,
-                'save': save}
+        config_kwargs = {'from_': from_,
+                'server': server or self.get_server(from_)[0],
+                'port': port or self.get_server(from_)[1],
+                'password': password, 'profile': profile, 'save': save}
 
         configure(self, params=config_kwargs,
                 to_save={'from_', 'server', 'port'}, credentials={'password'})
@@ -107,7 +108,10 @@ class Email(Message):
     def get_server(address):
         """Return an SMTP servername guess from outgoing email address."""
         domain = address.split('@')[1]
-        return 'smtp.' + domain
+        try:
+            return SMTP_SERVERS[domain]
+        except KeyError:
+            return ('smtp.' + domain, 465)
 
 
     @staticmethod

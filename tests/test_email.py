@@ -134,7 +134,18 @@ def test_email_str(get_email, capsys):
 # TESTS: Email.get_server
 ##############################################################################
 
-def test_get_server(get_email):
+def test_get_server_known(get_email):
+    """
+    GIVEN a valid Email object
+    WHEN get_server() is called with an email address
+    THEN assert a known smtp server is returned
+    """
+    e = get_email
+    server = e.get_server('me@gmail.com')
+    assert server == ('smtp.gmail.com', 465)
+
+
+def test_get_server_guess(get_email):
     """
     GIVEN a valid Email object
     WHEN get_server() is called with an email address
@@ -142,7 +153,7 @@ def test_get_server(get_email):
     """
     e = get_email
     server = e.get_server('me@test.com')
-    assert server == 'smtp.test.com'
+    assert server == ('smtp.test.com', 465)
 
 
 ##############################################################################
