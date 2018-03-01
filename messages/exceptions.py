@@ -20,3 +20,11 @@ class UnsupportedMessageTypeError(TypeError):
             self.err += '\n\t* Supported message types: '
             self.err += str(msg_types)
         super(UnsupportedMessageTypeError, self).__init__(self.err)
+
+
+class UnknownProfileError(KeyError):
+    """Exception for unknown config.json profile names."""
+
+    def __init__(self, profile):
+        self.err = 'Unknown Profile name: ' + profile
+        super(UnknownProfileError, self).__init__(self.err)

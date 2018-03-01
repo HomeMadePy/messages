@@ -9,6 +9,7 @@ import messages.config
 from messages.config import configure
 from messages.config import set_default_profile
 from messages.config import getpass
+from messages.exceptions import UnknownProfileError
 
 
 ##############################################################################
@@ -55,7 +56,6 @@ def test_configure_profileYes_saveTrue(cfg_mock):
     assert msg.password == 'passw0rd'
 
 
-@pytest.mark.skip()
 @patch.object(messages.config, 'getpass')
 def test_configure_noPassword(getpass_mock, cfg_mock):
     """
@@ -63,8 +63,9 @@ def test_configure_noPassword(getpass_mock, cfg_mock):
     WHEN `configure` is called with the specified args
     THEN assert appropriate attributes are set
     """
-    msg = Msg(from_='me', password=None, profile='myProf', save=True)
+    msg = Msg(from_='me', password=None, profile='NewProf', save=False)
     configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'password'})
+    print(msg.password)
     assert getpass_mock.call_count == 1
 
 
@@ -72,10 +73,20 @@ def test_configure_noPassword(getpass_mock, cfg_mock):
 # TESTS: set_default_profile
 ##############################################################################
 
-def test_set_default_profile(cfg_mock):
+def test_set_default_profileGood(cfg_mock):
     """
     GIVEN a profile to make as the default
     WHEN set_default_profile(profile) is called
     THEN verify no errors occur with call to jsonconfig.Config
     """
-    set_default_profile('myProfile')
+    set_default_profile('tester')
+
+
+def test_set_default_profileBad(cfg_mock):
+    """
+    GIVEN a profile to make as the default
+    WHEN set_default_profile(profile) is called with an unknown profile name
+    THEN assert UnknownProfileError is raised
+    """
+    with pytest.raises(UnknownProfileError):
+        set_default_profile('UnknownProfile')

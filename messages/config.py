@@ -9,6 +9,8 @@ from getpass import getpass
 
 import jsonconfig
 
+from .exceptions import UnknownProfileError
+
 
 def configure(msg, params, to_save, credentials):
     """
@@ -59,8 +61,15 @@ def configure(msg, params, to_save, credentials):
 
 
 def set_default_profile(profile):
-    """Sets the default profile to use in the messages config.json file."""
+    """
+    Sets the default profile to use in the messages config.json file.
+
+    Args:
+        :profile: (str) name of existing profile to use
+    """
     with jsonconfig.Config('messages') as cfg:
+        if profile not in cfg.data:
+            raise UnknownProfileError(profile)
         cfg.data['default'] = profile
         cfg.kwargs['dump']['indent'] = 4
 

@@ -4,6 +4,7 @@ import pytest
 
 from messages.exceptions import InvalidMessageInputError
 from messages.exceptions import UnsupportedMessageTypeError
+from messages.exceptions import UnknownProfileError
 
 
 ##############################################################################
@@ -52,5 +53,19 @@ def test_UnsupportedMessageTypeError_listarg(capsys):
         expected = 'Invalid input for specified message class: BadType'
         expected += '\n\t* Supported message types: '
         expected += "{'m1', 'm2'}\n"
+        assert out == expected
+        assert err == ''
+
+
+def test_UnknownProfileError(capsys):
+    """
+    GIVEN no object instantiated, just raise the exception
+    WHEN the exception is raised with given args
+    THEN assert it raises exception and prints proper output
+    """
+    with pytest.raises(UnknownProfileError):
+        raise UnknownProfileError('unknown_user')
+        out, err = capsys.readouterr()
+        expected = 'Unknown Profile name: unknown_user\n'
         assert out == expected
         assert err == ''

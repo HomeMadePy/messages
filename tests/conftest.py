@@ -29,7 +29,7 @@ class ConfigMock:
     """Mock class to return instead of jsonconfig.Config."""
     data = {'tester': 'this is a mock'}
     filename = '/default/path'
-    pwd = {'myName_email': None}
+    pwd = {'myProf_email': None}
     kwargs = {'dump': {'indent': 4}}
 
 
