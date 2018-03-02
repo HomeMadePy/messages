@@ -57,7 +57,7 @@ def configure(msg, params, to_save, credentials):
                 cfg.data[msg.profile][msg_type][d] = getattr(msg, d)
             for c in creds:
                 cfg.pwd[(msg.profile + '_' + msg_type)] = getattr(msg, c)
-            cfg.kwargs['dump']['indent'] = 4
+        cfg.kwargs['dump']['indent'] = 4
 
 
 def set_default_profile(profile):
