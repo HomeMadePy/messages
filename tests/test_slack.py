@@ -16,9 +16,10 @@ from messages._eventloop import MESSAGELOOP
 ##############################################################################
 
 @pytest.fixture()
-def get_slack():
+def get_slack(cfg_mock):
     """Return a valid SlackWebhook object."""
-    return SlackWebhook('test_url', 'message', ['url1', 'url2'])
+    return SlackWebhook(url='test_url', body='message',
+                attachments=['url1', 'url2'])
 
 
 ##############################################################################
@@ -32,9 +33,9 @@ def test_slack_init(get_slack):
     THEN assert it is properly created
     """
     s = get_slack
-    assert s.webhook_url == 'test_url'
+    assert s.url == 'test_url'
     assert s.body == 'message'
-    assert s.attach_urls == ['url1', 'url2']
+    assert s.attachments == ['url1', 'url2']
     assert isinstance(s.message, dict)
     assert isinstance(s.sent_messages, deque)
 
@@ -57,6 +58,23 @@ def test_slack_construct_message(add_mock, req_mock, get_slack):
     assert add_mock.call_count == 1
     assert req_mock.call_count == 1
 
+
+@patch.object(urllib.request, 'Request')
+@patch.object(SlackWebhook, 'add_attachments')
+def test_slack_construct_message_withFromSubj(add_mock, req_mock, get_slack):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN construct_message() is called
+    THEN assert the message is properly created
+    """
+    s = get_slack
+    s.from_ = 'me'
+    s.subject = 'Tst Msg'
+    s.construct_message()
+    expected = 'From: me\nSubject: Tst Msg\nmessage'
+    assert s.message['text'] == expected
+    assert add_mock.call_count == 1
+    assert req_mock.call_count == 1
 
 ##############################################################################
 # TESTS: SlackWebhook.add_attachments
@@ -82,7 +100,7 @@ def test_slack_add_attachments_str(get_slack):
     THEN assert the urls are properly attached to the message
     """
     s = get_slack
-    s.attach_urls = 'url1'
+    s.attachments = 'url1'
     s.add_attachments()
     expected = [{'image_url': 'url1', 'author_name': ''}]
     assert s.message['attachments'] == expected
@@ -95,7 +113,7 @@ def test_slack_add_attachments_with_params(get_slack):
     THEN assert the extra params are properly added
     """
     s = get_slack
-    s.attach_urls = 'url1'
+    s.attachments = 'url1'
     s.params = {'author_name': 'me', 'text': 'image of me'}
     s.add_attachments()
     expected = [{'image_url': 'url1', 'author_name': 'me',

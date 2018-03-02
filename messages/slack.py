@@ -10,8 +10,9 @@ import json
 import urllib
 from collections import deque
 
-from ._interface import Message
+from .config import configure
 from ._eventloop import MESSAGELOOP
+from ._interface import Message
 
 
 class SlackWebhook(Message):
@@ -19,9 +20,11 @@ class SlackWebhook(Message):
     Create and send Slack message via the Incoming WebHooks API.
 
     Args:
-        :webhook_url: (str) webhook url for installed slack app.
+        :from_: (str) optional arg to specify who message is from.
+        :url: (str) webhook url for installed slack app.
+        :subjet: (str) optional arg to specify message subject.
         :body: (str) message to send.
-        :attach_urls: (str or list) each item is a url to attach
+        :attachments: (str or list) each item is a url to attach
         :params: (dict) additional attributes to add to each attachment,
             i.e. author_name, title, text, etc., see API for information
             on which attributes are possible.
@@ -40,10 +43,20 @@ class SlackWebhook(Message):
         https://api.slack.com/incoming-webhooks
     """
 
-    def __init__(self, webhook_url, body, attach_urls, params={}):
-        self.webhook_url = webhook_url
+    def __init__(
+        self, from_=None, url=None, subject=None, body='', attachments=None,
+        params=None, profile=None, save=False
+    ):
+
+        config_kwargs = {'from_': from_, 'url': url, 'profile': profile,
+                'save': save}
+
+        configure(self, params=config_kwargs,
+                to_save={'from_', 'url'}, credentials={})
+
+        self.subject = subject
         self.body = body
-        self.attach_urls = attach_urls
+        self.attachments = attachments
         self.params = params
         self.message = {}
         self.sent_messages = deque()
@@ -51,23 +64,29 @@ class SlackWebhook(Message):
 
     def construct_message(self):
         """Build the message params."""
-        self.message['text'] = self.body
+        self.message['text'] = ''
+        if self.from_:
+            self.message['text'] += ('From: ' + self.from_ + '\n')
+        if self.subject:
+            self.message['text'] += ('Subject: ' + self.subject + '\n')
+
+        self.message['text'] += self.body
         self.add_attachments()
         headers = {'Content-Type': 'application/json'}
-        req = urllib.request.Request(self.webhook_url, headers=headers,
+        req = urllib.request.Request(self.url, headers=headers,
                                      data=json.dumps(self.message).encode())
         return req
 
 
     def add_attachments(self):
         """Add attachments."""
-        if self.attach_urls:
-            if not isinstance(self.attach_urls, list):
-                self.attach_urls = [self.attach_urls]
+        if self.attachments:
+            if not isinstance(self.attachments, list):
+                self.attachments = [self.attachments]
 
             self.message['attachments'] = [{'image_url': url,
                                             'author_name': ''}
-                                           for url in self.attach_urls]
+                                           for url in self.attachments]
             if self.params:
                 for attachment in self.message['attachments']:
                     attachment.update(self.params)
