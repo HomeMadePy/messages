@@ -27,8 +27,8 @@ def email_kwargs():
 
 @pytest.fixture()
 def slackwebhook_kwargs():
-    return {'webhook_url': 'https://slack.com', 'body': 'Test message',
-            'attach_urls': None, 'params': {'author_name': 'me'}}
+    return {'url': 'https://slack.com', 'body': 'Test message',
+            'attachments': None, 'params': {'author_name': 'me'}}
 
 
 @pytest.fixture()

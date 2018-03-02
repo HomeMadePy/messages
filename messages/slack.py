@@ -22,7 +22,7 @@ class SlackWebhook(Message):
     Args:
         :from_: (str) optional arg to specify who message is from.
         :url: (str) webhook url for installed slack app.
-        :subjet: (str) optional arg to specify message subject.
+        :subject: (str) optional arg to specify message subject.
         :body: (str) message to send.
         :attachments: (str or list) each item is a url to attach
         :params: (dict) additional attributes to add to each attachment,
