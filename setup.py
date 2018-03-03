@@ -41,6 +41,7 @@ setup(
     install_requires=[
         'click>=6.0',
         'jsonconfig-tool',
+        'requests',
         'twilio',
         'validus',
     ],

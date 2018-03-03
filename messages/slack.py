@@ -6,9 +6,9 @@ Module designed to make creating and sending chat messages easy.
     - https://api.slack.com/incoming-webhooks
 """
 
-import json
-import urllib
 from collections import deque
+
+import requests
 
 from .config import configure
 from ._eventloop import MESSAGELOOP
@@ -72,10 +72,6 @@ class SlackWebhook(Message):
 
         self.message['text'] += self.body
         self.add_attachments()
-        headers = {'Content-Type': 'application/json'}
-        req = urllib.request.Request(self.url, headers=headers,
-                                     data=json.dumps(self.message).encode())
-        return req
 
 
     def add_attachments(self):
@@ -93,14 +89,9 @@ class SlackWebhook(Message):
 
 
     def send(self):
-        """
-        Send the message via HTTP POST.
-        Uses the urllib standard library since 'requests' is not yet
-        compatible with gevent, which is used in the eventloop.
-        """
-        req = self.construct_message()
-        resp = urllib.request.urlopen(req)
-
+        """Send the message via HTTP POST."""
+        self.construct_message()
+        requests.post(self.url, json=self.message)
         print('Message sent...')
         self.sent_messages.append(repr(self))
 

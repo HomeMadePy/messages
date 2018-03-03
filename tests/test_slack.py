@@ -2,7 +2,7 @@
 
 import pytest
 
-import urllib.request
+import requests
 
 from collections import deque
 from unittest.mock import patch
@@ -44,9 +44,8 @@ def test_slack_init(get_slack):
 # TESTS: SlackWebhook.construct_message
 ##############################################################################
 
-@patch.object(urllib.request, 'Request')
 @patch.object(SlackWebhook, 'add_attachments')
-def test_slack_construct_message(add_mock, req_mock, get_slack):
+def test_slack_construct_message(add_mock, get_slack):
     """
     GIVEN a valid SlackWebhook object
     WHEN construct_message() is called
@@ -56,12 +55,10 @@ def test_slack_construct_message(add_mock, req_mock, get_slack):
     s.construct_message()
     assert s.message['text'] == 'message'
     assert add_mock.call_count == 1
-    assert req_mock.call_count == 1
 
 
-@patch.object(urllib.request, 'Request')
 @patch.object(SlackWebhook, 'add_attachments')
-def test_slack_construct_message_withFromSubj(add_mock, req_mock, get_slack):
+def test_slack_construct_message_withFromSubj(add_mock, get_slack):
     """
     GIVEN a valid SlackWebhook object
     WHEN construct_message() is called
@@ -74,7 +71,7 @@ def test_slack_construct_message_withFromSubj(add_mock, req_mock, get_slack):
     expected = 'From: me\nSubject: Tst Msg\nmessage'
     assert s.message['text'] == expected
     assert add_mock.call_count == 1
-    assert req_mock.call_count == 1
+
 
 ##############################################################################
 # TESTS: SlackWebhook.add_attachments
@@ -125,9 +122,9 @@ def test_slack_add_attachments_with_params(get_slack):
 # TESTS: SlackWebhook.send
 ##############################################################################
 
-@patch.object(urllib.request, 'urlopen')
+@patch.object(requests, 'post')
 @patch.object(SlackWebhook, 'construct_message')
-def test_slack_send(con_mock, url_mock, get_slack, capsys):
+def test_slack_send(con_mock, req_mock, get_slack, capsys):
     """
     GIVEN a valid SlackWebhook object
     WHEN send() is called
@@ -137,7 +134,7 @@ def test_slack_send(con_mock, url_mock, get_slack, capsys):
     s.send()
     out, err = capsys.readouterr()
     assert con_mock.call_count == 1
-    assert url_mock.call_count == 1
+    assert req_mock.call_count == 1
     assert out == 'Message sent...\n'
     assert err == ''
     assert len(s.sent_messages) == 1
