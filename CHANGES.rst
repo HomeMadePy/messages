@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+0.2.0
+-----
+- Changes the message class interface to be more consistent with eachother.
+- Adds the ability to create config.json files to save default parameters and credentials.
+- Adds an **api.py** module to make sending messages more user friendly.
+
+
 0.1.2
 -----
 - Adds input validation via the `validus <https://github.com/shopnilsazal/validus>`_ package, which uses regular expressions to verify formatting (i.e. email addresses, urls, etc).
