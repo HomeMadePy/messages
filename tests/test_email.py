@@ -71,21 +71,6 @@ def test_email_init_normal(get_email):
     assert e.message is None
     assert isinstance(e.sent_messages, deque)
 
-"""
-@patch.object(messages.email_, 'getpass')
-def test_email_init_no_password_save_True(getpass_mock, get_email, cfg_mock):
-
-    GIVEN a need to create an Email object
-    WHEN the user instantiates a new object with required args
-    THEN assert Email object is created with given args
-
-    e = Email(from_='me@here.com', to='you@there.com',
-             server='smtp.gmail.com', port=465, password=None,
-             cc='someone@there.com', bcc='them@there.com',
-             subject='subject', body='message', attachments=['file1', 'file2'],
-             name=None, save=True)
-    assert getpass_mock.call_count == 1
-"""
 
 ##############################################################################
 # TESTS: Email.__repr__
