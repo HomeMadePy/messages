@@ -4,6 +4,7 @@ import sys
 from unittest.mock import patch
 
 import pytest
+import conftest
 
 import click
 from click import Context
@@ -111,6 +112,7 @@ def test_check_type_badType():
 # TESTS: cli.get_body
 ##############################################################################
 
+@conftest.travis
 def test_get_body(tmpdir):
     """
     GIVEN a call to messages via the CLI
