@@ -31,7 +31,7 @@ class Twilio(Message):
         :attachments: (str) url of any image to send along with message
         :profile: (str) use a separate account profile specified by name
         :save: (bool) save pertinent values in the messages config file,
-            such as from_, server, port, password (encrypted keyring) to make
+            such as from_, acct_sid, auth_token (encrypted keyring) to make
             sending messages faster.
 
     Attributes:

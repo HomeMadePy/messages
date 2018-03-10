@@ -29,17 +29,13 @@ def send(msg_type, send_async=False, *args, **kwargs):
 
     Example:
         >>> kwargs = {
-                      from_: 'me@here.com',
-                      to: 'you@there.com',
-                      password: 'yourPassword',
-                      server: 'smtp.google.com',
-                      port: 465,
-                      cc: None,
-                      bcc: None,
-                      subject: 'Email Subject',
-                      body: 'Your message to send',
-                      attachments: ['filepath1', 'filepath2'],
-                }
+                  from_: 'me@here.com',
+                  to: 'you@there.com',
+                  password: 'yourPassword',
+                  subject: 'Email Subject',
+                  body: 'Your message to send',
+                  attachments: ['filepath1', 'filepath2'],
+            }
         >>> messages.send('email', **kwargs)
         Message sent...
     """

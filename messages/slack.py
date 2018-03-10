@@ -28,6 +28,10 @@ class SlackWebhook(Message):
         :params: (dict) additional attributes to add to each attachment,
             i.e. author_name, title, text, etc., see API for information
             on which attributes are possible.
+        :profile: (str) use a separate account profile specified by name
+        :save: (bool) save pertinent values in the messages config file,
+            such as from_, url (encrypted keyring) to make
+            sending messages faster.
 
     Attributes:
         :message: (dict) current form of the message to be constructed
