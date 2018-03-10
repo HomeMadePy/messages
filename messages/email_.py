@@ -46,8 +46,8 @@ class Email(Message):
         :attachments: (str or list) files to attach
             i.e. './file1', or
                 ['/home/you/file1.txt', '/home/you/file2.pdf']
-        :profile: (str) use a separate account profile specified by name
-        :save: (bool) save pertinent values in the messages config file,
+        :profile: (str) use an account profile specified by name
+        :save: (bool) save pertinent values in the messages config.json file,
             such as from_, server, port, password (encrypted keyring) to make
             sending messages faster.
 
@@ -107,11 +107,13 @@ class Email(Message):
     @staticmethod
     def get_server(address):
         """Return an SMTP servername guess from outgoing email address."""
-        domain = address.split('@')[1]
-        try:
-            return SMTP_SERVERS[domain]
-        except KeyError:
-            return ('smtp.' + domain, 465)
+        if address:
+            domain = address.split('@')[1]
+            try:
+                return SMTP_SERVERS[domain]
+            except KeyError:
+                return ('smtp.' + domain, 465)
+        return (None, None)
 
 
     @staticmethod
