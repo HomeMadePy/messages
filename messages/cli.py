@@ -74,7 +74,7 @@ def trim_args(kwds):
     help='Specify pre-configured user profile.')
 @option('-T', '--types',
     help='List available message types.')
-@click.version_option(version='0.2.0', prog_name='Messages')
+@click.version_option(version='0.3.0', prog_name='Messages')
 @click.pass_context
 def main(ctx, **kwds):
     """Specify Message-Type, Recipients, and Content to send."""

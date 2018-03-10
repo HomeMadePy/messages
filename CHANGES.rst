@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+0.3.0
+-----
+- Completes CLI functionality
+    - However, this may undergo some modification
+
+
 0.2.0
 -----
 - Changes the message class interface to be more consistent with eachother.
