@@ -31,7 +31,7 @@ Installation
 ------------
 .. code-block:: console
 
-  $ pip install git+https://github.com/trp07/messages
+  $ pip install messages
 
 
 Supported Messages
