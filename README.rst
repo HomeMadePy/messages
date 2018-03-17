@@ -24,7 +24,7 @@ Purpose
 -------
 - **Messages** is a package designed to make sending messages easy!
 - **Messages** incorporates various standard library module, third-party module, web app API calls, etc. all in one package.
-- **Messages** can send messages _asynchronously_.
+- **Messages** can send messages *asynchronously*.
 
 
 Installation
@@ -69,7 +69,7 @@ Examples
     >>> m.send_async()  # send asynchronously
 
 
-**Read the `Wiki <https://github.com/trp07/messages/wiki>`_ for more examples**
+**Read** the `Wiki <https://github.com/trp07/messages/wiki>`_ for **more examples**
 
 
 
