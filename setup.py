@@ -1,4 +1,5 @@
 import ast
+import os
 import re
 import sys
 from setuptools import setup, find_packages
@@ -23,8 +24,8 @@ REQS = ['click>=6.0', 'jsonconfig-tool', 'requests', 'twilio',
 TEST_REQS = ['pytest-cov', 'flake8', 'tox']
 
 
-# update REQS for specific OS
-if 'linux' in sys.platform.lower():
+# update REQS for specific OS, except if on travis-ci
+if 'linux' in sys.platform.lower() and not "TRAVIS" in os.environ:
     REQS.append('dbus-python')
 
 
