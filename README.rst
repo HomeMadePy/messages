@@ -24,7 +24,7 @@ Purpose
 -------
 - **Messages** is a package designed to make sending messages easy!
 - **Messages** incorporates various standard library module, third-party module, web app API calls, etc. all in one package.
-- **Messages** can send messages asynchronously.
+- **Messages** can send messages _asynchronously_.
 
 
 Installation
@@ -48,7 +48,7 @@ Supported Messages
 
 Upcoming Messages
 -----------------
-- WhatsApp
+- Whatever the community thinks is fun or interesting.
 
 
 Examples
@@ -69,39 +69,8 @@ Examples
     >>> m.send_async()  # send asynchronously
 
 
+**Read the `Wiki <https://github.com/trp07/messages/wiki>`_ for more examples**
 
-**Text Message**
-
-.. code-block:: python
-
-    >>> from messages import Twilio
-    >>> msg = 'Hello,\n\tTry this new package called "messages"!'
-    >>> t = Twilio(from_='+16198675309',
-                to='+16195551212',
-                body=msg,
-                acct_sid='your API sid',
-                auth_token='your API token',
-                attachments='https://imgs.xkcd.com/comics/python.png'
-            )
-    >>>
-    >>> t.send()        # send synchronously
-    >>> t.send_async()  # send asynchronously
-
-
-
-**Slack - Inbound Webhook API**
-
-.. code-block:: python
-
-    >>> from messages import SlackWebhook
-    >>> msg = 'Hello,\n\tTry this new package called "messages"!'
-    >>> s = SlackWebhook(url='webhook_url',
-                body=msg,
-                attachments='https://imgs.xkcd.com/comics/python.png'
-            )
-    >>>
-    >>> s.send()        # send synchronously
-    >>> s.send_async()  # send asynchronously
 
 
 Contributing
@@ -109,4 +78,4 @@ Contributing
 - **Help Wanted!**
 - All contributions are welcome to build upon the package!
 - If it's a **message**, add it to messages!
-- Please read `CONTRIBUTING <https://github.com/trp07/messages/wiki/1.--CONTRIBUTING>`_ for guidelines, as well as a `TODO List <https://github.com/trp07/messages/wiki/2.--TODO>`_ for ideas on where to get started.
+- Read the `Wiki <https://github.com/trp07/messages/wiki>`_ for guidelines.
