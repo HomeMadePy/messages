@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.3.1
+-----
+- Moves documenation to the github Wiki and trims down the README
+
+
 0.3.0
 -----
 - Completes CLI functionality
