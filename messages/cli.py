@@ -52,7 +52,7 @@ def trim_args(kwds):
 
 @click.command()
 @argument('type', required=True)
-@option('-f', '--from',
+@option('-f', '--from_',
     help='From address/phone/etc.')
 @option('-t', '--to', multiple=True,
     help='Primary (To) recipient.')
@@ -68,7 +68,7 @@ def trim_args(kwds):
     help='Read message body from filepath.')
 @option('-a', '--attach', multiple=True,
     help='Attachments -- filepath or url to attach.')
-@option('-S', '--save',
+@option('-S', '--save', is_flag=True,
     help='Save default values/credentials.')
 @option('-P', '--profile',
     help='Specify pre-configured user profile.')
