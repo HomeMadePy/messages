@@ -1,5 +1,6 @@
 """messages.cli tests."""
 
+import builtins
 import sys
 from unittest.mock import patch
 
@@ -18,6 +19,7 @@ from messages.cli import check_args
 from messages.cli import check_type
 from messages.cli import get_body
 from messages.cli import trim_args
+from messages.cli import create_config_entry
 from messages.cli import main
 from messages.exceptions import UnsupportedMessageTypeError
 from messages.email_ import Email
@@ -156,6 +158,41 @@ def test_trim_args_ListItems():
     assert kwargs == {'to': ['me@here.com'], 'cc': ['her@there.com'],
             'bcc': ['him@there.com', 'her@there.com'], 'attach': ['file1']}
 
+
+##############################################################################
+# TESTS: cli.create_config_entry
+##############################################################################
+
+@patch.object(messages.cli, 'create_config')
+@patch.object(builtins, 'input', return_value='y')
+def test_create_config_entry_yes(input_mock, create_mock, capsys):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN create_config_entry is called with a valid message type with user
+        input=yes
+    THEN assert correct output is printed and create_config is called
+    """
+    create_config_entry('email')
+    out, err = capsys.readouterr()
+    assert 'You will need the following information to configure: email' in out
+    assert "['from_', 'server', 'port', 'password']" in out
+    assert input_mock.call_count == 2
+    assert create_mock.call_count == 1
+
+
+@patch.object(messages.cli, 'create_config')
+@patch.object(builtins, 'input', return_value='n')
+def test_create_config_entry_no(input_mock, create_mock, capsys):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN create_config_entry is called with a valid message type with user
+        input=no
+    THEN assert create_config is not called
+    """
+    create_config_entry('email')
+    out, err = capsys.readouterr()
+    assert input_mock.call_count == 2
+    assert create_mock.call_count == 0
 
 ##############################################################################
 # TESTS: cli.main

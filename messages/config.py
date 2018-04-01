@@ -73,3 +73,28 @@ def set_default_profile(profile):
         cfg.data['default'] = profile
         cfg.kwargs['dump']['indent'] = 4
 
+
+def create_config(msg_type, profile, params):
+    """
+    Creates an entry in the config.json file for a specified message
+    type.  To be used via the cli module.
+
+    Args:
+        :msg_type: (str) the type of message, i.e. email, twilio, etc.
+        :profile: (str) profile name to save params under.
+        :params: (dict) the params to save in the config file.
+    """
+    with jsonconfig.Config('messages') as cfg:
+
+        if profile not in cfg.data:
+            cfg.data[profile] = {}
+
+        if msg_type not in cfg.data[profile]:
+            cfg.data[profile][msg_type] = {}
+
+        for d in params['defaults']:
+            cfg.data[profile][msg_type][d] = input('Enter ' + d + ': ')
+
+        for c in params['credentials']:
+            cfg.pwd[(profile + '_' + msg_type)] = getpass('\n' + c + ': ')
+        cfg.kwargs['dump']['indent'] = 4

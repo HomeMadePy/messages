@@ -1,6 +1,7 @@
 """messages.config tests."""
 
 import pytest
+import builtins
 from unittest.mock import patch
 
 import jsonconfig
@@ -8,6 +9,7 @@ import jsonconfig
 import messages.config
 from messages.config import configure
 from messages.config import set_default_profile
+from messages.config import create_config
 from messages.config import getpass
 from messages.exceptions import UnknownProfileError
 
@@ -90,3 +92,14 @@ def test_set_default_profileBad(cfg_mock):
     """
     with pytest.raises(UnknownProfileError):
         set_default_profile('UnknownProfile')
+
+
+##############################################################################
+# TESTS: create_config
+##############################################################################
+
+@patch.object(messages.config, 'getpass')
+@patch.object(builtins, 'input')
+def test_create_config_withParams(input_mock, getpass_mock, cfg_mock):
+    create_config('email', 'myProfile', {'defaults': ['from_'],
+        'credentials': ['password']})

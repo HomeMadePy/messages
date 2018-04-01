@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+0.3.2
+-----
+- Adds a **-C**, **--configure** option to the CLI in order to configure and
+create an entry in the config.json file for a specific message type.  That way
+default parameters and credentials can be saved away for easier use later.
+
+
 0.3.1
 -----
 - Moves documenation to the github Wiki and trims down the README

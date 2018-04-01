@@ -10,6 +10,7 @@ from click import option
 
 from messages import MESSAGES
 from .api import send
+from .config import create_config
 from .exceptions import UnsupportedMessageTypeError
 
 
@@ -27,7 +28,7 @@ def check_type(kwds):
         click.echo('[!] Must specify message type with -t option.')
         click.echo('Try messages --help for more information.')
         sys.exit(0)
-    if kwds['type'].lower() not in MESSAGES:
+    if kwds['type'].lower() not in MESSAGES.keys():
         raise UnsupportedMessageTypeError(kwds['type'])
 
 
@@ -48,6 +49,17 @@ def trim_args(kwds):
         if k in ('to', 'cc', 'bcc', 'attach'):
             kwargs[k] = list(kwargs[k])
     return kwargs
+
+
+def create_config_entry(msg_type):
+    """Creates an entry in the config.json file for later use."""
+    print('You will need the following information to configure: ' + msg_type)
+    print('\t', MESSAGES[msg_type]['defaults'] +
+        MESSAGES[msg_type]['credentials'])
+    status = input('\nContinue [Y/N]? ')
+    profile = input('\nSpecify Profile Name: ')
+    if status in ('Y', 'y'):
+        create_config(msg_type, profile, MESSAGES[msg_type])
 
 
 @click.command()
@@ -74,13 +86,20 @@ def trim_args(kwds):
     help='Specify pre-configured user profile.')
 @option('-T', '--types',
     help='List available message types.')
-@click.version_option(version='0.3.1', prog_name='Messages')
+@option('-C', '--configure', is_flag=True,
+    help='Configure specified message type and exit.')
+@click.version_option(version='0.3.2', prog_name='Messages')
 @click.pass_context
 def main(ctx, **kwds):
     """Specify Message-Type, Recipients, and Content to send."""
 
     check_args(ctx, kwds)
     check_type(kwds)
+
+    if kwds['configure']:
+        create_config_entry(kwds['type'])
+        sys.exit(0)
+
     get_body(kwds)
     kwargs = trim_args(kwds)
 
