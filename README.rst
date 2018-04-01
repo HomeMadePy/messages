@@ -37,13 +37,9 @@ Installation
 Supported Messages
 ------------------
 - Email
-    - SMTP
-
 - Text Messages (SMS/MMS)
-    - Twilio API (must have API keys)
-
 - Slack
-    - Inbound Webhook API
+- Read the `Wiki <https://github.com/trp07/messages/wiki>`_ for usage.
 
 
 Upcoming Messages
