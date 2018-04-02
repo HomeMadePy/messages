@@ -58,7 +58,8 @@ Examples
     >>> m = Email(from_='me@here.com',
                 to='you@there.com',
                 body=msg,
-                attachments=['./file1.txt', '~/Documents/file2.pdf']
+                attachments=['./file1.txt', '~/Documents/file2.pdf'],
+                profile='myProfileName'
             )
     >>>
     >>> m.send()        # send synchronously
