@@ -8,6 +8,9 @@ from .slack import SlackWebhook
 from .text import Twilio
 
 
+__version__ = '0.3.2'
+
+
 MESSAGES = {
     'email': {
         'defaults': ['from_', 'server', 'port',],
@@ -22,5 +25,3 @@ MESSAGES = {
         'credentials': ['auth_token']
         },
     }
-
-__version__ = '0.3.2'
