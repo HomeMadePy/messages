@@ -23,16 +23,12 @@ def check_args(ctx, kwds):
 
 
 def check_type(kwds):
-    """If no or incorrect message-type specified, alerts user and exits."""
-    if not kwds['type']:
-        click.echo('[!] Must specify message type with -t option.')
-        click.echo('Try messages --help for more information.')
-        sys.exit(0)
+    """If incorrect message-type specified, raise error."""
     if kwds['type'].lower() not in MESSAGES.keys():
         raise UnsupportedMessageTypeError(kwds['type'])
 
 
-def get_body(kwds):
+def get_body_from_file(kwds):
     """Reads message body if specified via filepath."""
     if kwds['file'] and os.path.isfile(kwds['file']):
         kwds['body'] = open(kwds['file'], 'r').read()
@@ -54,16 +50,25 @@ def trim_args(kwds):
 def create_config_entry(msg_type):
     """Creates an entry in the config.json file for later use."""
     print('You will need the following information to configure: ' + msg_type)
-    print('\t', MESSAGES[msg_type]['defaults'] +
-        MESSAGES[msg_type]['credentials'])
+    for item in (MESSAGES[msg_type]['defaults'] +
+                 MESSAGES[msg_type]['credentials']):
+        print('\t* ' + item)
+
     status = input('\nContinue [Y/N]? ')
-    profile = input('\nSpecify Profile Name: ')
     if status in ('Y', 'y'):
+        profile = input('\nEnter Profile Name: ')
         create_config(msg_type, profile, MESSAGES[msg_type])
 
 
+def list_types():
+    """Prints all available message types."""
+    print('Available messages types:')
+    for m in MESSAGES:
+        print('\t* ' + m)
+
+
 @click.command()
-@argument('type', required=True)
+@argument('type', required=False)
 @option('-f', '--from_',
     help='From address/phone/etc.')
 @option('-t', '--to', multiple=True,
@@ -84,8 +89,8 @@ def create_config_entry(msg_type):
     help='Save default values/credentials.')
 @option('-P', '--profile',
     help='Specify pre-configured user profile.')
-@option('-T', '--types',
-    help='List available message types.')
+@option('-T', '--types', is_flag=True,
+    help='List available message types and exit.')
 @option('-C', '--configure', is_flag=True,
     help='Configure specified message type and exit.')
 @click.version_option(version='0.3.2', prog_name='Messages')
@@ -94,13 +99,22 @@ def main(ctx, **kwds):
     """Specify Message-Type, Recipients, and Content to send."""
 
     check_args(ctx, kwds)
-    check_type(kwds)
+
+    if kwds['type']:
+        check_type(kwds)
+
+    if kwds['types']:
+        list_types()
+        sys.exit(0)
 
     if kwds['configure']:
         create_config_entry(kwds['type'])
         sys.exit(0)
 
-    get_body(kwds)
+    if kwds['file']:
+        get_body_from_file(kwds)
+
     kwargs = trim_args(kwds)
 
-    send(kwds['type'], send_async=True, **kwargs)
+    if kwds['type']:
+        send(kwds['type'], send_async=True, **kwargs)

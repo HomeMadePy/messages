@@ -17,7 +17,7 @@ import messages.cli
 import messages.api
 from messages.cli import check_args
 from messages.cli import check_type
-from messages.cli import get_body
+from messages.cli import get_body_from_file
 from messages.cli import trim_args
 from messages.cli import create_config_entry
 from messages.cli import main
@@ -85,20 +85,6 @@ def test_check_type_normal():
     check_type(kwds)
 
 
-@patch.object(click, 'echo')
-def test_check_type_NoType(echo_mock):
-    """
-    GIVEN a call to messages via the CLI
-    WHEN a NO message type is given
-    THEN assert click.echo and sys.exit are called
-    """
-    kwds = {'type': None}
-    with pytest.raises(SystemExit) as sysext:
-        check_type(kwds)
-        assert echo_mock.call_count == 2
-        assert sysext.code == 0
-
-
 def test_check_type_badType():
     """
     GIVEN a call to messages via the CLI
@@ -111,11 +97,11 @@ def test_check_type_badType():
 
 
 ##############################################################################
-# TESTS: cli.get_body
+# TESTS: cli.get_body_from_file
 ##############################################################################
 
 @conftest.travis
-def test_get_body(tmpdir):
+def test_get_body_from_file(tmpdir):
     """
     GIVEN a call to messages via the CLI
     WHEN a message is specified by filename
@@ -126,7 +112,7 @@ def test_get_body(tmpdir):
     msg_file = tmpdir.join('msg.txt')
     msg_file.write('This is the message to send!')
     kwds = {'body': None, 'file': msg_file}
-    body = get_body(kwds)
+    body = get_body_from_file(kwds)
     assert kwds == {'body': 'This is the message to send!', 'file': None}
 
 
@@ -165,7 +151,7 @@ def test_trim_args_ListItems():
 
 @patch.object(messages.cli, 'create_config')
 @patch.object(builtins, 'input', return_value='y')
-def test_create_config_entry_yes(input_mock, create_mock, capsys):
+def test_create_config_entry_yes_email(input_mock, create_mock, capsys):
     """
     GIVEN a call to messages via the CLI
     WHEN create_config_entry is called with a valid message type with user
@@ -175,7 +161,47 @@ def test_create_config_entry_yes(input_mock, create_mock, capsys):
     create_config_entry('email')
     out, err = capsys.readouterr()
     assert 'You will need the following information to configure: email' in out
-    assert "['from_', 'server', 'port', 'password']" in out
+    assert 'from_' in out
+    assert 'server' in out
+    assert 'port' in out
+    assert 'password' in out
+    assert input_mock.call_count == 2
+    assert create_mock.call_count == 1
+
+
+@patch.object(messages.cli, 'create_config')
+@patch.object(builtins, 'input', return_value='y')
+def test_create_config_entry_yes_twilio(input_mock, create_mock, capsys):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN create_config_entry is called with a valid message type with user
+        input=yes
+    THEN assert correct output is printed and create_config is called
+    """
+    create_config_entry('twilio')
+    out, err = capsys.readouterr()
+    assert 'You will need the following information to configure: twilio' in out
+    assert 'from_' in out
+    assert 'acct_sid' in out
+    assert 'auth_token' in out
+    assert input_mock.call_count == 2
+    assert create_mock.call_count == 1
+
+
+@patch.object(messages.cli, 'create_config')
+@patch.object(builtins, 'input', return_value='y')
+def test_create_config_entry_yes_slackwebhook(input_mock, create_mock, capsys):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN create_config_entry is called with a valid message type with user
+        input=yes
+    THEN assert correct output is printed and create_config is called
+    """
+    create_config_entry('slackwebhook')
+    out, err = capsys.readouterr()
+    assert 'You will need the following information to configure: slackwebhook' in out
+    assert 'from_' in out
+    assert 'url' in out
     assert input_mock.call_count == 2
     assert create_mock.call_count == 1
 
@@ -191,7 +217,7 @@ def test_create_config_entry_no(input_mock, create_mock, capsys):
     """
     create_config_entry('email')
     out, err = capsys.readouterr()
-    assert input_mock.call_count == 2
+    assert input_mock.call_count == 1
     assert create_mock.call_count == 0
 
 ##############################################################################
@@ -199,7 +225,7 @@ def test_create_config_entry_no(input_mock, create_mock, capsys):
 ##############################################################################
 
 @patch.object(messages.api, 'send')
-@patch.object(messages.cli, 'get_body')
+@patch.object(messages.cli, 'get_body_from_file')
 @patch.object(messages.cli, 'check_type')
 @patch.object(messages.cli, 'check_args')
 def test_main(args_mock, type_mock, body_mock, send_mock):
