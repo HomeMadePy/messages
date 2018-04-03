@@ -36,9 +36,9 @@ Installation
 
 Supported Messages
 ------------------
-- Email
-- Text Messages (SMS/MMS)
-- Slack
+- `Email SMTP <https://github.com/trp07/messages/wiki/Email>`_
+- `Twilio <https://github.com/trp07/messages/wiki/Twilio>`_
+- `Slack <https://github.com/trp07/messages/wiki/Slack_IncomingWebhook>`_
 - Read the `Wiki <https://github.com/trp07/messages/wiki>`_ for usage.
 
 
