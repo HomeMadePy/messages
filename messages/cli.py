@@ -37,10 +37,10 @@ def get_body_from_file(kwds):
 
 def trim_args(kwds):
     """Gets rid of args with value of None, as well as select keys."""
-    reject_key = ('type')
+    reject_key = ('type', 'types', 'configure')
     reject_val = (None, ())
-    kwargs = {k:v for k,v in kwds.items() if k not in ('type') and
-                                             v not in (None, ())}
+    kwargs = {k:v for k,v in kwds.items() if k not in reject_key and
+                                             v not in reject_val}
     for k, v in kwargs.items():
         if k in ('to', 'cc', 'bcc', 'attach'):
             kwargs[k] = list(kwargs[k])
