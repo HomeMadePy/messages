@@ -17,8 +17,16 @@ with open('README.rst', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 
+# install dependencies
+REQS = ['click>=6.0', 'jsonconfig-tool', 'requests', 'twilio',
+        'validus']
+
 TEST_REQS = ['pytest-cov', 'flake8', 'tox']
 
+
+# update REQS for specific OS, except if on travis-ci
+if 'linux' in sys.platform.lower() and "TRAVIS" not in os.environ:
+    REQS.append('dbus-python')
 
 
 setup(
@@ -46,21 +54,10 @@ setup(
         'Topic :: Utilities',
     ],
 
-    install_requires=[
-        'click>=6.0',
-        'jsonconfig-tool',
-        'requests',
-        'twilio',
-        'validus',
-        'dbus-python; platform_system == "Linux"',
-    ],
+    install_requires=REQS,
 
     test_suite='tests',
-    test_requires=[
-        'pytest-cov',
-        'flake8',
-        'tox',
-    ],
+    test_requires=TEST_REQS,
 
     setup_requires=['pytest-runner'],
 
