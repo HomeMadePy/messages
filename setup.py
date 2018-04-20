@@ -25,7 +25,7 @@ TEST_REQS = ['pytest-cov', 'flake8', 'tox']
 
 
 # update REQS for specific OS, except if on travis-ci
-if 'linux' in sys.platform.lower() and not "TRAVIS" in os.environ:
+if 'linux' in sys.platform.lower() and "TRAVIS" not in os.environ:
     REQS.append('dbus-python')
 
 
