@@ -48,7 +48,6 @@ setup(
         'requests',
         'twilio',
         'validus',
-        'dbus-python; platform_system == "Linux"',
     ],
 
     test_suite='tests',
