@@ -69,7 +69,7 @@ def list_types():
 
 @click.command()
 @argument('type', required=False)
-@option('-f', '--from_',
+@option('-f', '--from', 'from_',
     help='From address/phone/etc.')
 @option('-t', '--to', multiple=True,
     help='Primary (To) recipient.')
