@@ -44,11 +44,16 @@ setup(
 
     install_requires=[
         'click>=6.0',
-        'jsonconfig-tool',
         'requests',
         'twilio',
         'validus',
     ],
+
+    extras_require={
+        ':("linux" in sys.platform.lower() and "TRAVIS" not in os.environ)':[
+            'jsonconfig-tool',
+        ]
+    }
 
     test_suite='tests',
     test_requires=[
