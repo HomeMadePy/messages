@@ -17,6 +17,17 @@ with open('README.rst', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 
+REQS = [
+    'click>=6.0',
+    'requests',
+    'twilio',
+    'validus',
+]
+
+if "linux" in sys.platform.lower() and "TRAVIS" not in os.environ:
+    REQS.append('jsonconfig-tool')
+
+
 setup(
     name='messages',
     version=version,
@@ -42,18 +53,7 @@ setup(
         'Topic :: Utilities',
     ],
 
-    install_requires=[
-        'click>=6.0',
-        'requests',
-        'twilio',
-        'validus',
-    ],
-
-    extras_require={
-        ':("linux" in sys.platform.lower() and "TRAVIS" not in os.environ)':[
-            'jsonconfig-tool',
-        ]
-    },
+    install_requires=REQS,
 
     test_suite='tests',
     test_requires=[
