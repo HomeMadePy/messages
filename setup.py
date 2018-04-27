@@ -53,7 +53,7 @@ setup(
         ':("linux" in sys.platform.lower() and "TRAVIS" not in os.environ)':[
             'jsonconfig-tool',
         ]
-    }
+    },
 
     test_suite='tests',
     test_requires=[
