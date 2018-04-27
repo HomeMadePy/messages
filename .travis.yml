@@ -7,7 +7,6 @@ env:
   global:
     - PYTHONPATH="/home/travis/build/trp07/messages"
 install:
-  - pip install .
   - pip install pytest-cov pytest-pep8 coveralls
 script: py.test --cov=messages
 after_success:
