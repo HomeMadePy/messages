@@ -7,7 +7,7 @@ env:
   global:
     - PYTHONPATH="/home/travis/build/trp07/messages"
 install:
-  - pip install pytest-cov pytest-pep8 coveralls twilio jsonconfig-tool requests validus click>=6.0
+  - "pip install pytest-cov pytest-pep8 coveralls twilio jsonconfig-tool requests validus click>=6.0"
 script: py.test --cov=messages
 after_success:
 - coveralls
