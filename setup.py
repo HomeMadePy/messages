@@ -22,6 +22,8 @@ REQS = [
     'requests',
     'twilio',
     'validus',
+    'jeepney',
+    'keyring_jeepney',
 ]
 
 if "linux" in sys.platform.lower() and "TRAVIS" not in os.environ:
