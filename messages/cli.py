@@ -52,7 +52,7 @@ def create_config_entry(msg_type):
     print('You will need the following information to configure: ' + msg_type)
     for item in (MESSAGES[msg_type]['defaults'] +
                  MESSAGES[msg_type]['credentials']):
-        print('\t* ' + item)
+        click.echo('\t* ' + item)
 
     status = input('\nContinue [Y/N]? ')
     if status in ('Y', 'y'):
@@ -64,7 +64,7 @@ def list_types():
     """Prints all available message types."""
     print('Available messages types:')
     for m in MESSAGES:
-        print('\t* ' + m)
+        click.echo('\t* ' + m)
 
 
 @click.command()
@@ -83,7 +83,7 @@ def list_types():
     help='Message body text.')
 @option('-M', '--file',
     help='Read message body from filepath.')
-@option('-a', '--attach', multiple=True,
+@option('-a', '--attach', 'attachments', multiple=True,
     help='Attachments -- filepath or url to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values/credentials.')
@@ -96,7 +96,12 @@ def list_types():
 @click.version_option(version='0.3.2', prog_name='Messages')
 @click.pass_context
 def main(ctx, **kwds):
-    """Specify Message-Type, Recipients, and Content to send."""
+    """
+    Specify Message-Type, Recipients, and Content to send.
+
+    [TYPE] = email, twilio, ...\n
+        try `messages --types` to see all available types
+    """
 
     check_args(ctx, kwds)
 
@@ -118,3 +123,8 @@ def main(ctx, **kwds):
 
     if kwds['type']:
         send(kwds['type'], send_async=True, **kwargs)
+    else:
+        click.echo('[*] Specify message type')
+        click.echo('Try `messages --help` for more information')
+        sys.exit(0)
+
