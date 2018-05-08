@@ -17,19 +17,6 @@ with open('README.rst', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 
-REQS = [
-    'click>=6.0',
-    'requests',
-    'twilio',
-    'validus',
-    'jeepney',
-    'keyring_jeepney',
-]
-
-if "linux" in sys.platform.lower() and "TRAVIS" not in os.environ:
-    REQS.append('jsonconfig-tool')
-
-
 setup(
     name='messages',
     version=version,
@@ -51,11 +38,18 @@ setup(
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Utilities',
     ],
 
-    install_requires=REQS,
+    install_requires=[
+        'click>=6.0',
+        'requests',
+        'jsonconfig-tool',
+        'twilio',
+        'validus',
+    ],
 
     test_suite='tests',
     test_requires=[
