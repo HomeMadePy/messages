@@ -38,10 +38,13 @@ setup(
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Topic :: Utilities',
     ],
+
+    python_requires='>=3.5',
 
     install_requires=[
         'click>=6.0',

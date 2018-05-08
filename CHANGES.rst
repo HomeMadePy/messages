@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+0.3.3
+-----
+- Enforces python >= 3.5 for install
+- Tweaks CLI args a bit for ease of use
+- Adds more information to `messages --help` and docstrings for cli use
+
 0.3.2
 -----
 - Adds a **-C**, **--configure** option to the CLI in order to configure and

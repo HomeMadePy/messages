@@ -93,7 +93,7 @@ def list_types():
     help='List available message types and exit.')
 @option('-C', '--configure', is_flag=True,
     help='Configure specified message type and exit.')
-@click.version_option(version='0.3.2', prog_name='Messages')
+@click.version_option(version='0.3.3', prog_name='Messages')
 @click.pass_context
 def main(ctx, **kwds):
     """
@@ -124,7 +124,8 @@ def main(ctx, **kwds):
     if kwds['type']:
         send(kwds['type'], send_async=True, **kwargs)
     else:
-        click.echo('[*] Specify message type')
+        click.echo('[!] Specify message type')
+        list_types()
         click.echo('Try `messages --help` for more information')
         sys.exit(0)
 
