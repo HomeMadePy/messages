@@ -13,7 +13,7 @@ with open('messages/__init__.py', 'rb') as f:
 
 
 # load README.rst
-with open('README.rst', 'r', encoding='utf-8') as f:
+with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
 
 
