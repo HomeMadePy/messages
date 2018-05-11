@@ -62,7 +62,7 @@ def create_config_entry(msg_type):
 
 def list_types():
     """Prints all available message types."""
-    print('Available messages types:')
+    click.echo('Available message types:')
     for m in MESSAGES:
         click.echo('\t* ' + m)
 

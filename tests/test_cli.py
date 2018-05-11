@@ -2,7 +2,6 @@
 
 import builtins
 import sys
-from unittest.mock import patch
 
 import pytest
 import conftest
@@ -20,6 +19,7 @@ from messages.cli import check_type
 from messages.cli import get_body_from_file
 from messages.cli import trim_args
 from messages.cli import create_config_entry
+from messages.cli import list_types
 from messages.cli import main
 from messages.exceptions import UnsupportedMessageTypeError
 from messages.email_ import Email
@@ -41,6 +41,18 @@ def get_ctx():
     return ClickConfig()
 
 
+@pytest.fixture()
+def main_mocks(mocker):
+    """Returns mocks for all funcs inside main()."""
+    args_mk = mocker.patch.object(messages.cli, 'check_args')
+    type_mk = mocker.patch.object(messages.cli, 'check_type')
+    list_mk = mocker.patch.object(messages.cli, 'list_types')
+    body_mk = mocker.patch.object(messages.cli, 'get_body_from_file')
+    config_mk = mocker.patch.object(messages.cli, 'create_config_entry')
+    send_mk = mocker.patch.object(messages.cli, 'send')
+    return (args_mk, type_mk, list_mk, body_mk, config_mk, send_mk)
+
+
 ##############################################################################
 # TESTS: cli.check_args
 ##############################################################################
@@ -56,8 +68,7 @@ def test_check_args_withArgs(get_ctx):
     check_args(ctx, kwds)
 
 
-@patch.object(click, 'echo')
-def test_check_args_withNoArgs(echo_mock, get_ctx):
+def test_check_args_withNoArgs(get_ctx, mocker):
     """
     GIVEN a call to messages via the CLI
     WHEN check_args is called with NO args given
@@ -65,9 +76,10 @@ def test_check_args_withNoArgs(echo_mock, get_ctx):
     """
     ctx = get_ctx
     kwds = {}
+    echo_mk = mocker.patch('click.echo')
     with pytest.raises(SystemExit) as sysext:
         check_args(ctx, kwds)
-        assert echo_mock.call_count == 2
+        assert echo_mk.call_count == 2
         assert sysext.code == 0
 
 
@@ -149,15 +161,15 @@ def test_trim_args_ListItems():
 # TESTS: cli.create_config_entry
 ##############################################################################
 
-@patch.object(messages.cli, 'create_config')
-@patch.object(builtins, 'input', return_value='y')
-def test_create_config_entry_yes_email(input_mock, create_mock, capsys):
+def test_create_config_entry_yes_email(capsys, mocker):
     """
     GIVEN a call to messages via the CLI
     WHEN create_config_entry is called with a valid message type with user
         input=yes
     THEN assert correct output is printed and create_config is called
     """
+    input_mk = mocker.patch.object(builtins, 'input', return_value='y')
+    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
     create_config_entry('email')
     out, err = capsys.readouterr()
     assert 'You will need the following information to configure: email' in out
@@ -165,69 +177,166 @@ def test_create_config_entry_yes_email(input_mock, create_mock, capsys):
     assert 'server' in out
     assert 'port' in out
     assert 'password' in out
-    assert input_mock.call_count == 2
-    assert create_mock.call_count == 1
+    assert input_mk.call_count == 2
+    assert create_cfg_mk.call_count == 1
 
 
-@patch.object(messages.cli, 'create_config')
-@patch.object(builtins, 'input', return_value='y')
-def test_create_config_entry_yes_twilio(input_mock, create_mock, capsys):
+def test_create_config_entry_yes_twilio(capsys, mocker):
     """
     GIVEN a call to messages via the CLI
     WHEN create_config_entry is called with a valid message type with user
         input=yes
     THEN assert correct output is printed and create_config is called
     """
+    input_mk = mocker.patch.object(builtins, 'input', return_value='y')
+    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
     create_config_entry('twilio')
     out, err = capsys.readouterr()
     assert 'You will need the following information to configure: twilio' in out
     assert 'from_' in out
     assert 'acct_sid' in out
     assert 'auth_token' in out
-    assert input_mock.call_count == 2
-    assert create_mock.call_count == 1
+    assert input_mk.call_count == 2
+    assert create_cfg_mk.call_count == 1
 
 
-@patch.object(messages.cli, 'create_config')
-@patch.object(builtins, 'input', return_value='y')
-def test_create_config_entry_yes_slackwebhook(input_mock, create_mock, capsys):
+def test_create_config_entry_yes_slackwebhook(capsys, mocker):
     """
     GIVEN a call to messages via the CLI
     WHEN create_config_entry is called with a valid message type with user
         input=yes
     THEN assert correct output is printed and create_config is called
     """
+    input_mk = mocker.patch.object(builtins, 'input', return_value='y')
+    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
     create_config_entry('slackwebhook')
     out, err = capsys.readouterr()
     assert 'You will need the following information to configure: slackwebhook' in out
     assert 'from_' in out
     assert 'url' in out
-    assert input_mock.call_count == 2
-    assert create_mock.call_count == 1
+    assert input_mk.call_count == 2
+    assert create_cfg_mk.call_count == 1
 
 
-@patch.object(messages.cli, 'create_config')
-@patch.object(builtins, 'input', return_value='n')
-def test_create_config_entry_no(input_mock, create_mock, capsys):
+def test_create_config_entry_no(capsys, mocker):
     """
     GIVEN a call to messages via the CLI
     WHEN create_config_entry is called with a valid message type with user
         input=no
     THEN assert create_config is not called
     """
+    input_mk = mocker.patch.object(builtins, 'input', return_value='n')
+    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
     create_config_entry('email')
     out, err = capsys.readouterr()
-    assert input_mock.call_count == 1
-    assert create_mock.call_count == 0
+    assert input_mk.call_count == 1
+    assert create_cfg_mk.call_count == 0
+
+
+##############################################################################
+# TESTS: cli.list_types
+##############################################################################
+
+def test_list_types(capsys):
+    """
+    GIVEN a call to messages vis the CLI
+    WHEN list_types() is called
+    THEN assert the proper output prints
+    """
+    list_types()
+    out, err = capsys.readouterr()
+    assert 'Available message types:' in out
+    for m in MESSAGES:
+        assert m in out
+    assert '' in err
+
 
 ##############################################################################
 # TESTS: cli.main
 ##############################################################################
 
-@patch.object(messages.api, 'send')
-@patch.object(messages.cli, 'get_body_from_file')
-@patch.object(messages.cli, 'check_type')
-@patch.object(messages.cli, 'check_args')
-def test_main(args_mock, type_mock, body_mock, send_mock):
+def test_main_listTypes(main_mocks):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN args = ['-T']
+    THEN assert only certain functions are called
+    """
+    args_mk, type_mk, list_mk, body_mk, config_mk, send_mk = main_mocks
     runner = CliRunner()
-    result = runner.invoke(main, ['-t', 'email'], catch_exceptions=True)
+    runner.invoke(main, ['-T'], catch_exceptions=False)
+    assert args_mk.call_count == 1
+    assert list_mk.call_count == 1
+    assert type_mk.call_count == 0
+    assert body_mk.call_count == 0
+    assert config_mk.call_count == 0
+    assert send_mk.call_count == 0
+
+
+def test_main_configure(main_mocks):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN args = ['-C']
+    THEN assert only certain functions are called
+    """
+    args_mk, type_mk, list_mk, body_mk, config_mk, send_mk = main_mocks
+    runner = CliRunner()
+    runner.invoke(main, ['-C'], catch_exceptions=False)
+    assert args_mk.call_count == 1
+    assert list_mk.call_count == 0
+    assert type_mk.call_count == 0
+    assert body_mk.call_count == 0
+    assert config_mk.call_count == 1
+    assert send_mk.call_count == 0
+
+
+def test_main_configure_and_listTypes(main_mocks):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN args = ['-C', '-T']
+    THEN assert only certain functions are called
+    """
+    args_mk, type_mk, list_mk, body_mk, config_mk, send_mk = main_mocks
+    runner = CliRunner()
+    runner.invoke(main, ['-C', '-T'], catch_exceptions=False)
+    assert args_mk.call_count == 1
+    assert list_mk.call_count == 1
+    assert type_mk.call_count == 0
+    assert body_mk.call_count == 0
+    assert config_mk.call_count == 0
+    assert send_mk.call_count == 0
+
+
+def test_main_MessageFromFile(main_mocks):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN args = ['email', -M', './somefile']
+    THEN assert only certain functions are called
+    """
+    args_mk, type_mk, list_mk, body_mk, config_mk, send_mk = main_mocks
+    runner = CliRunner()
+    runner.invoke(main, ['email', '-M', './somefile'], catch_exceptions=False)
+    assert args_mk.call_count == 1
+    assert list_mk.call_count == 0
+    assert type_mk.call_count == 1
+    assert body_mk.call_count == 1
+    assert config_mk.call_count == 0
+    assert send_mk.call_count == 1
+
+
+def test_main_MessageFromFile_noType(main_mocks, mocker):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN args = [-M', './somefile']
+    THEN assert only certain functions are called
+    """
+    args_mk, type_mk, list_mk, body_mk, config_mk, send_mk = main_mocks
+    echo_mk = mocker.patch('click.echo')
+    runner = CliRunner()
+    runner.invoke(main, ['-M', './somefile'], catch_exceptions=False)
+    assert args_mk.call_count == 1
+    assert list_mk.call_count == 1
+    assert type_mk.call_count == 0
+    assert body_mk.call_count == 1
+    assert config_mk.call_count == 0
+    assert send_mk.call_count == 0
+    assert echo_mk.call_count == 2

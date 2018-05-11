@@ -57,6 +57,7 @@ setup(
     test_suite='tests',
     test_requires=[
         'pytest-cov',
+        'pytest-mock',
         'flake8',
         'tox',
     ],
