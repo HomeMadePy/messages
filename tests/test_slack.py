@@ -1,11 +1,9 @@
 """messages.slack tests."""
 
 import pytest
-
 import requests
 
 from collections import deque
-from unittest.mock import patch
 
 from messages.slack import SlackWebhook
 from messages._eventloop import MESSAGELOOP
@@ -44,26 +42,26 @@ def test_slack_init(get_slack):
 # TESTS: SlackWebhook.construct_message
 ##############################################################################
 
-@patch.object(SlackWebhook, 'add_attachments')
-def test_slack_construct_message(add_mock, get_slack):
+def test_slack_construct_message(get_slack, mocker):
     """
     GIVEN a valid SlackWebhook object
     WHEN construct_message() is called
     THEN assert the message is properly created
     """
+    add_mock = mocker.patch.object(SlackWebhook, 'add_attachments')
     s = get_slack
     s.construct_message()
     assert s.message['text'] == 'message'
     assert add_mock.call_count == 1
 
 
-@patch.object(SlackWebhook, 'add_attachments')
-def test_slack_construct_message_withFromSubj(add_mock, get_slack):
+def test_slack_construct_message_withFromSubj(get_slack, mocker):
     """
     GIVEN a valid SlackWebhook object
     WHEN construct_message() is called
     THEN assert the message is properly created
     """
+    add_mock = mocker.patch.object(SlackWebhook, 'add_attachments')
     s = get_slack
     s.from_ = 'me'
     s.subject = 'Tst Msg'
@@ -122,14 +120,14 @@ def test_slack_add_attachments_with_params(get_slack):
 # TESTS: SlackWebhook.send
 ##############################################################################
 
-@patch.object(requests, 'post')
-@patch.object(SlackWebhook, 'construct_message')
-def test_slack_send(con_mock, req_mock, get_slack, capsys):
+def test_slack_send(get_slack, capsys, mocker):
     """
     GIVEN a valid SlackWebhook object
     WHEN send() is called
     THEN assert the proper send sequence occurs
     """
+    con_mock = mocker.patch.object(SlackWebhook, 'construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
     s = get_slack
     s.send()
     out, err = capsys.readouterr()
@@ -144,13 +142,13 @@ def test_slack_send(con_mock, req_mock, get_slack, capsys):
 # TESTS: SlackWebhook.send_async
 ##############################################################################
 
-@patch.object(MESSAGELOOP, 'add_message')
-def test_slack_send_async(msgloop_mock, get_slack):
+def test_slack_send_async(get_slack, mocker):
     """
     GIVEN a valid SlackWebhook object
     WHEN send_async() is called
     THEN assert the proper send sequence occurs
     """
+    msgloop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
     s = get_slack
     s.send_async()
     assert msgloop_mock.call_count == 1

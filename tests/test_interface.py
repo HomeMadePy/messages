@@ -1,7 +1,6 @@
 """messages._interface tests."""
 
 import pytest
-from unittest.mock import patch
 
 import messages._interface
 from messages._interface import Message
@@ -31,11 +30,17 @@ class MsgBad2(Message):
     def send_async(self): pass
 
 
+@pytest.fixture()
+def val_mock(mocker):
+    """mock the VALIDATOR."""
+    val_mock = mocker.patch.object(messages._interface, 'VALIDATOR')
+    return val_mock
+
+
 ##############################################################################
 # TESTS: instantiation
 ##############################################################################
 
-@patch.object(messages._interface, 'VALIDATOR')
 def test_MsgGood(val_mock):
     """
     GIVEN a message class that inherits from 'Message'
@@ -70,7 +75,6 @@ def test_MsgBad2():
 # TESTS: __setattr__
 ##############################################################################
 
-@patch.object(messages._interface, 'VALIDATOR')
 def test_setattr(val_mock):
     """
     GIVEN a message class that inherits from 'Message'
@@ -85,7 +89,6 @@ def test_setattr(val_mock):
 # TESTS: __repr__
 ##############################################################################
 
-@patch.object(messages._interface, 'VALIDATOR')
 def test_repr(val_mock, capsys):
     """
     GIVEN a message class that inherits from 'Message'
@@ -104,7 +107,6 @@ def test_repr(val_mock, capsys):
 # TESTS: __iter__
 ##############################################################################
 
-@patch.object(messages._interface, 'VALIDATOR')
 def test_iter(val_mock):
     """
     GIVEN a message class that inherits from 'Message'

@@ -3,7 +3,6 @@
 import pytest
 
 from collections import deque
-from unittest.mock import patch
 
 from twilio.rest import Client
 
@@ -18,9 +17,9 @@ from messages._eventloop import MESSAGELOOP
 ##############################################################################
 
 @pytest.fixture()
-@patch.object(messages.text, 'configure')
-def get_twilio(config_mock):
+def get_twilio(mocker):
     """Return a valid Twilio object."""
+    configure_mock = mocker.patch.object(messages.text, 'configure')
     t = Twilio(from_='+16198675309', to='+16195551212', acct_sid='test_sid',
         auth_token='test_token', body='test text!',
         attachments='https://imgs.xkcd.com/comics/python.png',
@@ -79,13 +78,13 @@ def test_twilio_str(get_twilio,cfg_mock, capsys):
 # TESTS: Twilio.get_client
 ##############################################################################
 
-@patch.object(messages.text, 'Client')
-def test_get_client(get_twilio):
+def test_get_client(get_twilio, mocker):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.get_client is called
     THEN assert a twilio.rest.Client is returned (a Mock object)
     """
+    client_mock = mocker.patch.object(messages.text, 'Client')
     t = get_twilio
     client = t.get_client()
     assert client is not None
@@ -95,14 +94,14 @@ def test_get_client(get_twilio):
 # TESTS: Twilio.send
 ##############################################################################
 
-@patch.object(Client, 'messages')
-def test_send(messages_mock, get_twilio, cfg_mock, capsys):
+def test_send(get_twilio, cfg_mock, capsys, mocker):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() is called
     THEN assert the correct functions are called and correct attributes
         updated
     """
+    msg_mock = mocker.patch.object(Client, 'messages')
     t = get_twilio
     t.send()
     t.sid = 12345
@@ -116,13 +115,13 @@ def test_send(messages_mock, get_twilio, cfg_mock, capsys):
 # TESTS: Twilio.send_async
 ##############################################################################
 
-@patch.object(MESSAGELOOP, 'add_message')
-def test_send_async(msg_loop_mock, cfg_mock, get_twilio):
+def test_send_async(cfg_mock, get_twilio, mocker):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send_async() is called
     THEN assert it is added to the event loop for async sending
     """
+    msg_loop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
     t = get_twilio
     t.send_async()
     assert msg_loop_mock.call_count == 1

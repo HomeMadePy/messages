@@ -2,7 +2,6 @@
 
 import pytest
 import builtins
-from unittest.mock import patch
 
 import jsonconfig
 
@@ -58,16 +57,15 @@ def test_configure_profileYes_saveTrue(cfg_mock):
     assert msg.password == 'passw0rd'
 
 
-@patch.object(messages.config, 'getpass')
-def test_configure_noPassword(getpass_mock, cfg_mock):
+def test_configure_noPassword(cfg_mock, mocker):
     """
     GIVEN a valid message object
     WHEN `configure` is called with the specified args
     THEN assert appropriate attributes are set
     """
+    getpass_mock = mocker.patch.object(messages.config, 'getpass')
     msg = Msg(from_='me', password=None, profile='NewProf', save=False)
     configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'password'})
-    print(msg.password)
     assert getpass_mock.call_count == 1
 
 
@@ -98,8 +96,15 @@ def test_set_default_profileBad(cfg_mock):
 # TESTS: create_config
 ##############################################################################
 
-@patch.object(messages.config, 'getpass')
-@patch.object(builtins, 'input')
-def test_create_config_withParams(input_mock, getpass_mock, cfg_mock):
+def test_create_config_withParams(cfg_mock, mocker):
+    """
+    GIVEN a configuration profile to create
+    WHEN create_config() is called with correct params
+    THEN assert correct functionality is called
+    """
+    input_mock = mocker.patch.object(builtins, 'input')
+    getpass_mock = mocker.patch.object(messages.config, 'getpass')
     create_config('email', 'myProfile', {'defaults': ['from_'],
         'credentials': ['password']})
+    assert input_mock.call_count == 1
+    assert getpass_mock.call_count == 1

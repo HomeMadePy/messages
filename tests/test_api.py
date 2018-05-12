@@ -1,7 +1,6 @@
 """messages.api tests."""
 
 import pytest
-from unittest.mock import patch, Mock
 
 import messages.api
 from messages.api import send
@@ -42,26 +41,26 @@ def twilio_kwargs():
 # TESTS: send()
 ##############################################################################
 
-@patch.object(messages.api, 'message_factory')
-def test_send_async_false(fact_mock, email_kwargs):
+def test_send_async_false(email_kwargs, mocker):
     """
     GIVEN a need to create and send an email message
     WHEN api.send() is called
     THEN assert first the factory function returns a valid message instance
     """
     kwargs = email_kwargs
+    fact_mock = mocker.patch.object(messages.api, 'message_factory')
     send('email', **kwargs)
     assert fact_mock.call_count == 1
 
 
-@patch.object(messages.api, 'message_factory')
-def test_send_async_true(fact_mock, email_kwargs):
+def test_send_async_true(email_kwargs, mocker):
     """
     GIVEN a need to create and send an email message
     WHEN api.send() is called
     THEN assert first the factory function returns a valid message instance
     """
     kwargs = email_kwargs
+    fact_mock = mocker.patch.object(messages.api, 'message_factory')
     send('email', send_async=True, **kwargs)
     assert fact_mock.call_count == 1
 

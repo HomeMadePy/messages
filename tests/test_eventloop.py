@@ -4,7 +4,8 @@ import pytest
 
 import asyncio
 from collections import deque
-from unittest.mock import patch, Mock
+from unittest.mock import Mock
+
 from messages._eventloop import MessageLoop
 from messages.exceptions import UnsupportedMessageTypeError
 
@@ -48,13 +49,13 @@ def test_init(get_messageloop):
 # TESTS: MessageLoop.add_message
 ##############################################################################
 
-@patch.object(MessageLoop, 'send_loop')
-def test_add_message_msgGood(send_loop_mock, get_messageloop):
+def test_add_message_msgGood(get_messageloop, mocker):
     """
     GIVEN a valid MessageLoop object
     WHEN a valid message is added with the add_message method
     THEN assert it is added and send_loop() is called
     """
+    send_loop_mock = mocker.patch.object(MessageLoop, 'send_loop')
     ml = get_messageloop
     ml.add_message(MsgGood())
     assert send_loop_mock.call_count == 1

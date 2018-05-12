@@ -105,7 +105,7 @@ class Email(Message):
 
 
     @staticmethod
-    def get_server(address):
+    def get_server(address=None):
         """Return an SMTP servername guess from outgoing email address."""
         if address:
             domain = address.split('@')[1]
