@@ -51,7 +51,7 @@ setup(
         'requests',
         'jsonconfig-tool',
         'twilio',
-        'validus',
+        'validus>=0.3.0',
     ],
 
     test_suite='tests',
