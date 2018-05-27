@@ -1,138 +1,61 @@
-"""
-Utility Module - globals, classes, and functions useful to all other modules.
-
-1.  Validator
-    - Class used to validate user input for each message class.
-    - i.e. validate email address inputs or phone number inputs
-        using regular expressions.
-    - Uses the third-party module, 'validus', for regular expressions.
-        https://github.com/shopnilsazal/validus
-"""
-
-import functools
-import inspect
+"""Utility Module - functions useful to other modules."""
 
 import validus
 
 from .exceptions import InvalidMessageInputError
 
 
-class Validator:
-    """
-    Input validation class.
+"""
+Functions below this header are used within the _interface.py module in
+order to validate user-input to specific fields.
+"""
 
-    Each message classe's 'command' should be a command that returns a bool.
-    """
-
-    EMAIL = {
-             'from_': {
-                       'command': validus.isemail,
-                       'type': 'email address',
-                       },
-             'to': {
-                    'command': validus.isemail,
-                    'type': 'email address',
-                    },
-             'cc': {
-                    'command': validus.isemail,
-                    'type': 'email address or list of email addresses',
-                    },
-             'bcc': {
-                     'command': validus.isemail,
-                     'type': 'email address or list of email addresses',
-                     },
-            }
-
-    TWILIO = {
-              'from_': {
-                        'command': validus.isphone,
-                        'type': 'phone number',
-                        },
-              'to': {
-                     'command': validus.isphone,
-                     'type': 'phone number',
-                     },
-              'media_url': {
-                            'command': validus.isurl,
-                            'type': 'url',
-                    },
-            }
-
-    SLACKWEBHOOK = {
-                    'webhook_url': {
-                                    'command': validus.isurl,
-                                    'type': 'url',
-                                    },
-                    'attach_urls': {
-                                    'command': validus.isurl,
-                                    'type': 'url or list of urls',
-                                    },
-                    }
-
-    def __init__(self):
+def validate_input(msg, attr, valid=True):
+    """Base function to validate input, dispatched via message type."""
+    try:
+        valid = {
+            'Email': validate_email,
+            'Twilio': validate_twilio,
+            'SlackWebhook': validate_slackwebhook,
+        }[msg.__class__.__name__](msg, attr)
+    except KeyError:
         pass
 
 
-    def validate_input(self, msg, attr):
-        """
-        Validate the given input for correct types, using
-        regular expressions with the 'validus' package.  Actual validation
-        is done via the is_valid() method so the functools.lru_cache decorator
-        can be used to memoize/cache inputs.
+def check_valid(msg, attr, func, exec_info):
+    """
+    Checker function all validate_* functions below will call.
+    Raises InvalidMessageInputError if input is not valid as per
+    given func.
+    """
+    if getattr(msg, attr) is not None:
+        if isinstance(getattr(msg, attr), list):
+                for item in getattr(msg, attr):
+                        if not func(item):
+                            raise InvalidMessageInputError(msg.__class__.__name__,
+                                attr, exec_info)
 
-        Args:
-            :msg: object, any instantiated message class
-                i.e. e = Email(*args)
-            :attr: str, the attribute to validate
-
-        Returns:
-            None, but raises InvalidMessageInputError if Validator._is_valid()
-                returns False.
-
-        Usage:
-            This is used by the __setattr__ override in the
-            _interface.Message class, inherited by message classes.
-        """
-        msgtype = msg.__class__.__name__.upper()
-        inputs = getattr(msg, attr)
-
-        if attr in getattr(Validator, msgtype).keys() and inputs is not None:
-
-            if isinstance(inputs, list):
-                for i in inputs:
-                    if not self._is_valid(msgtype, attr, i):
-                        raise InvalidMessageInputError(msg.__class__.__name__,
-                            i, getattr(Validator, msgtype)[attr]['type'])
-            else:
-                if not self._is_valid(msgtype, attr, inputs):
-                    raise InvalidMessageInputError(msg.__class__.__name__,
-                            inputs, getattr(Validator, msgtype)[attr]['type'])
+        else:
+            if not func(getattr(msg, attr)):
+                raise InvalidMessageInputError(msg.__class__.__name__,
+                    attr, exec_info)
 
 
-    @staticmethod
-    @functools.lru_cache(maxsize=256)
-    def _is_valid(msgtype, attr, val):
-        """
-        Check each individual input and cache the result via the
-        functools.lru_cache decorator to speed up subsequent calls with
-        the same input.
-
-        Args:
-            :msgtype: str.upper(), type of message in uppercase format
-            :attr:, str, the attribute to validate
-            :val:, str, the value of that attribute (attr)
-
-        Returns:
-            bool, from operation of `command(val)`.  i.e. True if the
-                'val' is valid, False otherwise.
-
-        Example inputs:
-            Validator._is_valid('EMAIL', 'from_', 'me@here.com')
-            returns True
-        """
-        msgtype = getattr(Validator, msgtype)
-        command = msgtype[attr]['command']
-        return command(val)
+def validate_email(msg, attr):
+    """Email input validator function."""
+    if attr in ('from_', 'to', 'cc', 'bcc'):
+        check_valid(msg, attr, validus.isemail, 'email address')
 
 
-VALIDATOR = Validator()
+def validate_twilio(msg, attr):
+    """Twilio input validator function."""
+    if attr in ('from_', 'to'):
+        check_valid(msg, attr, validus.isphone, 'phone number')
+    elif attr in ('media_url'):
+        check_valid(msg, attr, validus.isurl, 'url')
+
+
+def validate_slackwebhook(msg, attr):
+    """SlackWebhook input validator function."""
+    if attr in ('webhook_url', 'attachments'):
+        check_valid(msg, attr, validus.isurl, 'url')

@@ -60,7 +60,7 @@ class SlackWebhook(Message):
 
         self.subject = subject
         self.body = body
-        self.attachments = attachments
+        self.attachments = attachments or []
         self.params = params
         self.message = {}
         self.sent_messages = deque()
@@ -80,6 +80,7 @@ class SlackWebhook(Message):
 
     def add_attachments(self):
         """Add attachments."""
+        print(self.attachments)
         if self.attachments:
             if not isinstance(self.attachments, list):
                 self.attachments = [self.attachments]

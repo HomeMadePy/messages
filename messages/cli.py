@@ -9,6 +9,7 @@ from click import option
 
 
 from messages import MESSAGES
+from messages import __version__ as VERSION
 from .api import send
 from .config import create_config
 from .exceptions import UnsupportedMessageTypeError
@@ -42,7 +43,7 @@ def trim_args(kwds):
     kwargs = {k:v for k,v in kwds.items() if k not in reject_key and
                                              v not in reject_val}
     for k, v in kwargs.items():
-        if k in ('to', 'cc', 'bcc', 'attach'):
+        if k in ('to', 'cc', 'bcc', 'attachments'):
             kwargs[k] = list(kwargs[k])
     return kwargs
 
@@ -93,7 +94,7 @@ def list_types():
     help='List available message types and exit.')
 @option('-C', '--configure', is_flag=True,
     help='Configure specified message type and exit.')
-@click.version_option(version='0.3.3', prog_name='Messages')
+@click.version_option(version=VERSION, prog_name='Messages')
 @click.pass_context
 def main(ctx, **kwds):
     """

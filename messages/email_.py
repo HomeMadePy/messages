@@ -87,7 +87,6 @@ class Email(Message):
         self.message = None
         self.sent_messages = deque()
 
-
     def __str__(self):
         """print(Email(**args)) method."""
         return('MIMEMultipart Email:'

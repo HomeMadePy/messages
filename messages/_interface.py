@@ -4,7 +4,7 @@
 from abc import ABCMeta
 from abc import abstractmethod
 
-from ._utils import VALIDATOR
+from ._utils import validate_input
 
 
 class Message(metaclass=ABCMeta):
@@ -23,7 +23,7 @@ class Message(metaclass=ABCMeta):
     def __setattr__(self, attr, val):
         """Validate attribute inputs after assignment."""
         self.__dict__[attr] = val
-        VALIDATOR.validate_input(self, attr)
+        validate_input(self, attr)
 
 
     def __repr__(self):

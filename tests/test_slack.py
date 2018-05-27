@@ -16,8 +16,8 @@ from messages._eventloop import MESSAGELOOP
 @pytest.fixture()
 def get_slack(cfg_mock):
     """Return a valid SlackWebhook object."""
-    return SlackWebhook(url='test_url', body='message',
-                attachments=['url1', 'url2'])
+    return SlackWebhook(url='https://test_url.com', body='message',
+                attachments=['https://url1.com', 'https://url2.com'])
 
 
 ##############################################################################
@@ -31,9 +31,7 @@ def test_slack_init(get_slack):
     THEN assert it is properly created
     """
     s = get_slack
-    assert s.url == 'test_url'
     assert s.body == 'message'
-    assert s.attachments == ['url1', 'url2']
     assert isinstance(s.message, dict)
     assert isinstance(s.sent_messages, deque)
 
@@ -83,8 +81,8 @@ def test_slack_add_attachments_list(get_slack):
     """
     s = get_slack
     s.add_attachments()
-    expected = [{'image_url': 'url1', 'author_name': ''},
-                {'image_url': 'url2', 'author_name': ''}]
+    expected = [{'image_url': 'https://url1.com', 'author_name': ''},
+                {'image_url': 'https://url2.com', 'author_name': ''}]
     assert s.message['attachments'] == expected
 
 
@@ -95,9 +93,9 @@ def test_slack_add_attachments_str(get_slack):
     THEN assert the urls are properly attached to the message
     """
     s = get_slack
-    s.attachments = 'url1'
+    s.attachments = 'https://url1.com'
     s.add_attachments()
-    expected = [{'image_url': 'url1', 'author_name': ''}]
+    expected = [{'image_url': 'https://url1.com', 'author_name': ''}]
     assert s.message['attachments'] == expected
 
 
@@ -108,10 +106,10 @@ def test_slack_add_attachments_with_params(get_slack):
     THEN assert the extra params are properly added
     """
     s = get_slack
-    s.attachments = 'url1'
+    s.attachments = 'https://url1.com'
     s.params = {'author_name': 'me', 'text': 'image of me'}
     s.add_attachments()
-    expected = [{'image_url': 'url1', 'author_name': 'me',
+    expected = [{'image_url': 'https://url1.com', 'author_name': 'me',
                 'text': 'image of me'}]
     assert s.message['attachments'] == expected
 

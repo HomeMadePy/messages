@@ -32,8 +32,8 @@ class MsgBad2(Message):
 
 @pytest.fixture()
 def val_mock(mocker):
-    """mock the VALIDATOR."""
-    val_mock = mocker.patch.object(messages._interface, 'VALIDATOR')
+    """mock validate_input."""
+    val_mock = mocker.patch.object(messages._interface, 'validate_input')
     return val_mock
 
 
@@ -79,10 +79,11 @@ def test_setattr(val_mock):
     """
     GIVEN a message class that inherits from 'Message'
     WHEN instantiated with all required abstract methods
-    THEN assert VALIDATOR.validate_input is called once per attribute (2)
+    THEN assert validate_input is called once per attribute (2)
     """
     msg = MsgGood(1, 2)
-    assert val_mock.validate_input.call_count == 2
+    validator = val_mock
+    assert validator.call_count == 2
 
 
 ##############################################################################
