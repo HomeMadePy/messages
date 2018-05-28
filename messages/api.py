@@ -1,8 +1,5 @@
 """This module implements the Messages API."""
 
-import copy
-import inspect
-
 from .email_ import Email
 from .slack import SlackWebhook
 from .text import Twilio
