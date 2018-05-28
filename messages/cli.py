@@ -50,7 +50,7 @@ def trim_args(kwds):
 
 def create_config_entry(msg_type):
     """Creates an entry in the config.json file for later use."""
-    print('You will need the following information to configure: ' + msg_type)
+    click.echo('You will need the following information to configure: ' + msg_type)
     for item in (MESSAGES[msg_type]['defaults'] +
                  MESSAGES[msg_type]['credentials']):
         click.echo('\t* ' + item)
