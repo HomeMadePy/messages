@@ -8,7 +8,7 @@ from .slack import SlackWebhook
 from .text import Twilio
 
 
-__version__ = '0.3.4'
+__version__ = '0.3.3'
 
 
 MESSAGES = {
