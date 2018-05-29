@@ -12,7 +12,7 @@ with open('messages/__init__.py', 'rb') as f:
         f.read().decode('utf-8')).group(1)))
 
 
-# load README.rst
+# load README.md
 with open('README.md', 'r', encoding='utf-8') as f:
     readme = f.read()
 
@@ -30,6 +30,7 @@ setup(
     description=('A package designed to make sending messages '
                  'easy and efficient!'),
     long_description=readme,
+    long_description_content_type='text/markdown',
 
     packages=find_packages(include=['messages']),
     include_package_data=True,
