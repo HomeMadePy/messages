@@ -4,7 +4,7 @@ import pytest
 
 from collections import deque
 
-from twilio.rest import Client
+import requests
 
 import messages.text
 from messages.text import Twilio
@@ -48,7 +48,6 @@ def test_twilio_init(get_twilio, cfg_mock):
     assert t.auth_token == 'test_token'
     assert t.body == 'test text!'
     assert t.attachments == 'https://imgs.xkcd.com/comics/python.png'
-    assert t.client is None
     assert isinstance(t.sent_messages, deque)
 
 
@@ -75,22 +74,6 @@ def test_twilio_str(get_twilio,cfg_mock, capsys):
 
 
 ##############################################################################
-# TESTS: Twilio.get_client
-##############################################################################
-
-def test_get_client(get_twilio, mocker):
-    """
-    GIVEN a valid Twilio object
-    WHEN Twilio.get_client is called
-    THEN assert a twilio.rest.Client is returned (a Mock object)
-    """
-    client_mock = mocker.patch.object(messages.text, 'Client')
-    t = get_twilio
-    client = t.get_client()
-    assert client is not None
-
-
-##############################################################################
 # TESTS: Twilio.send
 ##############################################################################
 
@@ -101,7 +84,7 @@ def test_send(get_twilio, cfg_mock, capsys, mocker):
     THEN assert the correct functions are called and correct attributes
         updated
     """
-    msg_mock = mocker.patch.object(Client, 'messages')
+    msg_mock = mocker.patch.object(requests, 'post')
     t = get_twilio
     t.send()
     t.sid = 12345

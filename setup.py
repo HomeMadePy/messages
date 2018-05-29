@@ -50,7 +50,6 @@ setup(
         'click>=6.0',
         'requests',
         'jsonconfig-tool',
-        'twilio',
         'validus>=0.3.0',
     ],
 

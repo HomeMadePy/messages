@@ -4,7 +4,8 @@ Change Log
 0.3.4 (Upcoming Release)
 -----
 - Changes README.rst to README.md since now compatible on PyPI
-
+- Reworked the _utils.py module to be more functional and readable
+- Removes the twilio sdk dependency and just uses the requests library
 
 0.3.3
 -----

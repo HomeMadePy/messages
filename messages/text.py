@@ -11,7 +11,7 @@ Module designed to make creating and sending text messages easy.
 import sys
 from collections import deque
 
-from twilio.rest import Client
+import requests
 
 from .config import configure
 from ._eventloop import MESSAGELOOP
@@ -61,7 +61,6 @@ class Twilio(Message):
         self.to = to
         self.body = body
         self.attachments = attachments
-        self.client = None
         self.sid = None
         self.sent_messages = deque()
 
@@ -76,27 +75,24 @@ class Twilio(Message):
                .format(self.from_, self.to, self.body, self.attachments))
 
 
-    def get_client(self):
-        """Return a twilio.rest client."""
-        return Client(self.acct_sid, self.auth_token)
-
     def send(self):
         """
         Send the SMS/MMS message.
         Set self.sid to return code of message.
         Append the (sid, message) tuple to self.sent_messages as a history.
         """
-        if self.client is None:
-            self.client = self.get_client()
-        msg = self.client.messages.create(
-              to=self.to,
-              from_=self.from_,
-              body=self.body,
-              media_url=self.attachments,
-            )
-        self.sid = msg.sid
+        url = ('https://api.twilio.com/2010-04-01/Accounts/'
+               + self.acct_sid + '/Messages.json')
+        data = {
+            'From': self.from_,
+            'To': self.to,
+            'Body': self.body,
+            'MediaUrl': self.attachments,
+        }
+        r = requests.post(url, data=data, auth=(self.acct_sid, self.auth_token))
+        self.sid = r.json()['sid']
         print('Message sent...', file=sys.stdout)
-        self.sent_messages.append((msg.sid, repr(self)))
+        self.sent_messages.append((self.sid, repr(self)))
 
 
     def send_async(self):
