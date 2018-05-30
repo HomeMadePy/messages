@@ -1,6 +1,7 @@
 # Messages: Create and send messages fast!
 
 [![](https://img.shields.io/badge/built%20with-Python3-red.svg)](https://www.python.org/)
+[![PyPI version](https://badge.fury.io/py/messages.svg)](https://badge.fury.io/py/messages)
 [![](https://travis-ci.org/trp07/messages.svg?branch=master)](https://travis-ci.org/trp07/messages)
 [![](https://coveralls.io/repos/github/trp07/messages/badge.svg?branch=master)](https://coveralls.io/github/trp07/messages?branch=master)
 [![](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/trp07/messages/blob/master/LICENSE)
