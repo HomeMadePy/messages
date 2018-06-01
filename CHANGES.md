@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+0.3.5 (Under Development)
+-------------------------
+-   Makes config.py and exceptions.py into private _*.py modules
+
+
 0.3.4
 -----
 
