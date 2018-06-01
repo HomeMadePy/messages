@@ -10,7 +10,7 @@ from messages._utils import validate_email
 from messages._utils import validate_twilio
 from messages._utils import validate_slackwebhook
 from messages._utils import validus
-from messages.exceptions import InvalidMessageInputError
+from messages._exceptions import InvalidMessageInputError
 
 
 ##############################################################################

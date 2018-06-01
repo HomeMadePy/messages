@@ -6,9 +6,9 @@ import messages.api
 from messages.api import send
 from messages.api import message_factory
 from messages.email_ import Email
-from messages.exceptions import UnsupportedMessageTypeError
 from messages.slack import SlackWebhook
 from messages.text import Twilio
+from messages._exceptions import UnsupportedMessageTypeError
 
 
 ##############################################################################

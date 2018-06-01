@@ -10,7 +10,7 @@ from collections import deque
 
 import requests
 
-from .config import configure
+from ._config import configure
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
 

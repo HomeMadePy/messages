@@ -1,16 +1,16 @@
-"""messages.config tests."""
+"""messages._config tests."""
 
 import pytest
 import builtins
 
 import jsonconfig
 
-import messages.config
-from messages.config import configure
-from messages.config import set_default_profile
-from messages.config import create_config
-from messages.config import getpass
-from messages.exceptions import UnknownProfileError
+import messages._config
+from messages._config import configure
+from messages._config import set_default_profile
+from messages._config import create_config
+from messages._config import getpass
+from messages._exceptions import UnknownProfileError
 
 
 ##############################################################################
@@ -63,7 +63,7 @@ def test_configure_noPassword(cfg_mock, mocker):
     WHEN `configure` is called with the specified args
     THEN assert appropriate attributes are set
     """
-    getpass_mock = mocker.patch.object(messages.config, 'getpass')
+    getpass_mock = mocker.patch.object(messages._config, 'getpass')
     msg = Msg(from_='me', password=None, profile='NewProf', save=False)
     configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'password'})
     assert getpass_mock.call_count == 1
@@ -103,7 +103,7 @@ def test_create_config_withParams(cfg_mock, mocker):
     THEN assert correct functionality is called
     """
     input_mock = mocker.patch.object(builtins, 'input')
-    getpass_mock = mocker.patch.object(messages.config, 'getpass')
+    getpass_mock = mocker.patch.object(messages._config, 'getpass')
     create_config('email', 'myProfile', {'defaults': ['from_'],
         'credentials': ['password']})
     assert input_mock.call_count == 1

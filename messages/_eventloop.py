@@ -5,7 +5,7 @@ be non-blocking.
 
 import asyncio
 
-from .exceptions import UnsupportedMessageTypeError
+from ._exceptions import UnsupportedMessageTypeError
 
 
 class MessageLoop:

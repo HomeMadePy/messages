@@ -9,7 +9,7 @@ from getpass import getpass
 
 import jsonconfig
 
-from .exceptions import UnknownProfileError
+from ._exceptions import UnknownProfileError
 
 
 def configure(msg, params, to_save, credentials):

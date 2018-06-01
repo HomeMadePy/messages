@@ -2,7 +2,7 @@
 
 import validus
 
-from .exceptions import InvalidMessageInputError
+from ._exceptions import InvalidMessageInputError
 
 
 """

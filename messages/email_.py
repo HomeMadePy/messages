@@ -13,7 +13,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
-from .config import configure
+from ._config import configure
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
 

@@ -11,8 +11,8 @@ from click import option
 from messages import MESSAGES
 from messages import __version__ as VERSION
 from .api import send
-from .config import create_config
-from .exceptions import UnsupportedMessageTypeError
+from ._config import create_config
+from ._exceptions import UnsupportedMessageTypeError
 
 
 def check_args(ctx, kwds):

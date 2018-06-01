@@ -1,10 +1,10 @@
-"""messages.exceptions tests."""
+"""messages._exceptions tests."""
 
 import pytest
 
-from messages.exceptions import InvalidMessageInputError
-from messages.exceptions import UnsupportedMessageTypeError
-from messages.exceptions import UnknownProfileError
+from messages._exceptions import InvalidMessageInputError
+from messages._exceptions import UnsupportedMessageTypeError
+from messages._exceptions import UnknownProfileError
 
 
 ##############################################################################

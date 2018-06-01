@@ -21,8 +21,8 @@ from messages.cli import trim_args
 from messages.cli import create_config_entry
 from messages.cli import list_types
 from messages.cli import main
-from messages.exceptions import UnsupportedMessageTypeError
 from messages.email_ import Email
+from messages._exceptions import UnsupportedMessageTypeError
 
 
 ##############################################################################

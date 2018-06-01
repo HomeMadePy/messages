@@ -7,7 +7,7 @@ from collections import deque
 from unittest.mock import Mock
 
 from messages._eventloop import MessageLoop
-from messages.exceptions import UnsupportedMessageTypeError
+from messages._exceptions import UnsupportedMessageTypeError
 
 
 ##############################################################################
