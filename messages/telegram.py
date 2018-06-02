@@ -25,7 +25,7 @@ class TelegramBot(Message):
         :chat_id: (str) chat_id for already-intiated chat.  Integer represented
             as a string.  Recipient must have already initiated chat at some
             point in the past for bot to send message.
-        :user_name: (str) if chat_id is unknown, can specify username of
+        :to: (str) if chat_id is unknown, can specify username of
             recipient to lookup via API call.
         :subject: (str) optional arg to specify message subject.
         :body: (str) message to send.
@@ -51,19 +51,19 @@ class TelegramBot(Message):
     """
 
     def __init__(
-        self, from_=None, bot_token=None, chat_id=None, username=None,
+        self, from_=None, bot_token=None, chat_id=None, to=None,
         subject=None, body='', attachments=None, params=None, profile=None,
         save=False
     ):
 
         config_kwargs = {'from_': from_, 'bot_token': bot_token,
-                     'chat_id': chat_id or self.get_chat_id(username),
+                     'chat_id': chat_id or self.get_chat_id(to),
                      'profile': profile, 'save': save}
 
         configure(self, params=config_kwargs,
                 to_save={'from_', 'chat_id'}, credentials={'bot_token'})
 
-        self.username = username
+        self.to = to
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
