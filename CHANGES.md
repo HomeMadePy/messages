@@ -1,8 +1,12 @@
 Change Log
 ==========
 
-0.4.0 (Under Development)
--------------------------
+Current Progress
+----------------
+-   Next version in development
+
+0.4.0
+-----
 -   Adds support for [Telegram Bot](https://core.telegram.org/bots/api#available-methods) messages
 -   Makes config.py and exceptions.py into private _*.py modules
 
