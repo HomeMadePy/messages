@@ -9,6 +9,7 @@ from messages._utils import check_valid
 from messages._utils import validate_email
 from messages._utils import validate_twilio
 from messages._utils import validate_slackwebhook
+from messages._utils import validate_telegrambot
 from messages._utils import validus
 from messages._exceptions import InvalidMessageInputError
 
@@ -35,6 +36,14 @@ class SlackWebhook:
        self.webhook_url = webhook_url
        self.attachments = attachments
 
+
+class TelegramBot:
+    """Basic TelegramBot class used for testing."""
+    def __init__(self, bot_token, chat_id):
+       self.bot_token = bot_token
+       self.chat_id = chat_id
+
+
 def func(item):
     """Test func for check_valid."""
     if item == 'BAD':
@@ -59,6 +68,12 @@ def get_twilio():
 def get_slackwebhook():
     """Return a valid SlackWebhook object for testing."""
     return SlackWebhook('https://webhookurl.com', 'https://url.com')
+
+
+@pytest.fixture()
+def get_tgram():
+    """Return a valid SlackWebhook object for testing."""
+    return TelegramBot('12345:ABCDEFG', '12356')
 
 
 ##############################################################################
@@ -119,6 +134,19 @@ def test_val_input_SlackWebhook(get_slackwebhook, mocker):
     assert val_mock.call_count == 2
 
 
+def test_val_input_TelegramBot(get_tgram, mocker):
+    """
+    GIVEN a message object is instantiated
+    WHEN validate_input() is called on a message object
+    THEN assert the proper valid_* functions are called
+    """
+    val_mock = mocker.patch.object(messages._utils, 'validate_telegrambot')
+    e = get_tgram
+    for key in e.__dict__.keys():
+        validate_input(e, key)
+    assert val_mock.call_count == 2
+
+
 ##############################################################################
 # TEST: validate_*
 ##############################################################################
@@ -163,6 +191,20 @@ def test_val_slackwebhook(get_slackwebhook, mocker):
     for key in e.__dict__.keys():
         validate_slackwebhook(e, key)
     assert check_mock.call_count == 2
+
+
+def test_val_telegrambot(get_tgram, mocker):
+    """
+    GIVEN a TelegramBot object
+    WHEN validate_telegrambot is called
+    THEN assert check_valid is called the requisite number of times
+    """
+    check_mock = mocker.patch.object(messages._utils, 'check_valid')
+    e = get_tgram
+    e.not_checked = 'this attr should not get checked'
+    for key in e.__dict__.keys():
+        validate_telegrambot(e, key)
+    assert check_mock.call_count == 1
 
 
 ##############################################################################

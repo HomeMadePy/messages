@@ -17,6 +17,7 @@ def validate_input(msg, attr, valid=True):
             'Email': validate_email,
             'Twilio': validate_twilio,
             'SlackWebhook': validate_slackwebhook,
+            'TelegramBot': validate_telegrambot,
         }[msg.__class__.__name__](msg, attr)
     except KeyError:
         pass
@@ -59,3 +60,9 @@ def validate_slackwebhook(msg, attr):
     """SlackWebhook input validator function."""
     if attr in ('webhook_url', 'attachments'):
         check_valid(msg, attr, validus.isurl, 'url')
+
+
+def validate_telegrambot(msg, attr):
+    """TelegramBot input validator function."""
+    if attr in ('chat_id'):
+        check_valid(msg, attr, validus.isint, 'integer as a string')

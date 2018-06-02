@@ -218,6 +218,24 @@ def test_create_config_entry_yes_slackwebhook(capsys, mocker):
     assert create_cfg_mk.call_count == 1
 
 
+def test_create_config_entry_yes_tgram(capsys, mocker):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN create_config_entry is called with a valid message type with user
+        input=yes
+    THEN assert correct output is printed and create_config is called
+    """
+    input_mk = mocker.patch.object(builtins, 'input', return_value='y')
+    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
+    create_config_entry('telegrambot')
+    out, err = capsys.readouterr()
+    assert 'You will need the following information to configure: telegrambot' in out
+    assert 'chat_id' in out
+    assert 'bot_token' in out
+    assert input_mk.call_count == 2
+    assert create_cfg_mk.call_count == 1
+
+
 def test_create_config_entry_no(capsys, mocker):
     """
     GIVEN a call to messages via the CLI
