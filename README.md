@@ -12,8 +12,9 @@ Join the conversation in the [Messages Slack Team](https://messages-py.herokuapp
 ## Purpose
 
 - **Messages** is a package designed to make sending messages easy!
-- **Messages** incorporates various standard library module, third-party module, web app API calls, etc. all in one package.
-- **Messages** can send messages *asynchronously*.
+- **Messages** wraps various standard library module, third-party module, web app API calls, etc. all in one package.
+- **Messages** can send messages **asynchronously**.
+- **Messages** can send messages via the **command-line interface**.
 
 
 ## Installation
@@ -24,7 +25,8 @@ $ pip install messages
 
 ## Supported Messages
 
-* [Email SMTP](https://github.com/trp07/messages/wiki/Email)
+* [Email](https://github.com/trp07/messages/wiki/Email)
+* [Telegram](https://github.com/trp07/messages/wiki/TelegramBot)
 * [Twilio](https://github.com/trp07/messages/wiki/Twilio)
 * [Slack](https://github.com/trp07/messages/wiki/Slack_IncomingWebhook)
 * Read the [Wiki](https://github.com/trp07/messages/wiki) for usage.
@@ -33,15 +35,19 @@ $ pip install messages
 ## Upcoming Messages
 
 * Whatever the community thinks is fun or interesting.
+* Please [Contribute](https://github.com/trp07/messages/wiki)!
 
-## Examples
+# Examples
 
-### Email
+## [Email](https://github.com/trp07/messages/wiki/Email)
+
+### REPL
 
 ```python
 >>> from messages import Email
->>> msg = 'Hello,\n\tTry this new package called "messages"!'
->>> m = Email(from_='me@here.com',
+>>> msg = 'Hello,\n\tTry this new package called MESSAGES!'
+>>> m = Email(
+            from_='me@here.com',
             to='you@there.com',
             body=msg,
             attachments=['./file1.txt', '~/Documents/file2.pdf'],
@@ -50,9 +56,50 @@ $ pip install messages
 >>>
 >>> m.send()        # send synchronously
 >>> m.send_async()  # send asynchronously
+Message sent...
 ```
 
-**Read** the [Wiki](https://github.com/trp07/messages/wiki) for **more examples**
+### CLI
+```linux
+$ messages email -t you@there.com \
+-m 'Hello,\n\tTry this new package called MESSAGES!' \
+-a ./file.txt
+-a ~/Documents/file2.pdf
+-P myProfileName
+Message sent...
+```
+
+## [Telegram](https://github.com/trp07/messages/wiki/TelegramBot)
+
+### REPL
+
+```python
+>>> from messages import TelegramBot
+>>> msg = 'Hello,\n\tTry this new package called MESSAGES!'
+>>> t = TelegramBot(
+            to='@someone'
+            body=msg
+            attachments=['https://url1.com', 'https://url2.com']
+            profile='myProfileName'
+        )
+>>>
+>>> t.send()        # send synchronously
+>>> t.send_async()  # send asynchronously
+Message sent...
+```
+
+### CLI
+```linux
+$ messages telegrambot -t @someone \
+-m 'Hello,\n\tTry this new package called MESSAGES!' \
+-a 'https://url1.com'
+-a 'https://url2.com'
+-P myProfileName
+Message sent...
+```
+
+
+### **Read** the [Wiki](https://github.com/trp07/messages/wiki) for **more examples**
 
 
 
