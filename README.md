@@ -60,7 +60,7 @@ Message sent...
 ```
 
 ### CLI
-```linux
+```shell
 $ messages email -t you@there.com \
 -m 'Hello,\n\tTry this new package called MESSAGES!' \
 -a ./file.txt
@@ -89,7 +89,7 @@ Message sent...
 ```
 
 ### CLI
-```linux
+```shell
 $ messages telegrambot -t @someone \
 -m 'Hello,\n\tTry this new package called MESSAGES!' \
 -a 'https://url1.com'
