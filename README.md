@@ -77,9 +77,9 @@ Message sent...
 >>> from messages import TelegramBot
 >>> msg = 'Hello,\n\tTry this new package called MESSAGES!'
 >>> t = TelegramBot(
-            to='@someone'
-            body=msg
-            attachments=['https://url1.com', 'https://url2.com']
+            to='@someone',
+            body=msg,
+            attachments=['https://url1.com', 'https://url2.com'],
             profile='myProfileName'
         )
 >>>
