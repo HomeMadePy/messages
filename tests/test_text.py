@@ -1,9 +1,6 @@
 """messages.text tests."""
 
 import pytest
-
-from collections import deque
-
 import requests
 
 import messages.text
@@ -48,7 +45,6 @@ def test_twilio_init(get_twilio, cfg_mock):
     assert t.auth_token == 'test_token'
     assert t.body == 'test text!'
     assert t.attachments == 'https://imgs.xkcd.com/comics/python.png'
-    assert isinstance(t.sent_messages, deque)
 
 
 ##############################################################################
@@ -91,7 +87,6 @@ def test_send(get_twilio, cfg_mock, capsys, mocker):
     out, err = capsys.readouterr()
     assert out == 'Message sent...\n'
     assert err == ''
-    assert len(t.sent_messages) == 1
 
 
 ##############################################################################

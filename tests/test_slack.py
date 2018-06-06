@@ -3,8 +3,6 @@
 import pytest
 import requests
 
-from collections import deque
-
 from messages.slack import SlackWebhook
 from messages._eventloop import MESSAGELOOP
 
@@ -33,7 +31,6 @@ def test_slack_init(get_slack):
     s = get_slack
     assert s.body == 'message'
     assert isinstance(s.message, dict)
-    assert isinstance(s.sent_messages, deque)
 
 
 ##############################################################################
@@ -133,7 +130,6 @@ def test_slack_send(get_slack, capsys, mocker):
     assert req_mock.call_count == 1
     assert out == 'Message sent...\n'
     assert err == ''
-    assert len(s.sent_messages) == 1
 
 
 ##############################################################################

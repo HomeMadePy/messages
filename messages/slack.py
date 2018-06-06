@@ -4,9 +4,11 @@ Module designed to make creating and sending chat messages easy.
 1.  SlackWebhook
     - Send messages via the Incoming Webhooks feature
     - https://api.slack.com/incoming-webhooks
-"""
 
-from collections import deque
+2.  SlackPost
+    - Send messages via the Slack API
+    - https://api.slack.com/methods/chat.postMessage
+"""
 
 import requests
 
@@ -63,7 +65,6 @@ class SlackWebhook(Message):
         self.attachments = attachments or []
         self.params = params
         self.message = {}
-        self.sent_messages = deque()
 
 
     def construct_message(self):
@@ -80,7 +81,6 @@ class SlackWebhook(Message):
 
     def add_attachments(self):
         """Add attachments."""
-        print(self.attachments)
         if self.attachments:
             if not isinstance(self.attachments, list):
                 self.attachments = [self.attachments]
@@ -98,7 +98,6 @@ class SlackWebhook(Message):
         self.construct_message()
         requests.post(self.url, json=self.message)
         print('Message sent...')
-        self.sent_messages.append(repr(self))
 
 
     def send_async(self):

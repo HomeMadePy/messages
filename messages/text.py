@@ -9,7 +9,6 @@ Module designed to make creating and sending text messages easy.
 """
 
 import sys
-from collections import deque
 
 import requests
 
@@ -62,7 +61,6 @@ class Twilio(Message):
         self.body = body
         self.attachments = attachments
         self.sid = None
-        self.sent_messages = deque()
 
 
     def __str__(self):
@@ -92,7 +90,6 @@ class Twilio(Message):
         r = requests.post(url, data=data, auth=(self.acct_sid, self.auth_token))
         self.sid = r.json()['sid']
         print('Message sent...', file=sys.stdout)
-        self.sent_messages.append((self.sid, repr(self)))
 
 
     def send_async(self):

@@ -5,7 +5,6 @@ import os
 import pytest
 import smtplib
 
-from collections import deque
 from email.mime.multipart import MIMEMultipart
 
 import messages
@@ -68,7 +67,6 @@ def test_email_init_normal(get_email):
     assert e.body == 'message'
     assert e.attachments == ['file1', 'file2']
     assert e.message is None
-    assert isinstance(e.sent_messages, deque)
 
 
 ##############################################################################
@@ -387,7 +385,6 @@ def test_send(get_email, capsys, mocker):
     out, err = capsys.readouterr()
     assert out == 'Message sent...\n'
     assert err == ''
-    assert e.sent_messages[0] == repr(e)
 
 
 ##############################################################################

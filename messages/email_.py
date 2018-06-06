@@ -8,7 +8,6 @@ Module designed to make creating and sending emails easy.
 
 import smtplib
 import sys
-from collections import deque
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
@@ -85,7 +84,7 @@ class Email(Message):
         self.body = body
         self.attachments = attachments or []
         self.message = None
-        self.sent_messages = deque()
+
 
     def __str__(self):
         """print(Email(**args)) method."""
@@ -214,7 +213,6 @@ class Email(Message):
         session.sendmail(self.from_, recipients, self.message.as_string())
         session.quit()
         print('Message sent...', file=sys.stdout)
-        self.sent_messages.append(repr(self))
 
 
     def send_async(self):
