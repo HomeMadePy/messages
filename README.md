@@ -45,7 +45,7 @@ $ pip install messages
 
 ```python
 >>> from messages import Email
->>> msg = 'Hello,\n\tTry this new package called MESSAGES!'
+>>> msg = 'Hello,\n\tBuy more Bitcoin!'
 >>> m = Email(
             from_='me@here.com',
             to='you@there.com',
@@ -62,7 +62,7 @@ Message sent...
 ### CLI
 ```shell
 $ messages email -t you@there.com \
--m 'Hello,\n\tTry this new package called MESSAGES!' \
+-m 'Hello,\n\tBuy more Bitcoin!' \
 -a ./file.txt
 -a ~/Documents/file2.pdf
 -P myProfileName
@@ -75,9 +75,9 @@ Message sent...
 
 ```python
 >>> from messages import TelegramBot
->>> msg = 'Hello,\n\tTry this new package called MESSAGES!'
+>>> msg = 'Hello,\n\tBuy more Bitcoin!'
 >>> t = TelegramBot(
-            to='@someone',
+            chat_id='1234567',
             body=msg,
             attachments=['https://url1.com', 'https://url2.com'],
             profile='myProfileName'
@@ -90,8 +90,8 @@ Message sent...
 
 ### CLI
 ```shell
-$ messages telegrambot -t @someone \
--m 'Hello,\n\tTry this new package called MESSAGES!' \
+$ messages telegrambot \
+-m 'Hello,\n\tBuy more Bitcoin!' \
 -a 'https://url1.com'
 -a 'https://url2.com'
 -P myProfileName

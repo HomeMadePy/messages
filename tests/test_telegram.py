@@ -33,19 +33,6 @@ def test_tgram_init(get_tgram):
     assert isinstance(t.message, dict)
 
 
-def test_tgram_init_noChatID(mocker):
-    """
-    GIVEN a need for a TelegramBot object
-    WHEN instantiated without a chat_id
-    THEN assert it is properly created
-    """
-    id_mock = mocker.patch.object(TelegramBot, 'get_chat_id')
-    id_mock.return_value = '123456'
-    t = TelegramBot(bot_token='1234:ABCD')
-    assert t.chat_id == '123456'
-    assert id_mock.call_count == 1
-
-
 ##############################################################################
 # TESTS: TelegramBot.get_chat_id
 ##############################################################################

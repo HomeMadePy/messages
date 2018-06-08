@@ -26,7 +26,8 @@ class TelegramBot(Message):
             as a string.  Recipient must have already initiated chat at some
             point in the past for bot to send message.
         :to: (str) if chat_id is unknown, can specify username of
-            recipient to lookup via API call.
+            recipient to lookup via API call.  This may return None if
+            chat is older than 24-hours old.
         :subject: (str) optional arg to specify message subject.
         :body: (str) message to send.
         :attachments: (str or list) each item is a url to attach
@@ -57,8 +58,7 @@ class TelegramBot(Message):
     ):
 
         config_kwargs = {'from_': from_, 'bot_token': bot_token,
-                     'chat_id': chat_id or self.get_chat_id(to),
-                     'profile': profile, 'save': save}
+                     'chat_id': chat_id, 'profile': profile, 'save': save}
 
         configure(self, params=config_kwargs,
                 to_save={'from_', 'chat_id'}, credentials={'bot_token'})
