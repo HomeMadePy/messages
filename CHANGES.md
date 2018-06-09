@@ -5,6 +5,13 @@ Current Progress
 ----------------
 -   Next version in development
 
+
+0.4.1
+-----
+- Adds a SlackPost class, for the [chat.postMessage](https://api.slack.com/methods/chat.postMessage) API
+- Changes TelegramBot.get_chat_id method to not be called by __init__, instead as a manual method to be called by the user as needed since Telegram's getUpdate method clears all entries after 24-hours.
+
+
 0.4.0
 -----
 -   Adds support for [Telegram Bot](https://core.telegram.org/bots/api#available-methods) messages

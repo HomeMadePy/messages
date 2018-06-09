@@ -11,7 +11,7 @@ from .telegram import TelegramBot
 from .text import Twilio
 
 
-__version__ = '0.4.0'
+__version__ = '0.4.1'
 
 
 MESSAGES = {
