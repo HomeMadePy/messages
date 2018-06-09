@@ -3,8 +3,10 @@ messages - A package designed to make sending various types of messages easy.
 """
 
 from .api import send
+
 from .email_ import Email
 from .slack import SlackWebhook
+from .slack import SlackPost
 from .telegram import TelegramBot
 from .text import Twilio
 
@@ -20,6 +22,10 @@ MESSAGES = {
     'slackwebhook': {
         'defaults': ['from_', 'url'],
         'credentials': []
+    },
+    'slackpost': {
+        'defaults': ['channel'],
+        'credentials': ['token']
     },
     'telegrambot': {
         'defaults': ['from_', 'chat_id'],

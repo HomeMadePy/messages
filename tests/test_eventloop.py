@@ -3,7 +3,6 @@
 import pytest
 
 import asyncio
-from collections import deque
 from unittest.mock import Mock
 
 from messages._eventloop import MessageLoop

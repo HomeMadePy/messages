@@ -1,5 +1,7 @@
 """messages._utils tests."""
 
+import builtins
+
 import pytest
 
 import messages._utils
@@ -9,6 +11,7 @@ from messages._utils import check_valid
 from messages._utils import validate_email
 from messages._utils import validate_twilio
 from messages._utils import validate_slackwebhook
+from messages._utils import validate_slackpost
 from messages._utils import validate_telegrambot
 from messages._utils import validus
 from messages._exceptions import InvalidMessageInputError
@@ -35,6 +38,13 @@ class SlackWebhook:
     def __init__(self, webhook_url, attachments):
        self.webhook_url = webhook_url
        self.attachments = attachments
+
+
+class SlackPost:
+    """Basic SlackPost class used for testing."""
+    def __init__(self, token, channel):
+       self.token = token
+       self.channel = channel
 
 
 class TelegramBot:
@@ -68,6 +78,12 @@ def get_twilio():
 def get_slackwebhook():
     """Return a valid SlackWebhook object for testing."""
     return SlackWebhook('https://webhookurl.com', 'https://url.com')
+
+
+@pytest.fixture()
+def get_slackpost():
+    """Return a valid SlackWebhook object for testing."""
+    return SlackPost('12345abcdef', 'general')
 
 
 @pytest.fixture()
@@ -134,6 +150,30 @@ def test_val_input_SlackWebhook(get_slackwebhook, mocker):
     assert val_mock.call_count == 2
 
 
+def test_val_input_SlackPost(get_slackpost):
+    """
+    GIVEN a message object is instantiated
+    WHEN validate_input() is called on a message object
+    THEN assert no errors occur
+    """
+    e = get_slackpost
+    for key in e.__dict__.keys():
+        validate_input(e, key)
+
+
+def test_val_input_SlackPost_raises(get_slackpost):
+    """
+    GIVEN a message object is instantiated with bad inputs
+    WHEN validate_input() is called on a message object
+    THEN assert InvalidMessageInputError is raised
+    """
+    e = get_slackpost
+    e.token = 12345
+    with pytest.raises(InvalidMessageInputError):
+        for key in e.__dict__.keys():
+            validate_input(e, key)
+
+
 def test_val_input_TelegramBot(get_tgram, mocker):
     """
     GIVEN a message object is instantiated
@@ -191,6 +231,20 @@ def test_val_slackwebhook(get_slackwebhook, mocker):
     for key in e.__dict__.keys():
         validate_slackwebhook(e, key)
     assert check_mock.call_count == 2
+
+
+def test_val_slackpost(get_slackpost, mocker):
+    """
+    GIVEN a SlackPost object
+    WHEN validate_slackpost is called
+    THEN assert check_valid is called the requisite number of times
+    """
+    check_mock = mocker.patch.object(messages._utils, 'check_valid')
+    e = get_slackpost
+    e.not_checked = 'this attr should not get checked'
+    for key in e.__dict__.keys():
+        validate_slackpost(e, key)
+    assert check_mock.call_count == 0
 
 
 def test_val_telegrambot(get_tgram, mocker):

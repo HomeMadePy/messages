@@ -52,8 +52,6 @@ class Email(Message):
 
     Attributes:
         :message: (MIMEMultipart) current form of the message to be constructed
-        :sent_messages: (deque) all messages sent with current SlackWebHook
-            object, acting as a log of messages sent in the current session.
 
     Usage:
         Create an email object with required Args above.

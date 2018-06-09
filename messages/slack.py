@@ -1,13 +1,20 @@
 """
 Module designed to make creating and sending chat messages easy.
 
-1.  SlackWebhook
+1.  Slack
+    - This is a base class that has the useful API for the other slack
+      messages.
+    - This is not to be instantiated on its own.
+
+2.  SlackWebhook
     - Send messages via the Incoming Webhooks feature
     - https://api.slack.com/incoming-webhooks
+    - Inherits functionality/API from the Slack class
 
-2.  SlackPost
-    - Send messages via the Slack API
+3.  SlackPost
+    - Send messages via the Slack chat.postMessage API
     - https://api.slack.com/methods/chat.postMessage
+    - Inherits functionality/API from the Slack class
 """
 
 import requests
@@ -17,7 +24,50 @@ from ._eventloop import MESSAGELOOP
 from ._interface import Message
 
 
-class SlackWebhook(Message):
+
+class Slack(Message):
+    """Base class that Slack* classes inherit from."""
+
+    def construct_message(self):
+        """Build the message params."""
+        self.message['text'] = ''
+        if self.from_:
+            self.message['text'] += ('From: ' + self.from_ + '\n')
+        if self.subject:
+            self.message['text'] += ('Subject: ' + self.subject + '\n')
+
+        self.message['text'] += self.body
+        self.add_attachments()
+
+
+    def add_attachments(self):
+        """Add attachments."""
+        if self.attachments:
+            if not isinstance(self.attachments, list):
+                self.attachments = [self.attachments]
+
+            self.message['attachments'] = [{'image_url': url,
+                                            'author_name': ''}
+                                           for url in self.attachments]
+            if self.params:
+                for attachment in self.message['attachments']:
+                    attachment.update(self.params)
+
+
+    def send(self):
+        """Send the message via HTTP POST."""
+        self.construct_message()
+        requests.post(self.url, json=self.message)
+        print('Message sent...')
+
+
+    def send_async(self):
+        """Send message asynchronously."""
+        MESSAGELOOP.add_message(self)
+
+
+
+class SlackWebhook(Slack):
     """
     Create and send Slack message via the Incoming WebHooks API.
 
@@ -67,39 +117,64 @@ class SlackWebhook(Message):
         self.message = {}
 
 
-    def construct_message(self):
-        """Build the message params."""
-        self.message['text'] = ''
-        if self.from_:
-            self.message['text'] += ('From: ' + self.from_ + '\n')
-        if self.subject:
-            self.message['text'] += ('Subject: ' + self.subject + '\n')
 
-        self.message['text'] += self.body
-        self.add_attachments()
+class SlackPost(Slack):
+    """
+    Create and send Slack message via the Slack chat.poseMessage API
 
+    Args:
+        :from_: (str) optional arg to specify who message is from.
+        :token: (str) authentication token with required scopes.
+        :channel: (str) Channel, private group, or IM channel to send message
+        :subject: (str) optional arg to specify message subject.
+        :body: (str) message to send.
+        :attachments: (str or list) each item is a url to attach
+        :params: (dict) additional attributes to add to each attachment,
+            i.e. author_name, title, text, etc., see API for information
+            on which attributes are possible.
+        :profile: (str) use a separate account profile specified by name
+        :save: (bool) save pertinent values in the messages config file,
+            such as from_, url (encrypted keyring) to make
+            sending messages faster.
 
-    def add_attachments(self):
-        """Add attachments."""
-        if self.attachments:
-            if not isinstance(self.attachments, list):
-                self.attachments = [self.attachments]
+    Attributes:
+        :message: (dict) current form of the message to be constructed
 
-            self.message['attachments'] = [{'image_url': url,
-                                            'author_name': ''}
-                                           for url in self.attachments]
-            if self.params:
-                for attachment in self.message['attachments']:
-                    attachment.update(self.params)
+    Usage:
+        Create a SlackPost object with required Args above.
+        Send message with self.send() or self.send_async() methods.
+
+    Note:
+        For API description:
+        https://api.slack.com/methods/chat.postMessage
+    """
+
+    def __init__(
+        self, from_=None, token=None, channel=None, subject=None, body='',
+        attachments=None, params=None, profile=None, save=False
+    ):
+
+        config_kwargs = {'channel': channel, 'token': token, 'profile': profile,
+                'save': save}
+
+        configure(self, params=config_kwargs,
+                to_save={'channel'}, credentials={'token'})
+
+        self.from_ = from_
+        self.subject = subject
+        self.body = body
+        self.attachments = attachments or []
+        self.params = params
+        self.message = {'token': self.token, 'channel': self.channel}
+        self.url = 'https://slack.com/api/chat.postMessage'
 
 
     def send(self):
-        """Send the message via HTTP POST."""
+        """
+        Send the message via HTTP POST.
+        Overrides the Slack base class since the API does not accept JSON data.
+        """
         self.construct_message()
-        requests.post(self.url, json=self.message)
+        requests.post(self.url, data=self.message)
         print('Message sent...')
 
-
-    def send_async(self):
-        """Send message asynchronously."""
-        MESSAGELOOP.add_message(self)

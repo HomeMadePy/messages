@@ -2,6 +2,7 @@
 
 from .email_ import Email
 from .slack import SlackWebhook
+from .slack import SlackPost
 from .telegram import TelegramBot
 from .text import Twilio
 
@@ -11,6 +12,7 @@ from ._exceptions import UnsupportedMessageTypeError
 MESSAGE_CLASSES = {
     Email,
     SlackWebhook,
+    SlackPost,
     TelegramBot,
     Twilio,
 }

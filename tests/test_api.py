@@ -7,6 +7,7 @@ from messages.api import send
 from messages.api import message_factory
 from messages.email_ import Email
 from messages.slack import SlackWebhook
+from messages.slack import SlackPost
 from messages.telegram import TelegramBot
 from messages.text import Twilio
 from messages._exceptions import UnsupportedMessageTypeError
@@ -29,6 +30,13 @@ def email_kwargs():
 def slackwebhook_kwargs():
     return {'url': 'https://slack.com', 'body': 'Test message',
             'attachments': None, 'params': {'author_name': 'me'}}
+
+
+@pytest.fixture()
+def slackpost_kwargs():
+    return {'token': '12345abcdef', 'channel': 'general',
+            'body': 'Test message', 'attachments': None,
+            'params': {'author_name': 'me'}}
 
 
 @pytest.fixture()
@@ -106,6 +114,17 @@ def test_message_factory_slackwebhook(slackwebhook_kwargs, cfg_mock):
     kwargs = slackwebhook_kwargs
     msg = message_factory('slackwebhook', **kwargs)
     assert isinstance(msg, SlackWebhook)
+
+
+def test_message_factory_slackpost(slackpost_kwargs, cfg_mock):
+    """
+    GIVEN a need to create a slackpost message with the specified kwargs
+    WHEN message_factory is called
+    THEN assert a SlackPost instance is returned
+    """
+    kwargs = slackpost_kwargs
+    msg = message_factory('slackpost', **kwargs)
+    assert isinstance(msg, SlackPost)
 
 
 def test_message_factory_telegrambot(telegrambot_kwargs, cfg_mock):
