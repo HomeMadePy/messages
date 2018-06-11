@@ -54,10 +54,13 @@ class Slack(Message):
                     attachment.update(self.params)
 
 
-    def send(self):
-        """Send the message via HTTP POST."""
+    def send(self, encoding='json'):
+        """Send the message via HTTP POST, default is json-encoded."""
         self.construct_message()
-        requests.post(self.url, json=self.message)
+        if encoding == 'json':
+            requests.post(self.url, json=self.message)
+        elif encoding == 'url':
+            requests.post(self.url, data=self.message)
         print('Message sent...')
 
 
@@ -170,11 +173,7 @@ class SlackPost(Slack):
 
 
     def send(self):
-        """
-        Send the message via HTTP POST.
-        Overrides the Slack base class since the API does not accept JSON data.
-        """
-        self.construct_message()
-        requests.post(self.url, data=self.message)
-        print('Message sent...')
+        """Send the message via HTTP POST, url-encoded."""
+        super().send(encoding='url')
+
 
