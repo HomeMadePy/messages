@@ -90,8 +90,6 @@ class SlackWebhook(Slack):
 
     Attributes:
         :message: (dict) current form of the message to be constructed
-        :sent_messages: (deque) all messages sent with current SlackWebhook
-            object, acting as a log of messages sent in the current session.
 
     Usage:
         Create a SlackWebhook object with required Args above.
