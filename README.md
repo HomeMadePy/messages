@@ -63,8 +63,8 @@ Message sent...
 ```shell
 $ messages email -t you@there.com \
 -m 'Hello,\n\tBuy more Bitcoin!' \
--a ./file.txt
--a ~/Documents/file2.pdf
+-a ./file.txt \
+-a ~/Documents/file2.pdf \
 -P myProfileName
 Message sent...
 ```
@@ -92,8 +92,8 @@ Message sent...
 ```shell
 $ messages telegrambot \
 -m 'Hello,\n\tBuy more Bitcoin!' \
--a 'https://url1.com'
--a 'https://url2.com'
+-a 'https://url1.com/picture.gif' \
+-a 'https://url2.com/file.pdf' \
 -P myProfileName
 Message sent...
 ```
