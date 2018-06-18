@@ -2,6 +2,8 @@
 messages - A package designed to make sending various types of messages easy.
 """
 
+import logging
+
 from .api import send
 
 from .email_ import Email
@@ -14,6 +16,11 @@ from .text import Twilio
 __version__ = '0.4.1'
 
 
+# Setup logger
+logging.getLogger(__name__).addHandler(logging.NullHandler())
+
+
+# dict values for cli module
 MESSAGES = {
     'email': {
         'defaults': ['from_', 'server', 'port',],
