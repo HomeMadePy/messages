@@ -35,7 +35,7 @@ $ pip install messages
 ## Upcoming Messages
 
 * Whatever the community thinks is fun or interesting.
-* Please [Contribute](https://github.com/trp07/messages/wiki)!
+* Please [Contribute Code](https://github.com/trp07/messages/wiki)!
 
 # Examples
 
@@ -103,7 +103,7 @@ Message sent...
 
 
 
-## Contributing
+## Contributing Code
 
 * **Help Wanted!**
 * All contributions are welcome to build upon the package!
