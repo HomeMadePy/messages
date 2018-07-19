@@ -6,3 +6,10 @@ eggs/
 .eggs/
 *.egg-info/
 *.egg
+
+#Virtual Python Environments
+/venv
+
+#Integrated Development Environments
+/.idea
+.idea/
