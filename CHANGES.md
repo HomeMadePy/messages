@@ -6,6 +6,11 @@ Current Progress
 -   Next version in development
 
 
+0.4.2
+-----
+- Minor bug fix and document changes.
+
+
 0.4.1
 -----
 - Adds a SlackPost class, for the [chat.postMessage](https://api.slack.com/methods/chat.postMessage) API
