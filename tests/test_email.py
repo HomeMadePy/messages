@@ -238,8 +238,8 @@ def test_add_attachments_list_local(get_email, mocker):
     body_mock = mocker.patch.object(Email, 'add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
-    e.attachments = ['./data/file1.txt', './data/file2.png',
-                     './data/file3.pdf', './data/file4.xlsx']
+    e.attachments = ['tests/data/file1.txt', 'tests/data/file2.png',
+                     'tests/data/file3.pdf', 'tests/data/file4.xlsx']
     e.generate_email()
     assert mime_attach_mock.call_count == 4
 
@@ -276,7 +276,7 @@ def test_add_attachments_str_local(get_email, mocker):
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
     e = get_email
-    e.attachments = './data/file1.txt'
+    e.attachments = 'tests/data/file1.txt'
     e.generate_email()
     assert mime_attach_mock.call_count == 1
 
