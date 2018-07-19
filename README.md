@@ -20,7 +20,7 @@ Join the conversation in the [Messages Slack Team](https://messages-py.herokuapp
 ## Installation
 
 ```console
-$ pip install messages
+$ pip3 install messages
 ```
 
 ## Supported Messages
