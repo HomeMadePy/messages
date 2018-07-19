@@ -167,9 +167,9 @@ class Email(Message):
 
     def get_session(self):
         """Start session with email server."""
-        if self.port == 465:
+        if self.port in (465, '465'):
             session = self.get_ssl()
-        elif self.port == 587:
+        elif self.port in (587, '587'):
             session = self.get_tls()
         session.login(self.from_, self.password)
         return session
