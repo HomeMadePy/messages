@@ -341,7 +341,7 @@ def test_get_ssl_port_string(get_email, mocker):
     """
     GIVEN a valid Email object
     WHEN port type is set to string
-    THEN assert an SMTP instance is invoked
+    THEN assert the correct functions are called
     """
     getssl_mock = mocker.patch.object(Email, 'get_ssl')
     gen_email_mock = mocker.patch.object(Email, 'generate_email')
@@ -360,7 +360,7 @@ def test_get_tls_port_string(get_email, mocker):
     """
     GIVEN a valid Email object
     WHEN port type is set to string
-    THEN assert an SMTP instance is invoked
+    THEN assert the correct functions are called
     """
     gettls_mock = mocker.patch.object(Email, 'get_tls')
     gen_email_mock = mocker.patch.object(Email, 'generate_email')
