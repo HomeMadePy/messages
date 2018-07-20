@@ -334,8 +334,20 @@ def test_get_session_tls(get_email, mocker):
 
 
 ##############################################################################
-# TESTS: Email.get_ssl with port as string
+# TESTS: Email.get_ssl
 ##############################################################################
+
+def test_get_ssl(get_email, mocker):
+    """
+    GIVEN a valid Email object
+    WHEN Email.get_ssl() is called
+    THEN assert an SMTP_SSL instance is invoked
+    """
+    smtpssl_mock = mocker.patch.object(smtplib, 'SMTP_SSL')
+    e = get_email
+    e.get_ssl()
+    assert smtpssl_mock.call_count == 1
+
 
 def test_get_ssl_port_string(get_email, mocker):
     """
@@ -353,8 +365,20 @@ def test_get_ssl_port_string(get_email, mocker):
 
 
 ##############################################################################
-# TESTS: Email.get_tls with port as string
+# TESTS: Email.get_tls
 ##############################################################################
+
+def test_get_tls(get_email, mocker):
+    """
+    GIVEN a valid Email object
+    WHEN Email.get_tls() is called
+    THEN assert an SMTP instance is invoked
+    """
+    smtp_mock = mocker.patch.object(smtplib, 'SMTP')
+    e = get_email
+    e.get_tls()
+    assert smtp_mock.call_count == 1
+
 
 def test_get_tls_port_string(get_email, mocker):
     """
@@ -369,38 +393,6 @@ def test_get_tls_port_string(get_email, mocker):
     e.generate_email()
     e.get_session()
     assert gettls_mock.call_count == 1
-
-
-##############################################################################
-# TESTS: Email.get_ssl
-##############################################################################
-
-def test_get_ssl(get_email, mocker):
-    """
-    GIVEN a valid Email object
-    WHEN Email.get_ssl() is called
-    THEN assert an SMTP_SSL instance is invoked
-    """
-    smtpssl_mock = mocker.patch.object(smtplib, 'SMTP_SSL')
-    e = get_email
-    e.get_ssl()
-    assert smtpssl_mock.call_count == 1
-
-
-##############################################################################
-# TESTS: Email.get_tls
-##############################################################################
-
-def test_get_tls(get_email, mocker):
-    """
-    GIVEN a valid Email object
-    WHEN Email.get_tls() is called
-    THEN assert an SMTP instance is invoked
-    """
-    smtp_mock = mocker.patch.object(smtplib, 'SMTP')
-    e = get_email
-    e.get_tls()
-    assert smtp_mock.call_count == 1
 
 
 ##############################################################################
