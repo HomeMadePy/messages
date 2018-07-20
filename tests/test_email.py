@@ -334,6 +334,44 @@ def test_get_session_tls(get_email, mocker):
 
 
 ##############################################################################
+# TESTS: Email.get_ssl with port as string
+##############################################################################
+
+def test_get_ssl_port_string(get_email, mocker):
+    """
+    GIVEN a valid Email object
+    WHEN port type is set to string
+    THEN assert an SMTP instance is invoked
+    """
+    getssl_mock = mocker.patch.object(Email, 'get_ssl')
+    gen_email_mock = mocker.patch.object(Email, 'generate_email')
+    e = get_email
+    e.port = '465'
+    e.generate_email()
+    e.get_session()
+    assert getssl_mock.call_count == 1
+
+
+##############################################################################
+# TESTS: Email.get_tls with port as string
+##############################################################################
+
+def test_get_tls_port_string(get_email, mocker):
+    """
+    GIVEN a valid Email object
+    WHEN port type is set to string
+    THEN assert an SMTP instance is invoked
+    """
+    gettls_mock = mocker.patch.object(Email, 'get_tls')
+    gen_email_mock = mocker.patch.object(Email, 'generate_email')
+    e = get_email
+    e.port = '587'
+    e.generate_email()
+    e.get_session()
+    assert gettls_mock.call_count == 1
+
+
+##############################################################################
 # TESTS: Email.get_ssl
 ##############################################################################
 
