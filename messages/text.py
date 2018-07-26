@@ -77,7 +77,6 @@ class Twilio(Message):
         """
         Send the SMS/MMS message.
         Set self.sid to return code of message.
-        Append the (sid, message) tuple to self.sent_messages as a history.
         """
         url = ('https://api.twilio.com/2010-04-01/Accounts/'
                + self.acct_sid + '/Messages.json')

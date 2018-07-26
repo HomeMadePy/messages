@@ -190,10 +190,7 @@ class Email(Message):
 
 
     def send(self):
-        """
-        Send the message.
-        Append the repr(self) to self.sent_messages as a history.
-        """
+        """Send the message."""
         self.generate_email()
         session = self.get_session()
 
