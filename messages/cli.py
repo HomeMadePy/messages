@@ -74,9 +74,9 @@ def list_types():
     help='From address/phone/etc.')
 @option('-t', '--to', multiple=True,
     help='Primary (To) recipient.')
-@option('-c', '--carboncopy', multiple=True,
+@option('-c', '--carboncopy', 'cc', multiple=True,
     help='Carbon Copy (CC) addresses.')
-@option('-b', '--blindcopy', multiple=True,
+@option('-b', '--blindcopy', 'bcc', multiple=True,
     help='Blind Carbon Copy (BCC) addresses.')
 @option('-s', '--subject',
     help='Subject line.')
