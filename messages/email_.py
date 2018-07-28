@@ -89,14 +89,22 @@ class Email(Message):
         """print(Email(**args)) method.
            Indentation value can be overridden in the function call.
            The default is new line"""
-        return(f'{identation}Server: {self.server}:{self.port}'
-               f'{identation}From: {self.from_}'
-               f'{identation}To: {self.to}'
-               f'{identation}Cc: {self.cc}'
-               f'{identation}Bcc: {self.bcc}'
-               f'{identation}Subject: {self.subject}'
-               f'{identation}body: {self.body[0:40]}...'
-               f'{identation}attachments: {self.attachments}')
+        return('{}Server: {}:{}'
+               '{}From: {}'
+               '{}To: {}'
+               '{}Cc: {}'
+               '{}Bcc: {}'
+               '{}Subject: {}'
+               '{}body: {}...'
+               '{}attachments: {}'
+               .format(identation, self.server, self.port,
+                       identation, self.from_,
+                       identation, self.to,
+                       identation, self.cc,
+                       identation, self.bcc,
+                       identation, self.subject,
+                       identation, self.body[0:40],
+                       identation, self.attachments))
 
 
     @staticmethod
