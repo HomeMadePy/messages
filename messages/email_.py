@@ -202,9 +202,9 @@ class Email(Message):
 
         self.generate_email()
         if self.verbose:
-            print(f"""Debugging info
-                  \r---------------
-                  \r{timestamp()} Message created.""")
+            print('Debugging info'
+                  '\n--------------'
+                  '\n{} Message created.'.format(timestamp()))
 
         session = self.get_session()
         if self.verbose:
