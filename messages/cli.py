@@ -94,6 +94,8 @@ def list_types():
     help='List available message types and exit.')
 @option('-C', '--configure', is_flag=True,
     help='Configure specified message type and exit.')
+@option('-V', '--verbose', is_flag=True,
+    help='Display debug information.')
 @click.version_option(version=VERSION, prog_name='Messages')
 @click.pass_context
 def main(ctx, **kwds):
@@ -129,4 +131,3 @@ def main(ctx, **kwds):
         list_types()
         click.echo('Try `messages --help` for more information')
         sys.exit(0)
-

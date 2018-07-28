@@ -1,5 +1,6 @@
 """Utility Module - functions useful to other modules."""
 
+import datetime
 import validus
 
 from ._exceptions import InvalidMessageInputError
@@ -75,3 +76,8 @@ def validate_telegrambot(msg, attr):
     """TelegramBot input validator function."""
     if attr in ('chat_id'):
         check_valid(msg, attr, validus.isint, 'integer as a string')
+
+
+def timestamp():
+    """Get current date and time."""
+    return '{:%Y-%b-%d %H:%M:%S}'.format(datetime.datetime.now())
