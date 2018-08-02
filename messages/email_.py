@@ -66,7 +66,7 @@ class Email(Message):
     def __init__(
         self, from_=None, to=None, server=None, port=None,
         password=None, cc=None, bcc=None, subject='', body='',
-        attachments=None, profile=None, save=False
+        attachments=None, profile=None, save=False, verbose=False
     ):
 
         config_kwargs = {'from_': from_,
@@ -82,22 +82,29 @@ class Email(Message):
         self.body = body
         self.attachments = attachments or []
         self.message = None
+        self.verbose = verbose
 
 
-    def __str__(self):
-        """print(Email(**args)) method."""
-        return('MIMEMultipart Email:'
-               '\n\tServer: {}:{}'
-               '\n\tFrom: {}'
-               '\n\tTo: {}'
-               '\n\tCc: {}'
-               '\n\tBcc: {}'
-               '\n\tSubject: {}'
-               '\n\tbody: {}...'
-               '\n\tattachments: {}'
-               .format(self.server, self.port, self.from_, self.to,
-                       self.cc, self.bcc, self.subject, self.body[0:40],
-                       self.attachments))
+    def __str__(self, identation='\n'):
+        """print(Email(**args)) method.
+           Indentation value can be overridden in the function call.
+           The default is new line"""
+        return('{}Server: {}:{}'
+               '{}From: {}'
+               '{}To: {}'
+               '{}Cc: {}'
+               '{}Bcc: {}'
+               '{}Subject: {}'
+               '{}body: {}...'
+               '{}attachments: {}'
+               .format(identation, self.server, self.port,
+                       identation, self.from_,
+                       identation, self.to,
+                       identation, self.cc,
+                       identation, self.bcc,
+                       identation, self.subject,
+                       identation, self.body[0:40],
+                       identation, self.attachments))
 
 
     @staticmethod
@@ -191,8 +198,17 @@ class Email(Message):
 
     def send(self):
         """Send the message."""
+        from ._utils import timestamp
+
         self.generate_email()
+        if self.verbose:
+            print('Debugging info'
+                  '\n--------------'
+                  '\n{} Message created.'.format(timestamp()))
+
         session = self.get_session()
+        if self.verbose:
+            print(timestamp(), 'Login successful.')
 
         recipients = []
         if self.to:
@@ -207,7 +223,13 @@ class Email(Message):
 
         session.sendmail(self.from_, recipients, self.message.as_string())
         session.quit()
-        print('Message sent...', file=sys.stdout)
+        if self.verbose:
+            print(timestamp(), 'Logged out.')
+
+        if self.verbose:
+            print(timestamp(), 'Email info:', self.__str__(identation='\n * '))
+
+        print('Message sent.')
 
 
     def send_async(self):

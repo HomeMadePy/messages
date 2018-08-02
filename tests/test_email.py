@@ -97,15 +97,14 @@ def test_email_str(get_email, capsys):
     THEN assert the correct format prints
     """
     e = get_email
-    expected = ('MIMEMultipart Email:'
-                '\n\tServer: smtp.gmail.com:465'
-                '\n\tFrom: me@here.com'
-                '\n\tTo: you@there.com'
-                '\n\tCc: someone@there.com'
-                '\n\tBcc: them@there.com'
-                '\n\tSubject: subject'
-                '\n\tbody: message...'
-                '\n\tattachments: [\'file1\', \'file2\']\n')
+    expected = ('\nServer: smtp.gmail.com:465'
+                '\nFrom: me@here.com'
+                '\nTo: you@there.com'
+                '\nCc: someone@there.com'
+                '\nBcc: them@there.com'
+                '\nSubject: subject'
+                '\nbody: message...'
+                '\nattachments: [\'file1\', \'file2\']\n')
     print(e)
     out, err = capsys.readouterr()
     assert out == expected
@@ -275,7 +274,6 @@ def test_add_attachments_str_local(get_email, mocker):
     body_mock = mocker.patch.object(Email, 'add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
-    e = get_email
     e.attachments = 'tests/data/file1.txt'
     e.generate_email()
     assert mime_attach_mock.call_count == 1
@@ -292,7 +290,6 @@ def test_add_attachments_str_travis(get_email, mocker):
     header_mock = mocker.patch.object(Email, 'add_header')
     body_mock = mocker.patch.object(Email, 'add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
-    e = get_email
     e = get_email
     PATH = '/home/travis/build/trp07/messages/tests/data/'
     e.attachments = PATH + 'file1.txt'
@@ -413,7 +410,66 @@ def test_send(get_email, capsys, mocker):
     e = get_email
     e.send()
     out, err = capsys.readouterr()
-    assert out == 'Message sent...\n'
+    assert out == 'Message sent.\n'
+    assert err == ''
+
+
+def test_send_verbose_true(get_email, capsys, mocker):
+    """
+    GIVEN a valid Email object
+    WHEN Email.send() is called
+    THEN assert the correct functions are called, correct attributes
+        updated and correct debug output is generated (using verbose flag
+        set to True)
+    """
+    header_mock = mocker.patch.object(Email, 'add_header')
+    body_mock = mocker.patch.object(Email, 'add_body')
+    attach_mock = mocker.patch.object(Email, 'add_attachments')
+    session_mock = mocker.patch.object(Email, 'get_session')
+    e = get_email
+    e.verbose = True
+    e.send()
+    out, err = capsys.readouterr()
+    assert 'Debugging info' in out
+    assert 'Message created.' in out
+    assert 'Login successful.' in out
+    assert 'Logged out.' in out
+    assert ' * Server: smtp.gmail.com:465' in out
+    assert ' * From: me@here.com' in out
+    assert ' * To: you@there.com' in out
+    assert ' * Cc: someone@there.com' in out
+    assert ' * Bcc: them@there.com' in out
+    assert ' * Subject: subject' in out
+    assert ' * body: message...' in out
+    assert ' * attachments: [\'file1\', \'file2\']' in out
+    assert 'Message sent.' in out
+    assert err == ''
+
+
+def test_send_verbose_false(get_email, capsys, mocker):
+    """
+    GIVEN a valid Email object
+    WHEN Email.send() is called
+    THEN assert the correct functions are called, correct attributes
+        updated and correct debug output is generated (using verbose flag
+        set to False)
+    """
+    header_mock = mocker.patch.object(Email, 'add_header')
+    body_mock = mocker.patch.object(Email, 'add_body')
+    attach_mock = mocker.patch.object(Email, 'add_attachments')
+    session_mock = mocker.patch.object(Email, 'get_session')
+    e = get_email
+    e.verbose = False
+    e.send()
+    out, err = capsys.readouterr()
+
+    assert out == 'Message sent.\n'
+    assert 'Debugging info' not in out
+    assert 'Message created.' not in out
+    assert 'Login successful.' not in out
+    assert 'Logged out.' not in out
+    assert ' * Server: smtp.gmail.com:465' not in out
+    assert ' * From: me@here.com' not in out
     assert err == ''
 
 
@@ -429,5 +485,18 @@ def test_send_async(get_email, mocker):
     """
     msg_loop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
     e = get_email
+    e.send_async()
+    assert msg_loop_mock.call_count == 1
+
+
+def test_send_async_verbose_true(get_email, mocker):
+    """
+    GIVEN a valid Email object
+    WHEN Email.send_async() is called
+    THEN assert it is added to the event loop for async sending
+    """
+    msg_loop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
+    e = get_email
+    e.verbose = True
     e.send_async()
     assert msg_loop_mock.call_count == 1
