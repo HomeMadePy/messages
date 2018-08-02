@@ -95,7 +95,7 @@ def list_types():
 @option('-C', '--configure', is_flag=True,
     help='Configure specified message type and exit.')
 @option('-V', '--verbose', is_flag=True,
-    help='Display debug information.')
+    help='Display verbose output and debug information.')
 @click.version_option(version=VERSION, prog_name='Messages')
 @click.pass_context
 def main(ctx, **kwds):

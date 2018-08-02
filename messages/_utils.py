@@ -78,6 +78,10 @@ def validate_telegrambot(msg, attr):
         check_valid(msg, attr, validus.isint, 'integer as a string')
 
 
+"""
+General utility functions below here.
+"""
+
 def timestamp():
     """Get current date and time."""
     return '{:%Y-%b-%d %H:%M:%S}'.format(datetime.datetime.now())

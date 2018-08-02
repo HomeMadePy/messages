@@ -85,7 +85,7 @@ class Email(Message):
         self.verbose = verbose
 
 
-    def __str__(self, identation='\n'):
+    def __str__(self, indentation='\n'):
         """print(Email(**args)) method.
            Indentation value can be overridden in the function call.
            The default is new line"""
@@ -97,14 +97,14 @@ class Email(Message):
                '{}Subject: {}'
                '{}body: {}...'
                '{}attachments: {}'
-               .format(identation, self.server, self.port,
-                       identation, self.from_,
-                       identation, self.to,
-                       identation, self.cc,
-                       identation, self.bcc,
-                       identation, self.subject,
-                       identation, self.body[0:40],
-                       identation, self.attachments))
+               .format(indentation, self.server, self.port,
+                       indentation, self.from_,
+                       indentation, self.to,
+                       indentation, self.cc,
+                       indentation, self.bcc,
+                       indentation, self.subject,
+                       indentation, self.body[0:40],
+                       indentation, self.attachments))
 
 
     @staticmethod
@@ -227,7 +227,7 @@ class Email(Message):
             print(timestamp(), 'Logged out.')
 
         if self.verbose:
-            print(timestamp(), 'Email info:', self.__str__(identation='\n * '))
+            print(timestamp(), 'Email info:', self.__str__(indentation='\n * '))
 
         print('Message sent.')
 
