@@ -96,5 +96,5 @@ def create_config(msg_type, profile, params):
             cfg.data[profile][msg_type][d] = input('Enter ' + d + ': ')
 
         for c in params['credentials']:
-            cfg.pwd[(profile + '_' + msg_type)] = getpass('\n' + c + ': ')
+            cfg.pwd[(profile + '_' + msg_type)] = getpass(c + ': ')
         cfg.kwargs['dump']['indent'] = 4
