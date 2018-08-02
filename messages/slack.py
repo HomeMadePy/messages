@@ -56,12 +56,24 @@ class Slack(Message):
 
     def send(self, encoding='json'):
         """Send the message via HTTP POST, default is json-encoded."""
+        from ._utils import timestamp
+
         self.construct_message()
+        if self.verbose:
+            print('Debugging info'
+                  '\n--------------'
+                  '\n{} Message created.'.format(timestamp()))
+
         if encoding == 'json':
             requests.post(self.url, json=self.message)
         elif encoding == 'url':
             requests.post(self.url, data=self.message)
-        print('Message sent...')
+
+        if self.verbose:
+            print(timestamp(), type(self).__name__, ' info:',
+                    self.__str__(indentation='\n * '))
+
+        print('Message sent.')
 
 
     def send_async(self):
@@ -102,7 +114,7 @@ class SlackWebhook(Slack):
 
     def __init__(
         self, from_=None, url=None, subject=None, body='', attachments=None,
-        params=None, profile=None, save=False
+        params=None, profile=None, save=False, verbose=False
     ):
 
         config_kwargs = {'from_': from_, 'url': url, 'profile': profile,
@@ -116,6 +128,23 @@ class SlackWebhook(Slack):
         self.attachments = attachments or []
         self.params = params
         self.message = {}
+        self.verbose = verbose
+
+
+    def __str__(self, indentation='\n'):
+        """print(SlackWebhook(**args)) method.
+           Indentation value can be overridden in the function call.
+           The default is new line"""
+        return('{}URL: {}'
+               '{}From: {}'
+               '{}Subject: {}'
+               '{}body: {}...'
+               '{}attachments: {}'
+               .format(indentation, self.url,
+                       indentation, self.from_ or 'Not Specified',
+                       indentation, self.subject,
+                       indentation, self.body[0:40],
+                       indentation, self.attachments))
 
 
 
@@ -152,7 +181,7 @@ class SlackPost(Slack):
 
     def __init__(
         self, from_=None, token=None, channel=None, subject=None, body='',
-        attachments=None, params=None, profile=None, save=False
+        attachments=None, params=None, profile=None, save=False, verbose=False
     ):
 
         config_kwargs = {'channel': channel, 'token': token, 'profile': profile,
@@ -168,6 +197,23 @@ class SlackPost(Slack):
         self.params = params
         self.message = {'token': self.token, 'channel': self.channel}
         self.url = 'https://slack.com/api/chat.postMessage'
+        self.verbose = verbose
+
+
+    def __str__(self, indentation='\n'):
+        """print(SlackPost(**args)) method.
+           Indentation value can be overridden in the function call.
+           The default is new line"""
+        return('{}Channel: {}'
+               '{}From: {}'
+               '{}Subject: {}'
+               '{}body: {}...'
+               '{}attachments: {}'
+               .format(indentation, self.channel,
+                       indentation, self.from_ or 'Not Specified',
+                       indentation, self.subject,
+                       indentation, self.body[0:40],
+                       indentation, self.attachments))
 
 
     def send(self):

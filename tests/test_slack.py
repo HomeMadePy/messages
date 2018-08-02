@@ -216,7 +216,7 @@ def test_slackWH_send(get_slackWH, capsys, mocker):
     out, err = capsys.readouterr()
     assert con_mock.call_count == 1
     assert req_mock.call_count == 1
-    assert out == 'Message sent...\n'
+    assert out == 'Message sent.\n'
     assert err == ''
 
 
@@ -233,9 +233,108 @@ def test_slackP_send(get_slackP, capsys, mocker):
     out, err = capsys.readouterr()
     assert con_mock.call_count == 1
     assert req_mock.call_count == 1
-    assert out == 'Message sent...\n'
+    assert out == 'Message sent.\n'
     assert err == ''
 
+
+def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN *.send() is called
+    THEN assert the correct functions are called, correct attributes
+        updated and correct debug output is generated (using verbose flag
+        set to True)
+    """
+    con_mock = mocker.patch.object(SlackWebhook, 'construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    s = get_slackWH
+    s.verbose = True
+    s.send()
+    out, err = capsys.readouterr()
+    assert 'Debugging info' in out
+    assert 'Message created.' in out
+    assert ' * URL: https://test_url.com' in out
+    assert ' * From: Not Specified' in out
+    assert ' * Subject: None' in out
+    assert ' * body: message.' in out
+    assert ' * attachments: [\'https://url1.com\', \'https://url2.com\']' in out
+    assert 'Message sent.' in out
+    assert err == ''
+
+
+def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN *.send() is called
+    THEN assert the correct functions are called, correct attributes
+        updated and correct debug output is generated (using verbose flag
+        set to False)
+    """
+    con_mock = mocker.patch.object(SlackWebhook, 'construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    s = get_slackWH
+    s.verbose = False
+    s.send()
+    out, err = capsys.readouterr()
+    assert 'Debugging info' not in out
+    assert 'Message created.' not in out
+    assert ' * URL: https://test_url.com' not in out
+    assert ' * From: Not Specified' not in out
+    assert ' * Subject: None' not in out
+    assert ' * body: message.' not in out
+    assert ' * attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
+    assert 'Message sent.' in out
+    assert err == ''
+
+
+def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
+    """
+    GIVEN a valid SlackPost object
+    WHEN *.send() is called
+    THEN assert the correct functions are called, correct attributes
+        updated and correct debug output is generated (using verbose flag
+        set to True)
+    """
+    con_mock = mocker.patch.object(SlackPost, 'construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    s = get_slackP
+    s.verbose = True
+    s.send()
+    out, err = capsys.readouterr()
+    assert 'Debugging info' in out
+    assert 'Message created.' in out
+    assert ' * Channel: general' in out
+    assert ' * From: Not Specified' in out
+    assert ' * Subject: None' in out
+    assert ' * body: message.' in out
+    assert ' * attachments: [\'https://url1.com\', \'https://url2.com\']' in out
+    assert 'Message sent.' in out
+    assert err == ''
+
+
+def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
+    """
+    GIVEN a valid SlackPost object
+    WHEN *.send() is called
+    THEN assert the correct functions are called, correct attributes
+        updated and correct debug output is generated (using verbose flag
+        set to False)
+    """
+    con_mock = mocker.patch.object(SlackPost, 'construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    s = get_slackP
+    s.verbose = False
+    s.send()
+    out, err = capsys.readouterr()
+    assert 'Debugging info' not in out
+    assert 'Message created.' not in out
+    assert ' * Channel: general' not in out
+    assert ' * From: Not Specified' not in out
+    assert ' * Subject: None' not in out
+    assert ' * body: message.' not in out
+    assert ' * attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
+    assert 'Message sent.' in out
+    assert err == ''
 
 ##############################################################################
 # TESTS: Slack*.send_async
