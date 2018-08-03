@@ -13,6 +13,7 @@ import requests
 from ._config import configure
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+from ._utils import timestamp
 
 
 class TelegramBot(Message):
@@ -54,7 +55,7 @@ class TelegramBot(Message):
     def __init__(
         self, from_=None, bot_token=None, chat_id=None, to=None,
         subject=None, body='', attachments=None, params=None, profile=None,
-        save=False
+        save=False, verbose=False
     ):
 
         config_kwargs = {'from_': from_, 'bot_token': bot_token,
@@ -70,6 +71,25 @@ class TelegramBot(Message):
         self.params = params or {}
         self.base_url = 'https://api.telegram.org/bot' + self.bot_token
         self.message = {}
+        self.verbose = verbose
+
+
+    def __str__(self, indentation='\n'):
+        """print(Telegram(**args)) method.
+           Indentation value can be overridden in the function call.
+           The default is new line"""
+        return('{}From: {}'
+               '{}To: {}'
+               '{}Chat ID: {}'
+               '{}Subject: {}'
+               '{}Body: {}...'
+               '{}Attachments: {}'
+               .format(indentation, self.from_,
+                       indentation, self.to,
+                       indentation, self.chat_id,
+                       indentation, self.subject,
+                       indentation, self.body[0:40],
+                       indentation, self.attachments))
 
 
     def get_chat_id(self, username):
@@ -97,23 +117,40 @@ class TelegramBot(Message):
 
     def send_content(self, method='/sendMessage'):
         """send via HTTP Post."""
+        if method == '/sendMessage':
+            content_type = 'Message body'
+        elif method == '/sendDocument':
+            content_type = ('Attachment: ' + self.message['document'])
+
         url = self.base_url + method
         r = requests.post(url, json=self.message)
 
-        if r.status_code == 200:
-            print('Message sent...', file=sys.stdout)
-        if r.status_code > 300:
-            print('Error while sending...', file=sys.stdout)
-            print(r.text, file=sys.stdout)
+        if r.status_code == 200 and self.verbose:
+            print(timestamp(), content_type + ' sent.')
+        if r.status_code > 300 and self.verbose:
+            print(timestamp(), 'Error while sending ' + content_type)
+            print(r.text)
 
 
     def send(self):
         """Start sending the message and attachments."""
         self.construct_message()
+        if self.verbose:
+            print('Debugging info'
+                  '\n--------------'
+                  '\n{} Message created.'.format(timestamp()))
+
         self.send_content('/sendMessage')
+
         for a in self.attachments:
             self.message['document'] = a
             self.send_content(method='/sendDocument')
+
+        if self.verbose:
+            print(timestamp(), type(self).__name__ + ' info:',
+                self.__str__(indentation='\n * '))
+
+        print('Message sent.')
 
 
     def send_async(self):

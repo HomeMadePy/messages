@@ -84,10 +84,10 @@ def test_tgram_construct_message_withFromSub(get_tgram):
 # TESTS: TelegramBot.send_content
 ##############################################################################
 
-def test_tgram_send_content(get_tgram, capsys, mocker):
+def test_tgram_send_content_verbose_false(get_tgram, capsys, mocker):
     """
     GIVEN a valid TelegramBot object
-    WHEN send_content() is called
+    WHEN send_content() is called with verbose=False
     THEN assert the proper send sequence occurs
     """
     req_mock = mocker.patch.object(requests, 'post')
@@ -96,24 +96,64 @@ def test_tgram_send_content(get_tgram, capsys, mocker):
     t.send_content()
     out, err = capsys.readouterr()
     assert req_mock.call_count == 1
-    assert out == 'Message sent...\n'
+    assert out == ''
     assert err == ''
 
 
-def test_tgram_send_content_statusGT300(get_tgram, capsys, mocker):
+def test_tgram_send_content_msgBody_verbose_true(get_tgram, capsys, mocker):
     """
     GIVEN a valid TelegramBot object
-    WHEN send_content() is called but an error occurs, status_code > 300
+    WHEN send_content() is called with verbose=True
+    THEN assert the proper send sequence occurs
+    """
+    req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 200
+    t = get_tgram
+    t.verbose = True
+    t.send_content()
+    out, err = capsys.readouterr()
+    assert req_mock.call_count == 1
+    assert 'Message body sent' in out
+    assert 'Attachment: https://url1.com' not in out
+    assert 'Attachment: https://url2.com' not in out
+    assert err == ''
+
+
+def test_tgram_send_content_attachments_verbose_true(get_tgram, capsys, mocker):
+    """
+    GIVEN a valid TelegramBot object
+    WHEN send_content() is called with verbose=True
+    THEN assert the proper send sequence occurs
+    """
+    req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 200
+    t = get_tgram
+    t.verbose = True
+    t.message['document'] = 'https://url1.com'
+    t.send_content(method='/sendDocument')
+    out, err = capsys.readouterr()
+    assert req_mock.call_count == 1
+    assert 'Message body sent' not in out
+    assert 'Attachment: https://url1.com' in out
+    assert err == ''
+
+
+def test_tgram_send_content_statusGT300_verbose_true(get_tgram, capsys, mocker):
+    """
+    GIVEN a valid TelegramBot object
+    WHEN send_content() is called but an error occurs, status_code > 300, verbose=True
     THEN assert the proper send sequence occurs
     """
     req_mock = mocker.patch.object(requests, 'post')
     req_mock.return_value.status_code = 403
     req_mock.return_value.text = 'test error'
     t = get_tgram
+    t.verbose = True
     t.send_content()
     out, err = capsys.readouterr()
     assert req_mock.call_count == 1
-    assert out == 'Error while sending...\n' + 'test error\n'
+    assert 'Error while sending Message body' in out
+    assert 'test error' in out
     assert err == ''
 
 ##############################################################################
