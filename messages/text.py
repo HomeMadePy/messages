@@ -48,7 +48,7 @@ class Twilio(Message):
 
     def __init__(
         self, from_=None, to=None, acct_sid=None, auth_token=None,
-        body='', attachments=None, profile=None, save=False
+        body='', attachments=None, profile=None, save=False, verbose=False
     ):
 
         config_kwargs = {'from_': from_, 'acct_sid': acct_sid,
@@ -61,16 +61,23 @@ class Twilio(Message):
         self.body = body
         self.attachments = attachments
         self.sid = None
+        self.verbose = verbose
 
 
-    def __str__(self):
-        """print(Twilio(**args)) method."""
-        return('Twilio Text Message:'
-               '\n\tFrom: {}'
-               '\n\tTo: {}'
-               '\n\tbody: {}...'
-               '\n\tattachments: {}'
-               .format(self.from_, self.to, self.body, self.attachments))
+    def __str__(self, indentation='\n'):
+        """print(Email(**args)) method.
+           Indentation value can be overridden in the function call.
+           The default is new line"""
+        return('{}From: {}'
+               '{}To: {}'
+               '{}Body: {}...'
+               '{}Attachments: {}'
+               '{}SID: {}'
+               .format(indentation, self.from_,
+                       indentation, self.to,
+                       indentation, self.body[0:40],
+                       indentation, self.attachments,
+                       indentation, self.sid))
 
 
     def send(self):
@@ -78,6 +85,8 @@ class Twilio(Message):
         Send the SMS/MMS message.
         Set self.sid to return code of message.
         """
+        from ._utils import timestamp
+
         url = ('https://api.twilio.com/2010-04-01/Accounts/'
                + self.acct_sid + '/Messages.json')
         data = {
@@ -86,9 +95,20 @@ class Twilio(Message):
             'Body': self.body,
             'MediaUrl': self.attachments,
         }
+
+        if self.verbose:
+            print('Debugging info'
+                  '\n--------------'
+                  '\n{} Message created.'.format(timestamp()))
+
         r = requests.post(url, data=data, auth=(self.acct_sid, self.auth_token))
         self.sid = r.json()['sid']
-        print('Message sent...', file=sys.stdout)
+
+        if self.verbose:
+            print(timestamp(), type(self).__name__ + ' info:',
+                self.__str__(indentation='\n * '))
+
+        print('Message sent.')
 
 
     def send_async(self):
