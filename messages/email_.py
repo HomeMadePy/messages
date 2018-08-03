@@ -227,7 +227,8 @@ class Email(Message):
             print(timestamp(), 'Logged out.')
 
         if self.verbose:
-            print(timestamp(), 'Email info:', self.__str__(indentation='\n * '))
+            print(timestamp(), type(self).__name__ + ' info:',
+                self.__str__(indentation='\n * '))
 
         print('Message sent.')
 
