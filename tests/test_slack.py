@@ -256,8 +256,8 @@ def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
     assert ' * URL: https://test_url.com' in out
     assert ' * From: Not Specified' in out
     assert ' * Subject: None' in out
-    assert ' * body: message.' in out
-    assert ' * attachments: [\'https://url1.com\', \'https://url2.com\']' in out
+    assert ' * Body: message.' in out
+    assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' in out
     assert 'Message sent.' in out
     assert err == ''
 
@@ -281,8 +281,8 @@ def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
     assert ' * URL: https://test_url.com' not in out
     assert ' * From: Not Specified' not in out
     assert ' * Subject: None' not in out
-    assert ' * body: message.' not in out
-    assert ' * attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
+    assert ' * Body: message.' not in out
+    assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
     assert 'Message sent.' in out
     assert err == ''
 
@@ -306,8 +306,8 @@ def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
     assert ' * Channel: general' in out
     assert ' * From: Not Specified' in out
     assert ' * Subject: None' in out
-    assert ' * body: message.' in out
-    assert ' * attachments: [\'https://url1.com\', \'https://url2.com\']' in out
+    assert ' * Body: message.' in out
+    assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' in out
     assert 'Message sent.' in out
     assert err == ''
 
@@ -331,8 +331,8 @@ def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
     assert ' * Channel: general' not in out
     assert ' * From: Not Specified' not in out
     assert ' * Subject: None' not in out
-    assert ' * body: message.' not in out
-    assert ' * attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
+    assert ' * Body: message.' not in out
+    assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
     assert 'Message sent.' in out
     assert err == ''
 

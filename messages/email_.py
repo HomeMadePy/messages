@@ -95,8 +95,8 @@ class Email(Message):
                '{}Cc: {}'
                '{}Bcc: {}'
                '{}Subject: {}'
-               '{}body: {}...'
-               '{}attachments: {}'
+               '{}Body: {}...'
+               '{}Attachments: {}'
                .format(indentation, self.server, self.port,
                        indentation, self.from_,
                        indentation, self.to,

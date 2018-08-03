@@ -138,8 +138,8 @@ class SlackWebhook(Slack):
         return('{}URL: {}'
                '{}From: {}'
                '{}Subject: {}'
-               '{}body: {}...'
-               '{}attachments: {}'
+               '{}Body: {}...'
+               '{}Attachments: {}'
                .format(indentation, self.url,
                        indentation, self.from_ or 'Not Specified',
                        indentation, self.subject,
@@ -207,8 +207,8 @@ class SlackPost(Slack):
         return('{}Channel: {}'
                '{}From: {}'
                '{}Subject: {}'
-               '{}body: {}...'
-               '{}attachments: {}'
+               '{}Body: {}...'
+               '{}Attachments: {}'
                .format(indentation, self.channel,
                        indentation, self.from_ or 'Not Specified',
                        indentation, self.subject,
