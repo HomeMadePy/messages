@@ -1,9 +1,9 @@
 Change Log
 ==========
 
-Current Progress
-----------------
--   Next version in development
+0.4.3
+-----
+- Adds **--verbose**, **-V** option to the CLI to enable verbose output for each message invocation.
 
 
 0.4.2
