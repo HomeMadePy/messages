@@ -15,6 +15,7 @@ from email.mime.application import MIMEApplication
 from ._config import configure
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+from ._utils import timestamp
 
 
 SMTP_SERVERS = {
@@ -198,8 +199,6 @@ class Email(Message):
 
     def send(self):
         """Send the message."""
-        from ._utils import timestamp
-
         self.generate_email()
         if self.verbose:
             print('Debugging info'

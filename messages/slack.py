@@ -22,6 +22,7 @@ import requests
 from ._config import configure
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+from ._utils import timestamp
 
 
 
@@ -56,8 +57,6 @@ class Slack(Message):
 
     def send(self, encoding='json'):
         """Send the message via HTTP POST, default is json-encoded."""
-        from ._utils import timestamp
-
         self.construct_message()
         if self.verbose:
             print('Debugging info'

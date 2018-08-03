@@ -15,6 +15,7 @@ import requests
 from ._config import configure
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+from ._utils import timestamp
 
 
 class Twilio(Message):
@@ -85,8 +86,6 @@ class Twilio(Message):
         Send the SMS/MMS message.
         Set self.sid to return code of message.
         """
-        from ._utils import timestamp
-
         url = ('https://api.twilio.com/2010-04-01/Accounts/'
                + self.acct_sid + '/Messages.json')
         data = {
