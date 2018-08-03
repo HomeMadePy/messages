@@ -65,7 +65,7 @@ def list_types():
     """Prints all available message types."""
     click.echo('Available message types:')
     for m in MESSAGES:
-        click.echo('\t* ' + m)
+        click.echo('    * ' + m)
 
 
 @click.command()
