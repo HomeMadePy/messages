@@ -15,19 +15,9 @@ from ._config import create_config
 from ._exceptions import UnsupportedMessageTypeError
 
 
-def check_args(ctx, kwds):
-    """If no CLI args given, prints usage and exits."""
-    if not any([val for key, val in kwds.items()]):
-        click.echo(ctx.get_usage())
-        click.echo('Try messages --help for more information.')
-        sys.exit(0)
-
-
-def check_type(kwds):
-    """If incorrect message-type specified, raise error."""
-    if kwds['type'].lower() not in MESSAGES.keys():
-        raise UnsupportedMessageTypeError(kwds['type'])
-
+##############################################################################
+# Utility functions
+##############################################################################
 
 def get_body_from_file(kwds):
     """Reads message body if specified via filepath."""
@@ -53,7 +43,7 @@ def create_config_entry(msg_type):
     click.echo('You will need the following information to configure: ' + msg_type)
     for item in (MESSAGES[msg_type]['defaults'] +
                  MESSAGES[msg_type]['credentials']):
-        click.echo('\t* ' + item)
+        click.echo('    * ' + item)
 
     status = input('\nContinue [Y/N]? ')
     if status in ('Y', 'y'):
@@ -61,73 +51,165 @@ def create_config_entry(msg_type):
         create_config(msg_type, profile, MESSAGES[msg_type])
 
 
-def list_types():
-    """Prints all available message types."""
-    click.echo('Available message types:')
-    for m in MESSAGES:
-        click.echo('    * ' + m)
-
-
-@click.command()
-@argument('type', required=False)
-@option('-f', '--from', 'from_',
-    help='From address/phone/etc.')
-@option('-t', '--to', multiple=True,
-    help='Primary (To) recipient.')
-@option('-c', '--carboncopy', 'cc', multiple=True,
-    help='Carbon Copy (CC) addresses.')
-@option('-b', '--blindcopy', 'bcc', multiple=True,
-    help='Blind Carbon Copy (BCC) addresses.')
-@option('-s', '--subject',
-    help='Subject line.')
-@option('-m', '--body',
-    help='Message body text.')
-@option('-M', '--file',
-    help='Read message body from filepath.')
-@option('-a', '--attach', 'attachments', multiple=True,
-    help='Attachments -- filepath or url to attach.')
-@option('-S', '--save', is_flag=True,
-    help='Save default values/credentials.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
-@option('-T', '--types', is_flag=True,
-    help='List available message types and exit.')
-@option('-C', '--configure', is_flag=True,
-    help='Configure specified message type and exit.')
-@option('-V', '--verbose', is_flag=True,
-    help='Display verbose output and debug information.')
-@click.version_option(version=VERSION, prog_name='Messages')
-@click.pass_context
-def main(ctx, **kwds):
-    """
-    Specify Message-Type, Recipients, and Content to send.
-
-    [TYPE] = email, twilio, ...\n
-        try `messages --types` to see all available types
-    """
-
-    check_args(ctx, kwds)
-
-    if kwds['type']:
-        check_type(kwds)
-
-    if kwds['types']:
-        list_types()
-        sys.exit(0)
-
-    if kwds['configure']:
-        create_config_entry(kwds['type'])
-        sys.exit(0)
-
+def send_message(msg_type, kwds):
+    """Do some final preprocessing and send the message."""
     if kwds['file']:
         get_body_from_file(kwds)
-
     kwargs = trim_args(kwds)
+    send(msg_type, send_async=True, **kwargs)
 
-    if kwds['type']:
-        send(kwds['type'], send_async=True, **kwargs)
-    else:
-        click.echo('[!] Specify message type')
-        list_types()
-        click.echo('Try `messages --help` for more information')
-        sys.exit(0)
+
+##############################################################################
+# Command Line Interface functions
+##############################################################################
+
+@click.group()
+@click.version_option(version=VERSION, prog_name='Messages')
+def main():
+    """See available commands below to create appropriate message."""
+    pass
+
+
+@main.command('configure')
+@click.argument('msg_type', required=True)
+def main_configure(msg_type):
+    """Configure the given message type."""
+    create_config_entry(msg_type)
+
+
+@main.command('email')
+@click.argument('profile', type=click.STRING, required=False)
+@click.argument('body', type=click.STRING, default='', required=False)
+@option('-f', '--from', 'from_',
+    help='Originating (from) email address')
+@option('-t', '--to', multiple=True,
+    help='Recipient email addresses.')
+@option('-c', '--carboncopy', 'cc', multiple=True,
+    help='Carbon Copy (CC) email addresses.')
+@option('-b', '--blindcopy', 'bcc', multiple=True,
+    help='Blind Carbon Copy (BCC) email addresses.')
+@option('-s', '--subject',
+    help='Subject line.')
+@option('-m', '--file',
+    help='Read message body from filepath.')
+@option('-a', '--attach', 'attachments', multiple=True,
+    help='Attachments -- filepath to attach.')
+@option('-S', '--save', is_flag=True,
+    help='Save default values in current profile.')
+@option('-P', '--profile',
+    help='Specify pre-configured user profile.')
+@option('-V', '--verbose', is_flag=True,
+    help='Display verbose output and debug information.')
+@click.pass_context
+def main_email(ctx, **kwds):
+    """Send email message.
+
+    * PROFILE: Pre-configured user profile.
+
+    * BODY:    message body text
+    """
+    send_message('email', kwds)
+
+
+@main.command('twilio')
+@click.argument('profile', type=click.STRING, required=False)
+@click.argument('body', type=click.STRING, default='', required=False)
+@option('-f', '--from', 'from_',
+    help='Originating (from) phone number')
+@option('-t', '--to', multiple=True,
+    help='Recipient phone numbers.')
+@option('-m', '--file',
+    help='Read message body from filepath.')
+@option('-a', '--attach', 'attachments', multiple=True,
+    help='Attachments -- url for image to attach.')
+@option('-S', '--save', is_flag=True,
+    help='Save default values in current profile.')
+@option('-P', '--profile',
+    help='Specify pre-configured user profile.')
+@option('-V', '--verbose', is_flag=True,
+    help='Display verbose output and debug information.')
+@click.pass_context
+def main_twilio(ctx, **kwds):
+    """Send twilio text message.
+
+    * PROFILE: Pre-configured user profile.
+
+    * BODY:    message body text
+    """
+    send_message('twilio', kwds)
+
+
+@main.command('slackwebhook')
+@click.argument('profile', type=click.STRING, required=False)
+@click.argument('body', type=click.STRING, default='', required=False)
+@option('-m', '--file',
+    help='Read message body from filepath.')
+@option('-a', '--attach', 'attachments', multiple=True,
+    help='Attachments -- url for image to attach.')
+@option('-S', '--save', is_flag=True,
+    help='Save default values in current profile.')
+@option('-P', '--profile',
+    help='Specify pre-configured user profile.')
+@option('-V', '--verbose', is_flag=True,
+    help='Display verbose output and debug information.')
+@click.pass_context
+def main_slackwebhook(ctx, **kwds):
+    """Send SlackWebhook message.
+
+    * PROFILE: Pre-configured user profile.
+
+    * BODY:    message body text
+    """
+    send_message('slackwebhook', kwds)
+
+
+@main.command('slackpost')
+@click.argument('profile', type=click.STRING, required=False)
+@click.argument('body', type=click.STRING, default='', required=False)
+@option('-c', '--channel',
+    help='Slack channel to post message to.')
+@option('-m', '--file',
+    help='Read message body from filepath.')
+@option('-a', '--attach', 'attachments', multiple=True,
+    help='Attachments -- url for image to attach.')
+@option('-S', '--save', is_flag=True,
+    help='Save default values in current profile.')
+@option('-P', '--profile',
+    help='Specify pre-configured user profile.')
+@option('-V', '--verbose', is_flag=True,
+    help='Display verbose output and debug information.')
+@click.pass_context
+def main_slackpost(ctx, **kwds):
+    """Send SlackPost message.
+
+    * PROFILE: Pre-configured user profile.
+
+    * BODY:    message body text
+    """
+    send_message('post', kwds)
+
+
+@main.command('telegram')
+@click.argument('profile', type=click.STRING, required=False)
+@click.argument('body', type=click.STRING, default='', required=False)
+@option('-c', '--chat-id',
+    help='Chat ID to send message to.')
+@option('-m', '--file',
+    help='Read message body from filepath.')
+@option('-a', '--attach', 'attachments', multiple=True,
+    help='Attachments -- url for image to attach.')
+@option('-S', '--save', is_flag=True,
+    help='Save default values in current profile.')
+@option('-P', '--profile',
+    help='Specify pre-configured user profile.')
+@option('-V', '--verbose', is_flag=True,
+    help='Display verbose output and debug information.')
+@click.pass_context
+def main_telegram(ctx, **kwds):
+    """Send TelegramBot message.
+
+    * PROFILE: Pre-configured user profile.
+
+    * BODY:    message body text
+    """
+    send_message('telegram', kwds)
