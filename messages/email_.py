@@ -21,7 +21,16 @@ from ._utils import timestamp
 SMTP_SERVERS = {
     'gmail.com': ('smtp.gmail.com', 465),
     'yahoo.com': ('smtp.yahoo.com', 465),
-    }
+    'yahoo.co.uk': ('smtp.mail.yahoo.co.uk', 465),
+    'yahoo.com.au': ('smtp.mail.yahoo.com.au', 465),
+    'live.com': ('smtp.live.com', 465),
+    'office365.com': ('smtp.office365.com', 587),
+    'att.net': ('smtp.att.yahoo.com', 465),
+    'verizon.net': ('outgoing.verizon.net', 465),
+    'ntlworld.com': ('smtp.ntlworld.com', 465),
+    'hotmail.com': ('smtp.live.com', 465),
+    'mail.com': ('smtp.mail.com', 465),
+}
 
 
 class Email(Message):
