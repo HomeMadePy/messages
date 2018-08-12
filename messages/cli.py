@@ -1,10 +1,8 @@
 """command-line interface for messages package."""
 
 import os
-import sys
 
 import click
-from click import argument
 from click import option
 
 
@@ -12,7 +10,6 @@ from messages import MESSAGES
 from messages import __version__ as VERSION
 from .api import send
 from ._config import create_config
-from ._exceptions import UnsupportedMessageTypeError
 
 
 ##############################################################################
@@ -106,7 +103,7 @@ def main_email(ctx, **kwds):
 
     * PROFILE: Pre-configured user profile.
 
-    * BODY:    message body text
+    * BODY:    message body text.
     """
     send_message('email', kwds)
 
