@@ -70,7 +70,7 @@ def main():
 @main.command('configure')
 @click.argument('msg_type', required=True)
 def main_configure(msg_type):
-    """Configure the given message type."""
+    """Configure profiles for the given message type."""
     create_config_entry(msg_type)
 
 
