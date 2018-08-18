@@ -14,7 +14,7 @@ from messages._eventloop import MESSAGELOOP
 @pytest.fixture()
 def get_tgram(cfg_mock):
     """Return a valid TelegramBot object."""
-    return TelegramBot(bot_token='34563:ABCDEFG', chat_id='123456', body='message',
+    return TelegramBot(credentials='34563:ABCDEFG', chat_id='123456', body='message',
                 attachments=['https://url1.com', 'https://url2.com'])
 
 

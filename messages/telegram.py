@@ -22,9 +22,10 @@ class TelegramBot(Message):
 
     Args:
         :from_: (str) optional arg to specify who message is from.
-        :bot_token: (str) auth token for bot.
-        :chat_id: (str) chat_id for already-intiated chat.  Integer represented
-            as a string.  Recipient must have already initiated chat at some
+        :credentials: (str) auth token for bot for access.
+        :chat_id: (str) chat_id for already-intiated chat.
+            chat_id is an integer represented as a string.
+            Recipient must have already initiated chat at some
             point in the past for bot to send message.
         :to: (str) if chat_id is unknown, can specify username of
             recipient to lookup via API call.  This may return None if
@@ -53,23 +54,23 @@ class TelegramBot(Message):
     """
 
     def __init__(
-        self, from_=None, bot_token=None, chat_id=None, to=None,
+        self, from_=None, credentials=None, chat_id=None, to=None,
         subject=None, body='', attachments=None, params=None, profile=None,
         save=False, verbose=False
     ):
 
-        config_kwargs = {'from_': from_, 'bot_token': bot_token,
+        config_kwargs = {'from_': from_, 'credentials': credentials,
                      'chat_id': chat_id, 'profile': profile, 'save': save}
 
         configure(self, params=config_kwargs,
-                to_save={'from_', 'chat_id'}, credentials={'bot_token'})
+                to_save={'from_', 'chat_id'}, credentials={'credentials'})
 
         self.to = to
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
         self.params = params or {}
-        self.base_url = 'https://api.telegram.org/bot' + self.bot_token
+        self.base_url = 'https://api.telegram.org/bot' + self.credentials
         self.message = {}
         self.verbose = verbose
 
