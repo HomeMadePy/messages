@@ -60,13 +60,13 @@ def validate_twilio(msg, attr):
 
 def validate_slackwebhook(msg, attr):
     """SlackWebhook input validator function."""
-    if attr in ('webhook_url', 'attachments'):
+    if attr in ('url', 'attachments'):
         check_valid(msg, attr, validus.isurl, 'url')
 
 
 def validate_slackpost(msg, attr):
     """SlackPost input validator function."""
-    if attr in ('channel', 'token'):
+    if attr in ('channel', 'credentials'):
         if not isinstance(getattr(msg, attr), str):
             raise InvalidMessageInputError(msg.__class__.__name__,
                     attr, 'string')

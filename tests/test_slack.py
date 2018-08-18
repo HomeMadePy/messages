@@ -15,14 +15,14 @@ from messages._eventloop import MESSAGELOOP
 @pytest.fixture()
 def get_slackWH(cfg_mock):
     """Return a valid SlackWebhook object."""
-    return SlackWebhook(url='https://test_url.com', body='message',
+    return SlackWebhook(credentials='https://testurl.com', body='message',
             attachments=['https://url1.com', 'https://url2.com'])
 
 
 @pytest.fixture()
 def get_slackP(cfg_mock):
     """Return a valid SlackPost object."""
-    return SlackPost(token='https://test_url.com', channel='general',
+    return SlackPost(credentials='1234:ABCD', channel='general',
             body='message', attachments=['https://url1.com', 'https://url2.com'])
 
 ##############################################################################
@@ -253,7 +253,7 @@ def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
     out, err = capsys.readouterr()
     assert 'Debugging info' in out
     assert 'Message created.' in out
-    assert ' * URL: https://test_url.com' in out
+    assert ' * URL: https://testurl.com' in out
     assert ' * From: Not Specified' in out
     assert ' * Subject: None' in out
     assert ' * Body: message.' in out

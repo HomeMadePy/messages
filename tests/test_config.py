@@ -19,14 +19,14 @@ from messages._exceptions import UnknownProfileError
 
 class Msg:
     """A test message class."""
-    def __init__(self, from_, password, profile=None, save=False):
-        self.config_kwargs = {'from_': from_, 'password': password,
+    def __init__(self, from_, credentials, profile=None, save=False):
+        self.config_kwargs = {'from_': from_, 'credentials': credentials,
                      'profile': profile, 'save': save}
 
 
 @pytest.fixture()
 def get_msg():
-    return Msg(from_='me', password='passw0rd')
+    return Msg(from_='me', credentials='passw0rd')
 
 
 ##############################################################################
@@ -40,9 +40,9 @@ def test_configure_profileNone_saveFalse(get_msg, cfg_mock):
     THEN assert appropriate attributes are set
     """
     msg = get_msg
-    configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'password'})
+    configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'credentials'})
     assert msg.from_ == 'me'
-    assert msg.password == 'passw0rd'
+    assert msg.credentials == 'passw0rd'
 
 
 def test_configure_profileYes_saveTrue(cfg_mock):
@@ -51,21 +51,21 @@ def test_configure_profileYes_saveTrue(cfg_mock):
     WHEN `configure` is called with the specified args
     THEN assert appropriate attributes are set
     """
-    msg = Msg(from_='me', password='passw0rd', profile='myProf', save=True)
-    configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'password'})
+    msg = Msg(from_='me', credentials='passw0rd', profile='myProf', save=True)
+    configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'credentials'})
     assert msg.from_ == 'me'
-    assert msg.password == 'passw0rd'
+    assert msg.credentials == 'passw0rd'
 
 
-def test_configure_noPassword(cfg_mock, mocker):
+def test_configure_noCredentials(cfg_mock, mocker):
     """
     GIVEN a valid message object
     WHEN `configure` is called with the specified args
     THEN assert appropriate attributes are set
     """
     getpass_mock = mocker.patch.object(messages._config, 'getpass')
-    msg = Msg(from_='me', password=None, profile='NewProf', save=False)
-    configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'password'})
+    msg = Msg(from_='me', credentials=None, profile='NewProf', save=False)
+    configure(msg, params=msg.config_kwargs, to_save={'from_'}, credentials={'credentials'})
     assert getpass_mock.call_count == 1
 
 
@@ -105,6 +105,6 @@ def test_create_config_withParams(cfg_mock, mocker):
     input_mock = mocker.patch.object(builtins, 'input')
     getpass_mock = mocker.patch.object(messages._config, 'getpass')
     create_config('email', 'myProfile', {'defaults': ['from_'],
-        'credentials': ['password']})
+        'credentials': ['credentials']})
     assert input_mock.call_count == 1
     assert getpass_mock.call_count == 1

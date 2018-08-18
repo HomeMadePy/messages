@@ -27,16 +27,16 @@ MESSAGES = {
         'credentials': ['password']
     },
     'slackwebhook': {
-        'defaults': ['from_', 'url'],
-        'credentials': []
+        'defaults': ['from_'],
+        'credentials': ['credentials']
     },
     'slackpost': {
         'defaults': ['channel'],
-        'credentials': ['token']
+        'credentials': ['credentials']
     },
     'telegrambot': {
         'defaults': ['from_', 'chat_id'],
-        'credentials': ['bot_token']
+        'credentials': ['credentials']
     },
     'twilio': {
         'defaults': ['from_', 'acct_sid'],

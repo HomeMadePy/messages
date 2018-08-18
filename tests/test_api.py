@@ -28,13 +28,13 @@ def email_kwargs():
 
 @pytest.fixture()
 def slackwebhook_kwargs():
-    return {'url': 'https://slack.com', 'body': 'Test message',
+    return {'credentials': 'https://slack.com', 'body': 'Test message',
             'attachments': None, 'params': {'author_name': 'me'}}
 
 
 @pytest.fixture()
 def slackpost_kwargs():
-    return {'token': '12345abcdef', 'channel': 'general',
+    return {'credentials': '12345abcdef', 'channel': 'general',
             'body': 'Test message', 'attachments': None,
             'params': {'author_name': 'me'}}
 

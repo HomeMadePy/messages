@@ -36,14 +36,14 @@ class Twilio:
 class SlackWebhook:
     """Basic SlackWebhook class used for testing."""
     def __init__(self, webhook_url, attachments):
-       self.webhook_url = webhook_url
+       self.url = webhook_url
        self.attachments = attachments
 
 
 class SlackPost:
     """Basic SlackPost class used for testing."""
     def __init__(self, token, channel):
-       self.token = token
+       self.credentials = token
        self.channel = channel
 
 
@@ -168,7 +168,7 @@ def test_val_input_SlackPost_raises(get_slackpost):
     THEN assert InvalidMessageInputError is raised
     """
     e = get_slackpost
-    e.token = 12345
+    e.credentials = 12345
     with pytest.raises(InvalidMessageInputError):
         for key in e.__dict__.keys():
             validate_input(e, key)
