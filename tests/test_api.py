@@ -41,7 +41,7 @@ def slackpost_kwargs():
 
 @pytest.fixture()
 def telegrambot_kwargs():
-    return {'bot_token': '1234:ABCD', 'chat_id': '123456'}
+    return {'credentials': '1234:ABCD', 'chat_id': '123456'}
 
 
 @pytest.fixture()
