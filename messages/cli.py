@@ -183,7 +183,7 @@ def main_slackpost(ctx, **kwds):
 
     * BODY:    message body text
     """
-    send_message('post', kwds)
+    send_message('slackpost', kwds)
 
 
 @main.command('telegram')
