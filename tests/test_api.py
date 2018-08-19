@@ -20,7 +20,7 @@ from messages._exceptions import UnsupportedMessageTypeError
 @pytest.fixture()
 def email_kwargs():
     return {'server': 'smtp.gmail.com', 'port': 465,
-            'password': 'passw0rd', 'from_': 'me@here.com',
+            'auth': 'passw0rd', 'from_': 'me@here.com',
             'to': 'you@there.com', 'cc': None, 'bcc': None,
             'subject': 'TEST', 'body': 'this is a message',
             'attachments': None}
@@ -28,25 +28,25 @@ def email_kwargs():
 
 @pytest.fixture()
 def slackwebhook_kwargs():
-    return {'credentials': 'https://slack.com', 'body': 'Test message',
+    return {'auth': 'https://slack.com', 'body': 'Test message',
             'attachments': None, 'params': {'author_name': 'me'}}
 
 
 @pytest.fixture()
 def slackpost_kwargs():
-    return {'credentials': '12345abcdef', 'channel': 'general',
+    return {'auth': '12345abcdef', 'channel': 'general',
             'body': 'Test message', 'attachments': None,
             'params': {'author_name': 'me'}}
 
 
 @pytest.fixture()
 def telegrambot_kwargs():
-    return {'credentials': '1234:ABCD', 'chat_id': '123456'}
+    return {'auth': '1234:ABCD', 'chat_id': '123456'}
 
 
 @pytest.fixture()
 def twilio_kwargs():
-    return {'acct_sid': 'your sid', 'auth_token': 'your token',
+    return {'auth': ('your sid', 'your token'),
             'from_': '+19998675309', 'to': '+19998675309', 'body': 'Test!',
             'attachments': 'https://www.google.com'}
 

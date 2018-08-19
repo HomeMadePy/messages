@@ -25,8 +25,7 @@ class Twilio(Message):
     Args:
         :from_: (str) phone number of originating text, e.g. '+15558675309'
         :to: (str) phone number of destination text, e.g. '+15558675309'
-        :acct_sid: (str) api credential from twilio
-        :auth_token: (str) api credential from twilio
+        :auth: (list or tuple) twilio api credentials: (acct_sid, auth_token)
         :body: (str) message to send
         :attachments: (str) url of any image to send along with message
         :profile: (str) use a separate account profile specified by name
@@ -48,15 +47,15 @@ class Twilio(Message):
     """
 
     def __init__(
-        self, from_=None, to=None, acct_sid=None, auth_token=None,
-        body='', attachments=None, profile=None, save=False, verbose=False
+        self, from_=None, to=None, auth=None, body='', attachments=None,
+        profile=None, save=False, verbose=False
     ):
 
-        config_kwargs = {'from_': from_, 'acct_sid': acct_sid,
-                'auth_token': auth_token, 'profile': profile, 'save': save}
+        config_kwargs = {'from_': from_, 'auth': list(auth),
+                'profile': profile, 'save': save}
 
         configure(self, params=config_kwargs,
-                to_save={'from_', 'acct_sid'}, credentials={'auth_token'})
+                to_save={'from_'}, credentials={'auth'})
 
         self.to = to
         self.body = body
@@ -87,7 +86,7 @@ class Twilio(Message):
         Set self.sid to return code of message.
         """
         url = ('https://api.twilio.com/2010-04-01/Accounts/'
-               + self.acct_sid + '/Messages.json')
+               + self.auth[0] + '/Messages.json')
         data = {
             'From': self.from_,
             'To': self.to,
@@ -99,8 +98,7 @@ class Twilio(Message):
             print('Debugging info'
                   '\n--------------'
                   '\n{} Message created.'.format(timestamp()))
-
-        r = requests.post(url, data=data, auth=(self.acct_sid, self.auth_token))
+        r = requests.post(url, data=data, auth=(self.auth[0], self.auth[1]))
         self.sid = r.json()['sid']
 
         if self.verbose:

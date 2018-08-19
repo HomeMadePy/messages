@@ -24,22 +24,22 @@ logging.getLogger(__name__).addHandler(logging.NullHandler())
 MESSAGES = {
     'email': {
         'defaults': ['from_', 'server', 'port',],
-        'credentials': ['password']
+        'credentials': ['auth']
     },
     'slackwebhook': {
         'defaults': ['from_'],
-        'credentials': ['credentials']
+        'credentials': ['auth']
     },
     'slackpost': {
         'defaults': ['channel'],
-        'credentials': ['credentials']
+        'credentials': ['auth']
     },
     'telegrambot': {
         'defaults': ['from_', 'chat_id'],
-        'credentials': ['credentials']
+        'credentials': ['auth']
     },
     'twilio': {
-        'defaults': ['from_', 'acct_sid'],
-        'credentials': ['auth_token']
+        'defaults': ['from_'],
+        'credentials': ['acct_sid', 'auth_token']
     },
 }

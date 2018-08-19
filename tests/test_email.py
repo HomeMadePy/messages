@@ -22,14 +22,14 @@ def get_email(mocker):
     """Return a valid Email object."""
     config_mock = mocker.patch.object(messages.email_, 'configure')
     e = Email(from_='me@here.com', to='you@there.com',
-            server='smtp.gmail.com', port=465, password='password',
+            server='smtp.gmail.com', port=465, auth='password',
             cc='someone@there.com', bcc='them@there.com',
             subject='subject', body='message', attachments=['file1', 'file2'],
             profile='myName', save=False)
     e.from_ = 'me@here.com'
     e.server = 'smtp.gmail.com'
     e.port = 465
-    e.password = 'password'
+    e.auth = 'password'
     return e
 
 
@@ -58,7 +58,7 @@ def test_email_init_normal(get_email):
     assert e is not None
     assert e.server == 'smtp.gmail.com'
     assert e.port == 465
-    assert e.password == 'password'
+    assert e.auth == 'password'
     assert e.from_ == 'me@here.com'
     assert e.to == 'you@there.com'
     assert e.cc == 'someone@there.com'

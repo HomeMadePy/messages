@@ -17,13 +17,12 @@ from messages._eventloop import MESSAGELOOP
 def get_twilio(mocker):
     """Return a valid Twilio object."""
     configure_mock = mocker.patch.object(messages.text, 'configure')
-    t = Twilio(from_='+16198675309', to='+16195551212', acct_sid='test_sid',
-        auth_token='test_token', body='test text!',
-        attachments='https://imgs.xkcd.com/comics/python.png',
-        profile='tester', save=False)
+    t = Twilio(from_='+16198675309', to='+16195551212',
+            auth=('test_sid', 'test_token'), body='test text!',
+            attachments='https://imgs.xkcd.com/comics/python.png',
+            profile='tester', save=False)
     t.from_ = '+16198675309'
-    t.acct_sid = 'test_sid'
-    t.auth_token = 'test_token'
+    t.auth = ('test_sid', 'test_token')
     t.profile = 'tester'
     return t
 
@@ -41,8 +40,7 @@ def test_twilio_init(get_twilio, cfg_mock):
     t = get_twilio
     assert t.from_ == '+16198675309'
     assert t.to == '+16195551212'
-    assert t.acct_sid == 'test_sid'
-    assert t.auth_token == 'test_token'
+    assert t.auth == ('test_sid', 'test_token')
     assert t.body == 'test text!'
     assert t.attachments == 'https://imgs.xkcd.com/comics/python.png'
 

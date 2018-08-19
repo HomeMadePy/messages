@@ -47,7 +47,7 @@ class Email(Message):
             i.e. 'smtp.gmail.com'
         :port: (int) smtp server port
             i.e. 465 or 587
-        :password: (str) password for email account
+        :auth: (str) password for email account
         :cc: (str or list) carbon-copy recipients
         :bcc: (str or list) blind carbon-copy recipients
         :subject: (str) email message subject line
@@ -57,7 +57,7 @@ class Email(Message):
                 ['/home/you/file1.txt', '/home/you/file2.pdf']
         :profile: (str) use an account profile specified by name
         :save: (bool) save pertinent values in the messages config.json file,
-            such as from_, server, port, password (encrypted keyring) to make
+            such as from_, server, port, auth (encrypted keyring) to make
             sending messages faster.
 
     Attributes:
@@ -75,17 +75,17 @@ class Email(Message):
 
     def __init__(
         self, from_=None, to=None, server=None, port=None,
-        password=None, cc=None, bcc=None, subject='', body='',
+        auth=None, cc=None, bcc=None, subject='', body='',
         attachments=None, profile=None, save=False, verbose=False
     ):
 
         config_kwargs = {'from_': from_,
                 'server': server or self.get_server(from_)[0],
                 'port': port or self.get_server(from_)[1],
-                'password': password, 'profile': profile, 'save': save}
+                'auth': auth, 'profile': profile, 'save': save}
 
         configure(self, params=config_kwargs,
-                to_save={'from_', 'server', 'port'}, credentials={'password'})
+                to_save={'from_', 'server', 'port'}, credentials={'auth'})
 
         self.to, self.cc, self.bcc = to, cc, bcc
         self.subject = subject
@@ -188,7 +188,7 @@ class Email(Message):
             session = self.get_ssl()
         elif self.port in (587, '587'):
             session = self.get_tls()
-        session.login(self.from_, self.password)
+        session.login(self.from_, self.auth)
         return session
 
 

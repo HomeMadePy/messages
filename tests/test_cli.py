@@ -115,7 +115,7 @@ def test_create_config_entry_yes_email(capsys, mocker):
     assert 'from_' in out
     assert 'server' in out
     assert 'port' in out
-    assert 'password' in out
+    assert 'auth' in out
     assert input_mk.call_count == 2
     assert create_cfg_mk.call_count == 1
 
@@ -152,7 +152,7 @@ def test_create_config_entry_yes_slackwebhook(capsys, mocker):
     out, err = capsys.readouterr()
     assert 'You will need the following information to configure: slackwebhook' in out
     assert 'from_' in out
-    assert 'credentials' in out
+    assert 'auth' in out
     assert input_mk.call_count == 2
     assert create_cfg_mk.call_count == 1
 
@@ -170,7 +170,7 @@ def test_create_config_entry_yes_tgram(capsys, mocker):
     out, err = capsys.readouterr()
     assert 'You will need the following information to configure: telegrambot' in out
     assert 'chat_id' in out
-    assert 'credentials' in out
+    assert 'auth' in out
     assert input_mk.call_count == 2
     assert create_cfg_mk.call_count == 1
 

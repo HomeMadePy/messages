@@ -87,7 +87,7 @@ class SlackWebhook(Slack):
 
     Args:
         :from_: (str) optional arg to specify who message is from.
-        :credentials: (str) webhook url for installed slack app.
+        :auth: (str) webhook url for installed slack app.
         :subject: (str) optional arg to specify message subject.
         :body: (str) message to send.
         :attachments: (str or list) each item is a url to attach
@@ -112,22 +112,22 @@ class SlackWebhook(Slack):
     """
 
     def __init__(
-        self, from_=None, credentials=None, subject=None, body='',
+        self, from_=None, auth=None, subject=None, body='',
         attachments=None, params=None, profile=None, save=False, verbose=False
     ):
 
-        config_kwargs = {'from_': from_, 'credentials': credentials, 'profile': profile,
+        config_kwargs = {'from_': from_, 'auth': auth, 'profile': profile,
                 'save': save}
 
         configure(self, params=config_kwargs,
-                to_save={'from_'}, credentials={'credentials'})
+                to_save={'from_'}, credentials={'auth'})
 
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
         self.params = params
         self.message = {}
-        self.url = self.credentials
+        self.url = self.auth
         self.verbose = verbose
 
 
@@ -154,7 +154,7 @@ class SlackPost(Slack):
 
     Args:
         :from_: (str) optional arg to specify who message is from.
-        :credentials: (str) authentication token with required scopes.
+        :auth: (str) authentication token with required scopes.
         :channel: (str) Channel, private group, or IM channel to send message
         :subject: (str) optional arg to specify message subject.
         :body: (str) message to send.
@@ -180,22 +180,22 @@ class SlackPost(Slack):
     """
 
     def __init__(
-        self, from_=None, credentials=None, channel=None, subject=None, body='',
+        self, from_=None, auth=None, channel=None, subject=None, body='',
         attachments=None, params=None, profile=None, save=False, verbose=False
     ):
 
-        config_kwargs = {'channel': channel, 'credentials': credentials,
+        config_kwargs = {'channel': channel, 'auth': auth,
                 'profile': profile, 'save': save}
 
         configure(self, params=config_kwargs,
-                to_save={'channel'}, credentials={'credentials'})
+                to_save={'channel'}, credentials={'auth'})
 
         self.from_ = from_
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
         self.params = params
-        self.message = {'token': self.credentials, 'channel': self.channel}
+        self.message = {'token': self.auth, 'channel': self.channel}
         self.url = 'https://slack.com/api/chat.postMessage'
         self.verbose = verbose
 

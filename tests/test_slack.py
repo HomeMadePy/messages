@@ -15,14 +15,14 @@ from messages._eventloop import MESSAGELOOP
 @pytest.fixture()
 def get_slackWH(cfg_mock):
     """Return a valid SlackWebhook object."""
-    return SlackWebhook(credentials='https://testurl.com', body='message',
+    return SlackWebhook(auth='https://testurl.com', body='message',
             attachments=['https://url1.com', 'https://url2.com'])
 
 
 @pytest.fixture()
 def get_slackP(cfg_mock):
     """Return a valid SlackPost object."""
-    return SlackPost(credentials='1234:ABCD', channel='general',
+    return SlackPost(auth='1234:ABCD', channel='general',
             body='message', attachments=['https://url1.com', 'https://url2.com'])
 
 ##############################################################################

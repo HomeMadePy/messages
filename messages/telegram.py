@@ -22,7 +22,7 @@ class TelegramBot(Message):
 
     Args:
         :from_: (str) optional arg to specify who message is from.
-        :credentials: (str) auth token for bot for access.
+        :auth: (str) auth token for bot for access.
         :chat_id: (str) chat_id for already-intiated chat.
             chat_id is an integer represented as a string.
             Recipient must have already initiated chat at some
@@ -54,23 +54,23 @@ class TelegramBot(Message):
     """
 
     def __init__(
-        self, from_=None, credentials=None, chat_id=None, to=None,
+        self, from_=None, auth=None, chat_id=None, to=None,
         subject=None, body='', attachments=None, params=None, profile=None,
         save=False, verbose=False
     ):
 
-        config_kwargs = {'from_': from_, 'credentials': credentials,
+        config_kwargs = {'from_': from_, 'auth': auth,
                      'chat_id': chat_id, 'profile': profile, 'save': save}
 
         configure(self, params=config_kwargs,
-                to_save={'from_', 'chat_id'}, credentials={'credentials'})
+                to_save={'from_', 'chat_id'}, credentials={'auth'})
 
         self.to = to
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
         self.params = params or {}
-        self.base_url = 'https://api.telegram.org/bot' + self.credentials
+        self.base_url = 'https://api.telegram.org/bot' + self.auth
         self.message = {}
         self.verbose = verbose
 
