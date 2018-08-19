@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+UPCOMING
+--------
+- Changes CLI structure to break out each message type into its own subcommand
+- Changes each message interface to accept an **auth** param instead of naming each credential param separately.  If a message requires more than one input for **auth**, then it will expect a tuple or a list.
+
+
 0.4.3
 -----
 - Adds **--verbose**, **-V** option to the CLI to enable verbose output for each message invocation.
