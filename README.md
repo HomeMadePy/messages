@@ -61,11 +61,10 @@ Message sent...
 
 ### CLI
 ```shell
-$ messages email -t you@there.com \
--m 'Hello,\n\tBuy more Bitcoin!' \
+$ messages email myProfileName 'Hello,\n\tBuy more Bitcoin!' \
+-t you@there.com \
 -a ./file.txt \
 -a ~/Documents/file2.pdf \
--P myProfileName
 Message sent...
 ```
 
@@ -90,11 +89,9 @@ Message sent...
 
 ### CLI
 ```shell
-$ messages telegrambot \
--m 'Hello,\n\tBuy more Bitcoin!' \
+$ messages telegram myProfileName 'Hello,\n\tBuy more Bitcoin!' \
 -a 'https://url1.com/picture.gif' \
 -a 'https://url2.com/file.pdf' \
--P myProfileName
 Message sent...
 ```
 
