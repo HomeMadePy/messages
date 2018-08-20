@@ -34,6 +34,31 @@ def test_tgram_init(get_tgram):
 
 
 ##############################################################################
+# TESTS: TelegramBot.__str__
+##############################################################################
+
+def test_tgram_str(get_tgram, capsys):
+    """
+    GIVEN t=TelegramBot()
+    WHEN print(t)
+    THEN assert proper output prints
+    """
+    t = get_tgram
+    t.from_ = 'Me'
+    t.to = 'You'
+    t.subject = 'Chat'
+    print(t)
+    out, err = capsys.readouterr()
+    assert 'From: Me' in out
+    assert 'To: You' in out
+    assert 'Chat ID: 123456' in out
+    assert 'Subject: Chat' in out
+    assert 'Body: message' in out
+    assert 'Attachments: [\'https://url1.com\', \'https://url2.com\']' in out
+    assert '' in err
+
+
+##############################################################################
 # TESTS: TelegramBot.get_chat_id
 ##############################################################################
 
@@ -160,13 +185,39 @@ def test_tgram_send_content_statusGT300_verbose_true(get_tgram, capsys, mocker):
 # TESTS: TelegramBot.send
 ##############################################################################
 
-def test_send(get_tgram, mocker):
+def test_send_verbose_false(get_tgram, mocker, capsys):
+    """
+    GIVEN a TelegramBot instance
+    WHEN send() is called with verbose=False
+    THEN assert correct sequence is called and correct output printed
+    """
     con_mock = mocker.patch.object(TelegramBot, 'construct_message')
     send_cont_mock = mocker.patch.object(TelegramBot, 'send_content')
     t = get_tgram
     t.send()
+    out, err = capsys.readouterr()
     assert con_mock.call_count == 1
     assert send_cont_mock.call_count == 3
+    assert 'Message sent.' in out
+    assert 'Debugging info' not in out
+
+
+def test_send_verbose_true(get_tgram, mocker, capsys):
+    """
+    GIVEN a TelegramBot instance
+    WHEN send() is called with verbose=True
+    THEN assert correct sequence is called and correct output printed
+    """
+    con_mock = mocker.patch.object(TelegramBot, 'construct_message')
+    send_cont_mock = mocker.patch.object(TelegramBot, 'send_content')
+    t = get_tgram
+    t.verbose = True
+    t.send()
+    out, err = capsys.readouterr()
+    assert con_mock.call_count == 1
+    assert send_cont_mock.call_count == 3
+    assert 'Message sent.' in out
+    assert 'Debugging info' in out
 
 
 ##############################################################################

@@ -1,6 +1,7 @@
 """messages.cli tests."""
 
 import builtins
+import os
 import sys
 
 import pytest
@@ -51,7 +52,7 @@ def main_mocks(mocker):
 # TESTS: cli.get_body_from_file
 ##############################################################################
 
-@conftest.travis
+@conftest.travis  # skip test if on travis-ci
 def test_get_body_from_file(tmpdir):
     """
     GIVEN a call to messages via the CLI
@@ -65,6 +66,22 @@ def test_get_body_from_file(tmpdir):
     kwds = {'body': None, 'file': msg_file}
     body = get_body_from_file(kwds)
     assert kwds == {'body': 'This is the message to send!', 'file': None}
+
+
+def test_get_body_from_file_travis(mocker):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN a message is specified by filename
+    THEN assert the correct file operations are called and the kwds
+        dict is updated
+    """
+    isfile_mock = mocker.patch.object(os.path, 'isfile')
+    open_mock = mocker.patch.object(builtins, 'open')
+    isfile_mock.return_value = True
+    kwds = {'file': 'file.txt'}
+    get_body_from_file(kwds)
+    assert kwds['file'] is None
+    assert 'body' in kwds.keys()
 
 
 ##############################################################################
