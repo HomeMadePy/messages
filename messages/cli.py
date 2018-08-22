@@ -209,4 +209,4 @@ def main_telegram(ctx, **kwds):
 
     * BODY:    message body text
     """
-    send_message('telegram', kwds)
+    send_message('telegrambot', kwds)
