@@ -9,7 +9,7 @@ from email.mime.multipart import MIMEMultipart
 
 import messages
 from messages.email_ import Email
-from messages.email_ import configure
+from messages.email_ import check_config_file
 from messages._eventloop import MESSAGELOOP
 
 
@@ -20,7 +20,7 @@ from messages._eventloop import MESSAGELOOP
 @pytest.fixture()
 def get_email(mocker):
     """Return a valid Email object."""
-    config_mock = mocker.patch.object(messages.email_, 'configure')
+    config_mock = mocker.patch.object(messages.email_, 'check_config_file')
     e = Email(from_='me@here.com', to='you@there.com',
             server='smtp.gmail.com', port=465, auth='password',
             cc='someone@there.com', bcc='them@there.com',

@@ -19,7 +19,7 @@ Module designed to make creating and sending chat messages easy.
 
 import requests
 
-from ._config import configure
+from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
 from ._utils import timestamp
@@ -116,19 +116,19 @@ class SlackWebhook(Slack):
         attachments=None, params=None, profile=None, save=False, verbose=False
     ):
 
-        config_kwargs = {'from_': from_, 'auth': auth, 'profile': profile,
-                'save': save}
-
-        configure(self, params=config_kwargs,
-                to_save={'from_'}, credentials={'auth'})
-
+        self.from_ = from_
+        self.auth = self.url = auth
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
         self.params = params
-        self.message = {}
-        self.url = self.auth
+        self.profile = profile
+        self.save = save
         self.verbose = verbose
+        self.message = {}
+
+        if self.profile:
+            check_config_file(self)
 
 
     def __str__(self, indentation='\n'):
@@ -184,20 +184,21 @@ class SlackPost(Slack):
         attachments=None, params=None, profile=None, save=False, verbose=False
     ):
 
-        config_kwargs = {'channel': channel, 'auth': auth,
-                'profile': profile, 'save': save}
-
-        configure(self, params=config_kwargs,
-                to_save={'channel'}, credentials={'auth'})
-
         self.from_ = from_
+        self.auth = auth
+        self.channel = channel
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
         self.params = params
+        self.profile = profile
+        self.save = save
+        self.verbose = verbose
         self.message = {'token': self.auth, 'channel': self.channel}
         self.url = 'https://slack.com/api/chat.postMessage'
-        self.verbose = verbose
+
+        if self.profile:
+            check_config_file(self)
 
 
     def __str__(self, indentation='\n'):

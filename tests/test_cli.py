@@ -11,12 +11,9 @@ import click
 from click import Context
 from click.testing import CliRunner
 
-from messages import MESSAGES
-
 import messages.cli
 from messages.cli import get_body_from_file
 from messages.cli import trim_args
-from messages.cli import create_config_entry
 from messages.cli import send_message
 from messages.cli import main
 from messages.email_ import Email
@@ -114,100 +111,6 @@ def test_trim_args_ListItems():
 
 
 ##############################################################################
-# TESTS: cli.create_config_entry
-##############################################################################
-
-def test_create_config_entry_yes_email(capsys, mocker):
-    """
-    GIVEN a call to messages via the CLI
-    WHEN create_config_entry is called with a valid message type with user
-        input=yes
-    THEN assert correct output is printed and create_config is called
-    """
-    input_mk = mocker.patch.object(builtins, 'input', return_value='y')
-    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
-    create_config_entry('email')
-    out, err = capsys.readouterr()
-    assert 'You will need the following information to configure: email' in out
-    assert 'from_' in out
-    assert 'server' in out
-    assert 'port' in out
-    assert 'auth' in out
-    assert input_mk.call_count == 2
-    assert create_cfg_mk.call_count == 1
-
-
-def test_create_config_entry_yes_twilio(capsys, mocker):
-    """
-    GIVEN a call to messages via the CLI
-    WHEN create_config_entry is called with a valid message type with user
-        input=yes
-    THEN assert correct output is printed and create_config is called
-    """
-    input_mk = mocker.patch.object(builtins, 'input', return_value='y')
-    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
-    create_config_entry('twilio')
-    out, err = capsys.readouterr()
-    assert 'You will need the following information to configure: twilio' in out
-    assert 'from_' in out
-    assert 'acct_sid' in out
-    assert 'auth_token' in out
-    assert input_mk.call_count == 2
-    assert create_cfg_mk.call_count == 1
-
-
-def test_create_config_entry_yes_slackwebhook(capsys, mocker):
-    """
-    GIVEN a call to messages via the CLI
-    WHEN create_config_entry is called with a valid message type with user
-        input=yes
-    THEN assert correct output is printed and create_config is called
-    """
-    input_mk = mocker.patch.object(builtins, 'input', return_value='y')
-    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
-    create_config_entry('slackwebhook')
-    out, err = capsys.readouterr()
-    assert 'You will need the following information to configure: slackwebhook' in out
-    assert 'from_' in out
-    assert 'auth' in out
-    assert input_mk.call_count == 2
-    assert create_cfg_mk.call_count == 1
-
-
-def test_create_config_entry_yes_tgram(capsys, mocker):
-    """
-    GIVEN a call to messages via the CLI
-    WHEN create_config_entry is called with a valid message type with user
-        input=yes
-    THEN assert correct output is printed and create_config is called
-    """
-    input_mk = mocker.patch.object(builtins, 'input', return_value='y')
-    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
-    create_config_entry('telegrambot')
-    out, err = capsys.readouterr()
-    assert 'You will need the following information to configure: telegrambot' in out
-    assert 'chat_id' in out
-    assert 'auth' in out
-    assert input_mk.call_count == 2
-    assert create_cfg_mk.call_count == 1
-
-
-def test_create_config_entry_no(capsys, mocker):
-    """
-    GIVEN a call to messages via the CLI
-    WHEN create_config_entry is called with a valid message type with user
-        input=no
-    THEN assert create_config is not called
-    """
-    input_mk = mocker.patch.object(builtins, 'input', return_value='n')
-    create_cfg_mk = mocker.patch.object(messages.cli, 'create_config')
-    create_config_entry('email')
-    out, err = capsys.readouterr()
-    assert input_mk.call_count == 1
-    assert create_cfg_mk.call_count == 0
-
-
-##############################################################################
 # TESTS: cli.send_message
 ##############################################################################
 
@@ -253,7 +156,7 @@ def test_main_configure(mocker):
     WHEN subcommand = configure
     THEN assert the correct sequence is called
     """
-    config_mock = mocker.patch.object(messages.cli, 'create_config_entry')
+    config_mock = mocker.patch.object(messages.cli, 'create_config_profile')
     runner = CliRunner()
     runner.invoke(main, ['configure', 'email'], catch_exceptions=False)
     assert config_mock.call_count == 1

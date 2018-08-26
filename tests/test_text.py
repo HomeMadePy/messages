@@ -5,7 +5,7 @@ import requests
 
 import messages.text
 from messages.text import Twilio
-from messages.text import configure
+from messages.text import check_config_file
 from messages._eventloop import MESSAGELOOP
 
 
@@ -16,7 +16,7 @@ from messages._eventloop import MESSAGELOOP
 @pytest.fixture()
 def get_twilio(mocker):
     """Return a valid Twilio object."""
-    configure_mock = mocker.patch.object(messages.text, 'configure')
+    configure_mock = mocker.patch.object(messages.text, 'check_config_file')
     t = Twilio(from_='+16198675309', to='+16195551212',
             auth=('test_sid', 'test_token'), body='test text!',
             attachments='https://imgs.xkcd.com/comics/python.png',

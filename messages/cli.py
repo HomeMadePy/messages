@@ -5,11 +5,10 @@ import os
 import click
 from click import option
 
-
-from messages import MESSAGES
 from messages import __version__ as VERSION
 from .api import send
-from ._config import create_config
+from ._config import create_config_profile
+from ._config import CONFIG
 
 
 ##############################################################################
@@ -35,19 +34,6 @@ def trim_args(kwds):
     return kwargs
 
 
-def create_config_entry(msg_type):
-    """Creates an entry in the config.json file for later use."""
-    click.echo('You will need the following information to configure: ' + msg_type)
-    for item in (MESSAGES[msg_type]['defaults'] +
-                 MESSAGES[msg_type]['credentials']):
-        click.echo('    * ' + item)
-
-    status = input('\nContinue [Y/N]? ')
-    if status in ('Y', 'y'):
-        profile = input('\nEnter Profile Name: ')
-        create_config(msg_type, profile, MESSAGES[msg_type])
-
-
 def send_message(msg_type, kwds):
     """Do some final preprocessing and send the message."""
     if kwds['file']:
@@ -71,7 +57,7 @@ def main():
 @click.argument('msg_type', required=True)
 def main_configure(msg_type):
     """Configure profiles for the given message type."""
-    create_config_entry(msg_type)
+    create_config_profile(msg_type)
 
 
 @main.command('email')
