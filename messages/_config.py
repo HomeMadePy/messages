@@ -18,7 +18,7 @@ from ._exceptions import UnknownProfileError
 #  Message class config defaults
 ##############################################################################
 
-CONFIG = OrderedDict({
+CONFIG = {
     'email': {
         'settings': {
             'from_': 'From email address (e.g. you@here.com)',
@@ -53,10 +53,10 @@ CONFIG = OrderedDict({
         'settings': {
             'from_': 'Twilio phone number (e.g. +19998675309)',
         },
-        'auth': {
+        'auth': OrderedDict({
             'auth_sid': 'Twilio API account SID',
             'auth_token': 'Twilio API authorization token',
-        },
+        }),
     },
 
     'telegrambot': {
@@ -67,7 +67,7 @@ CONFIG = OrderedDict({
             'auth': 'Telegram authorization token',
         },
     },
-})
+}
 
 
 ##############################################################################
