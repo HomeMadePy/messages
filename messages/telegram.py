@@ -70,11 +70,12 @@ class TelegramBot(Message):
         self.profile = profile
         self.save = save
         self.verbose = verbose
-        self.base_url = 'https://api.telegram.org/bot' + self.auth
         self.message = {}
 
         if self.profile:
             check_config_file(self)
+
+        self.base_url = 'https://api.telegram.org/bot' + self.auth
 
 
     def __str__(self, indentation='\n'):
