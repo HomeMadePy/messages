@@ -3,6 +3,7 @@
 import pytest
 import requests
 
+import messages.slack
 from messages.slack import SlackWebhook
 from messages.slack import SlackPost
 from messages._eventloop import MESSAGELOOP
@@ -13,17 +14,22 @@ from messages._eventloop import MESSAGELOOP
 ##############################################################################
 
 @pytest.fixture()
-def get_slackWH(cfg_mock):
+def get_slackWH(cfg_mock, mocker):
     """Return a valid SlackWebhook object."""
+    mocker.patch.object(messages.slack, 'check_config_file')
     return SlackWebhook(auth='https://testurl.com', body='message',
-            attachments=['https://url1.com', 'https://url2.com'])
+            attachments=['https://url1.com', 'https://url2.com'],
+            profile='myProfile')
 
 
 @pytest.fixture()
-def get_slackP(cfg_mock):
+def get_slackP(cfg_mock, mocker):
     """Return a valid SlackPost object."""
+    mocker.patch.object(messages.slack, 'check_config_file')
     return SlackPost(auth='1234:ABCD', channel='general',
-            body='message', attachments=['https://url1.com', 'https://url2.com'])
+            body='message', attachments=['https://url1.com', 'https://url2.com'],
+            profile='myProfile')
+
 
 ##############################################################################
 # TESTS: Slack*.__init__

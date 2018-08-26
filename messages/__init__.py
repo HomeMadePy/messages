@@ -18,28 +18,3 @@ __version__ = '0.4.3'
 
 # Setup logger
 logging.getLogger(__name__).addHandler(logging.NullHandler())
-
-
-# dict values for cli module
-MESSAGES = {
-    'email': {
-        'defaults': ['from_', 'server', 'port',],
-        'credentials': ['auth']
-    },
-    'slackwebhook': {
-        'defaults': ['from_'],
-        'credentials': ['auth']
-    },
-    'slackpost': {
-        'defaults': ['channel'],
-        'credentials': ['auth']
-    },
-    'telegrambot': {
-        'defaults': ['from_', 'chat_id'],
-        'credentials': ['auth']
-    },
-    'twilio': {
-        'defaults': ['from_'],
-        'credentials': ['acct_sid', 'auth_token']
-    },
-}

@@ -10,7 +10,7 @@ import sys
 
 import requests
 
-from ._config import configure
+from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
 from ._utils import timestamp
@@ -55,24 +55,26 @@ class TelegramBot(Message):
 
     def __init__(
         self, from_=None, auth=None, chat_id=None, to=None,
-        subject=None, body='', attachments=None, params=None, profile=None,
-        save=False, verbose=False
+        subject=None, body='', attachments=None, params=None,
+        profile=None, save=False, verbose=False
     ):
 
-        config_kwargs = {'from_': from_, 'auth': auth,
-                     'chat_id': chat_id, 'profile': profile, 'save': save}
-
-        configure(self, params=config_kwargs,
-                to_save={'from_', 'chat_id'}, credentials={'auth'})
-
+        self.from_ = from_
+        self.auth = auth
+        self.chat_id = chat_id
         self.to = to
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
         self.params = params or {}
+        self.profile = profile
+        self.save = save
+        self.verbose = verbose
         self.base_url = 'https://api.telegram.org/bot' + self.auth
         self.message = {}
-        self.verbose = verbose
+
+        if self.profile:
+            check_config_file(self)
 
 
     def __str__(self, indentation='\n'):

@@ -12,7 +12,7 @@ import sys
 
 import requests
 
-from ._config import configure
+from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
 from ._utils import timestamp
@@ -51,17 +51,18 @@ class Twilio(Message):
         profile=None, save=False, verbose=False
     ):
 
-        config_kwargs = {'from_': from_, 'auth': list(auth),
-                'profile': profile, 'save': save}
-
-        configure(self, params=config_kwargs,
-                to_save={'from_'}, credentials={'auth'})
-
+        self.from_ = from_
         self.to = to
+        self.auth = auth
         self.body = body
         self.attachments = attachments
-        self.sid = None
+        self.profile = profile
+        self.save = save
         self.verbose = verbose
+        self.sid = None
+
+        if self.profile:
+            check_config_file(self)
 
 
     def __str__(self, indentation='\n'):

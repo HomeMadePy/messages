@@ -3,6 +3,7 @@
 import pytest
 import requests
 
+import messages.telegram
 from messages.telegram import TelegramBot
 from messages._eventloop import MESSAGELOOP
 
@@ -12,10 +13,12 @@ from messages._eventloop import MESSAGELOOP
 ##############################################################################
 
 @pytest.fixture()
-def get_tgram(cfg_mock):
+def get_tgram(cfg_mock, mocker):
     """Return a valid TelegramBot object."""
+    mocker.patch.object(messages.telegram, 'check_config_file')
     return TelegramBot(auth='34563:ABCDEFG', chat_id='123456', body='message',
-                attachments=['https://url1.com', 'https://url2.com'])
+                attachments=['https://url1.com', 'https://url2.com'],
+                profile='myProfile')
 
 
 ##############################################################################
