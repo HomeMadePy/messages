@@ -5,6 +5,8 @@ UPCOMING
 --------
 - Changes CLI structure to break out each message type into its own subcommand
 - Changes each message interface to accept an **auth** param instead of naming each credential param separately.  If a message requires more than one input for **auth**, then it will expect a tuple or a list.
+- Redesigns the **_config.py** module to be more readable and easier
+to interface with inside the message classes.
 
 
 0.4.3
