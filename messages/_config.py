@@ -18,7 +18,7 @@ from ._exceptions import UnknownProfileError
 #  Message class config defaults
 ##############################################################################
 
-CONFIG = {
+CONFIG = OrderedDict({
     'email': {
         'settings': {
             'from_': 'From email address (e.g. you@here.com)',
@@ -67,7 +67,7 @@ CONFIG = {
             'auth': 'Telegram authorization token',
         },
     },
-}
+})
 
 
 ##############################################################################
