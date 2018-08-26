@@ -53,10 +53,10 @@ CONFIG = {
         'settings': {
             'from_': 'Twilio phone number (e.g. +19998675309)',
         },
-        'auth': OrderedDict({
-            'auth_sid': 'Twilio API account SID',
-            'auth_token': 'Twilio API authorization token',
-        }),
+        'auth': OrderedDict([
+            ('auth_sid', 'Twilio API account SID'),
+            ('auth_token', 'Twilio API authorization token'),
+        ]),
     },
 
     'telegrambot': {
@@ -229,10 +229,10 @@ def get_data_from_user(msg_type):
 
 def get_auth_from_user(msg_type):
     """Get the required 'auth' from the user and return as a dict."""
-    auth = OrderedDict()
+    auth = []
     for k, v in CONFIG[msg_type]['auth'].items():
-        auth[k] = getpass(v + ': ')
-    return auth
+        auth.append((k, getpass(v + ': ')))
+    return OrderedDict(auth)
 
 
 def configure_profile(msg_type, profile_name, data, auth):
