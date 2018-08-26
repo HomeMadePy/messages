@@ -115,9 +115,11 @@ def retrieve_data_from_config(msg, cfg):
         :msg: (Message class) an instance of a message class.
         :cfg: (jsonconfig.Config) config instance.
     """
+    msg_type = msg.__class__.__name__.lower()
     for attr in msg:
-        if getattr(msg, attr) is None and attr in cfg.data[msg.profile]:
-            setattr(msg, attr, cfg.data[msg.profile][attr])
+        if (getattr(msg, attr) is None and
+                attr in cfg.data[msg.profile][msg_type]):
+            setattr(msg, attr, cfg.data[msg.profile][msg_type][attr])
 
 
 def retrieve_pwd_from_config(msg, cfg):

@@ -164,7 +164,7 @@ def test_ret_data_from_config(get_msg, get_cfg):
     cfg = get_cfg
     # create some attributes to test
     msg.a, msg.b = None, None
-    cfg.data = {'myProfile': {'a': 1, 'b': 2}}
+    cfg.data = {'myProfile': {'msg': {'a': 1, 'b': 2}}}
     retrieve_data_from_config(msg, cfg)
     assert msg.a == 1
     assert msg.b == 2
