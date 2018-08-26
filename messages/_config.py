@@ -6,6 +6,7 @@ default attributes, credentials (auth), etc.
 """
 
 from collections import MutableSequence
+from collections import OrderedDict
 from getpass import getpass
 
 import jsonconfig
@@ -226,7 +227,7 @@ def get_data_from_user(msg_type):
 
 def get_auth_from_user(msg_type):
     """Get the required 'auth' from the user and return as a dict."""
-    auth = {}
+    auth = OrderedDict()
     for k, v in CONFIG[msg_type]['auth'].items():
         auth[k] = getpass(v + ': ')
     return auth
