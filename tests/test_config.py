@@ -3,6 +3,8 @@
 import pytest
 import builtins
 
+from collections import OrderedDict
+
 import jsonconfig
 
 import messages._config
@@ -453,7 +455,8 @@ def test_write_data(get_cfg):
     ('slackpost', {'auth': 's3cr3t'}, 's3cr3t'),
     ('slackwebhook', {'auth': 's3cr3t'}, 's3cr3t'),
     ('telegrambot', {'auth': 's3cr3t'}, 's3cr3t'),
-    ('twilio', {'auth_sid': 'ABCD', 'auth_token': '1234'}, 'ABCD :: 1234'),
+    ('twilio', OrderedDict({'auth_sid': 'ABCD', 'auth_token': '1234'}),
+        'ABCD :: 1234'),
 ])
 def test_write_auth(msg, auth, pwd, get_cfg):
     """
