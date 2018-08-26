@@ -117,7 +117,7 @@ class SlackWebhook(Slack):
     ):
 
         self.from_ = from_
-        self.auth = self.url = auth
+        self.auth = auth
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
@@ -130,6 +130,7 @@ class SlackWebhook(Slack):
         if self.profile:
             check_config_file(self)
 
+        self.url = self.auth
 
     def __str__(self, indentation='\n'):
         """print(SlackWebhook(**args)) method.
@@ -194,12 +195,12 @@ class SlackPost(Slack):
         self.profile = profile
         self.save = save
         self.verbose = verbose
-        self.message = {'token': self.auth, 'channel': self.channel}
         self.url = 'https://slack.com/api/chat.postMessage'
 
         if self.profile:
             check_config_file(self)
 
+        self.message = {'token': self.auth, 'channel': self.channel}
 
     def __str__(self, indentation='\n'):
         """print(SlackPost(**args)) method.
