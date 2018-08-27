@@ -79,8 +79,6 @@ def main_configure(msg_type):
     help='Attachments -- filepath to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -107,8 +105,6 @@ def main_email(ctx, **kwds):
     help='Attachments -- url for image to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -131,8 +127,6 @@ def main_twilio(ctx, **kwds):
     help='Attachments -- url for image to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -157,8 +151,6 @@ def main_slackwebhook(ctx, **kwds):
     help='Attachments -- url for image to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -183,8 +175,6 @@ def main_slackpost(ctx, **kwds):
     help='Attachments -- url for image to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
