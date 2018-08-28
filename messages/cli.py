@@ -79,8 +79,6 @@ def main_configure(msg_type):
     help='Attachments -- filepath to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -90,6 +88,9 @@ def main_email(ctx, **kwds):
     * PROFILE: Pre-configured user profile.
 
     * BODY:    message body text.
+
+    * Example: messages email myEmailProfile -t 'first@test.com' -c 'second@test.com' -s 'TestSubject'
+    'Hello from email.'  --attach ./sample.txt --verbose
     """
     send_message('email', kwds)
 
@@ -107,8 +108,6 @@ def main_email(ctx, **kwds):
     help='Attachments -- url for image to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -118,6 +117,8 @@ def main_twilio(ctx, **kwds):
     * PROFILE: Pre-configured user profile.
 
     * BODY:    message body text
+
+    * Example: messages twilio myTwilioProfile -t '+12223334444'  'hello from twilio'
     """
     send_message('twilio', kwds)
 
@@ -131,8 +132,6 @@ def main_twilio(ctx, **kwds):
     help='Attachments -- url for image to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -142,6 +141,8 @@ def main_slackwebhook(ctx, **kwds):
     * PROFILE: Pre-configured user profile.
 
     * BODY:    message body text
+
+    * Example: messages slackwebhook -a "https://somewebresource.jpg" mySlackWebhookProfile "Hello from slackwebhook."
     """
     send_message('slackwebhook', kwds)
 
@@ -157,8 +158,6 @@ def main_slackwebhook(ctx, **kwds):
     help='Attachments -- url for image to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -168,6 +167,8 @@ def main_slackpost(ctx, **kwds):
     * PROFILE: Pre-configured user profile.
 
     * BODY:    message body text
+
+    * Example: messages slackpost -c "#general" mySlackProfile "Hello from Slack." --verbose
     """
     send_message('slackpost', kwds)
 
@@ -183,8 +184,6 @@ def main_slackpost(ctx, **kwds):
     help='Attachments -- url for image to attach.')
 @option('-S', '--save', is_flag=True,
     help='Save default values in current profile.')
-@option('-P', '--profile',
-    help='Specify pre-configured user profile.')
 @option('-V', '--verbose', is_flag=True,
     help='Display verbose output and debug information.')
 @click.pass_context
@@ -194,5 +193,7 @@ def main_telegram(ctx, **kwds):
     * PROFILE: Pre-configured user profile.
 
     * BODY:    message body text
+
+    * Example: messages telegram --attach "https://somefile.jpg" myTelegramProfile "Hello from Telegram." --verbose
     """
     send_message('telegrambot', kwds)
