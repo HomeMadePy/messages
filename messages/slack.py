@@ -17,6 +17,8 @@ Module designed to make creating and sending chat messages easy.
     - Inherits functionality/API from the Slack class
 """
 
+import reprlib
+
 import requests
 
 from ._config import check_config_file
@@ -139,12 +141,12 @@ class SlackWebhook(Slack):
         return('{}URL: {}'
                '{}From: {}'
                '{}Subject: {}'
-               '{}Body: {}...'
+               '{}Body: {}'
                '{}Attachments: {}'
                .format(indentation, self.url,
                        indentation, self.from_ or 'Not Specified',
                        indentation, self.subject,
-                       indentation, self.body[0:40],
+                       indentation, reprlib.repr(self.body),
                        indentation, self.attachments))
 
 
@@ -209,12 +211,12 @@ class SlackPost(Slack):
         return('{}Channel: {}'
                '{}From: {}'
                '{}Subject: {}'
-               '{}Body: {}...'
+               '{}Body: {}'
                '{}Attachments: {}'
                .format(indentation, self.channel,
                        indentation, self.from_ or 'Not Specified',
                        indentation, self.subject,
-                       indentation, self.body[0:40],
+                       indentation, reprlib.repr(self.body),
                        indentation, self.attachments))
 
 

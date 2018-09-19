@@ -56,7 +56,7 @@ def test_tgram_str(get_tgram, capsys):
     assert 'To: You' in out
     assert 'Chat ID: 123456' in out
     assert 'Subject: Chat' in out
-    assert 'Body: message' in out
+    assert 'Body: \'message\'' in out
     assert 'Attachments: [\'https://url1.com\', \'https://url2.com\']' in out
     assert '' in err
 

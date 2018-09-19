@@ -6,7 +6,7 @@ Module designed to make creating and sending chat messages easy.
     - https://core.telegram.org/bots
 """
 
-import sys
+import reprlib
 
 import requests
 
@@ -86,13 +86,13 @@ class TelegramBot(Message):
                '{}To: {}'
                '{}Chat ID: {}'
                '{}Subject: {}'
-               '{}Body: {}...'
+               '{}Body: {}'
                '{}Attachments: {}'
                .format(indentation, self.from_,
                        indentation, self.to,
                        indentation, self.chat_id,
                        indentation, self.subject,
-                       indentation, self.body[0:40],
+                       indentation, reprlib.repr(self.body),
                        indentation, self.attachments))
 
 

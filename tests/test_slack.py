@@ -58,6 +58,39 @@ def test_slackP_init(get_slackP):
 
 
 ##############################################################################
+# TESTS: Slack*.__str__
+##############################################################################
+
+def test_slackWH_str(get_slackWH, capsys):
+    """
+    GIVEN a SlackWebhook object
+    WHEN print() is called on the object
+    THEN assert the proper output prints
+    """
+    s = get_slackWH
+    print(s)
+    out, err = capsys.readouterr()
+    assert "['https://url1.com', 'https://url2.com']" in out
+    assert "'message'" in out
+    assert err == ''
+
+
+def test_slackP_str(get_slackP, capsys):
+    """
+    GIVEN a SlackPost object
+    WHEN print() is called on the object
+    THEN assert the proper output prints
+    """
+    s = get_slackP
+    print(s)
+    out, err = capsys.readouterr()
+    assert "['https://url1.com', 'https://url2.com']" in out
+    assert "'message'" in out
+    assert 'gener' in out
+    assert err == ''
+
+
+##############################################################################
 # TESTS: Slack*.construct_message
 ##############################################################################
 
@@ -262,7 +295,7 @@ def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
     assert ' * URL: https://testurl.com' in out
     assert ' * From: Not Specified' in out
     assert ' * Subject: None' in out
-    assert ' * Body: message.' in out
+    assert ' * Body: \'message\'' in out
     assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' in out
     assert 'Message sent.' in out
     assert err == ''
@@ -287,7 +320,7 @@ def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
     assert ' * URL: https://test_url.com' not in out
     assert ' * From: Not Specified' not in out
     assert ' * Subject: None' not in out
-    assert ' * Body: message.' not in out
+    assert ' * Body: \'message\'' not in out
     assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
     assert 'Message sent.' in out
     assert err == ''
@@ -312,7 +345,7 @@ def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
     assert ' * Channel: general' in out
     assert ' * From: Not Specified' in out
     assert ' * Subject: None' in out
-    assert ' * Body: message.' in out
+    assert ' * Body: \'message\'' in out
     assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' in out
     assert 'Message sent.' in out
     assert err == ''
@@ -337,7 +370,7 @@ def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
     assert ' * Channel: general' not in out
     assert ' * From: Not Specified' not in out
     assert ' * Subject: None' not in out
-    assert ' * Body: message.' not in out
+    assert ' * Body: \'message\'' not in out
     assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
     assert 'Message sent.' in out
     assert err == ''
