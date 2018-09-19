@@ -6,8 +6,8 @@ Module designed to make creating and sending emails easy.
       object to construct the email.
 """
 
+import reprlib
 import smtplib
-import sys
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
@@ -105,7 +105,7 @@ class Email(Message):
                '{}Cc: {}'
                '{}Bcc: {}'
                '{}Subject: {}'
-               '{}Body: {}...'
+               '{}Body: {}'
                '{}Attachments: {}'
                .format(indentation, self.server, self.port,
                        indentation, self.from_,
@@ -113,7 +113,7 @@ class Email(Message):
                        indentation, self.cc,
                        indentation, self.bcc,
                        indentation, self.subject,
-                       indentation, self.body[0:40],
+                       indentation, reprlib.repr(self.body),
                        indentation, self.attachments))
 
 

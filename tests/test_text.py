@@ -58,7 +58,7 @@ def test_twilio_str(get_twilio,cfg_mock, capsys):
     t = get_twilio
     expected = ('\nFrom: +16198675309'
                 '\nTo: +16195551212'
-                '\nBody: test text!...'
+                '\nBody: \'test text!\''
                 '\nAttachments: https://imgs.xkcd.com/comics/python.png'
                 '\nSID: None\n')
     print(t)
@@ -112,7 +112,7 @@ def test_send_verbose_true(get_twilio, cfg_mock, capsys, mocker):
     assert 'Message created.' in out
     assert '* From: +16198675309' in out
     assert '* To: +16195551212' in out
-    assert '* Body: test text!' in out
+    assert '* Body: \'test text!\'' in out
     assert '* Attachments: https://imgs.xkcd.com/comics/python.png' in out
     assert '* SID: ' in out
     assert 'Message sent.' in out

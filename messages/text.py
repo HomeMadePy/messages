@@ -8,7 +8,7 @@ Module designed to make creating and sending text messages easy.
     - Go to https://www.twilio.com to register.
 """
 
-import sys
+import reprlib
 
 import requests
 
@@ -71,12 +71,12 @@ class Twilio(Message):
            The default is new line"""
         return('{}From: {}'
                '{}To: {}'
-               '{}Body: {}...'
+               '{}Body: {}'
                '{}Attachments: {}'
                '{}SID: {}'
                .format(indentation, self.from_,
                        indentation, self.to,
-                       indentation, self.body[0:40],
+                       indentation, reprlib.repr(self.body),
                        indentation, self.attachments,
                        indentation, self.sid))
 

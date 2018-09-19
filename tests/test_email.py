@@ -103,7 +103,7 @@ def test_email_str(get_email, capsys):
                 '\nCc: someone@there.com'
                 '\nBcc: them@there.com'
                 '\nSubject: subject'
-                '\nBody: message...'
+                '\nBody: \'message\''
                 '\nAttachments: [\'file1\', \'file2\']\n')
     print(e)
     out, err = capsys.readouterr()
@@ -440,7 +440,7 @@ def test_send_verbose_true(get_email, capsys, mocker):
     assert ' * Cc: someone@there.com' in out
     assert ' * Bcc: them@there.com' in out
     assert ' * Subject: subject' in out
-    assert ' * Body: message...' in out
+    assert ' * Body: \'message\'' in out
     assert ' * Attachments: [\'file1\', \'file2\']' in out
     assert 'Message sent.' in out
     assert err == ''
