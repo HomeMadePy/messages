@@ -97,10 +97,17 @@ def test_repr(val_mock, capsys):
     THEN assert appropriate output is printed
     """
     msg = MsgGood(1, 2)
+    msg.auth = 'password'
+    msg.body = 'A'*50
     print(repr(msg))
     out, err = capsys.readouterr()
-    expected = '<messages.MsgGood class> at: '
-    assert expected in out
+    assert 'MsgGood(' in out
+    assert 'auth=***obfuscated***,' in out
+    assert 'body=' in out
+    assert 'A...A' in out
+    assert 'x=1,' in out
+    assert 'y=2' in out
+    assert ')' in out
     assert err == ''
 
 
