@@ -70,23 +70,6 @@ def test_email_init_normal(get_email):
 
 
 ##############################################################################
-# TESTS: Email.__repr__
-##############################################################################
-
-def test_email_repr(get_email, capsys):
-    """
-    GIVEN a valid Email object
-    WHEN the user calls repr() or `>>> e`
-    THEN assert the correct format prints
-    """
-    e = get_email
-    print(repr(e))
-    out, err = capsys.readouterr()
-    assert '<messages.Email class> at: ' in out
-    assert err == ''
-
-
-##############################################################################
 # TESTS: Email.__str__
 ##############################################################################
 
