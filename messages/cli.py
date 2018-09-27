@@ -85,12 +85,12 @@ def main_configure(msg_type):
 def main_email(ctx, **kwds):
     """Send email message.
 
-    * PROFILE: Pre-configured user profile.
+    * [PROFILE]: Pre-configured user profile.
 
-    * BODY:    message body text.
+    * [BODY]:    Message body text.
 
-    * Example: messages email myEmailProfile -t 'first@test.com' -c 'second@test.com' -s 'TestSubject'
-    'Hello from email.'  --attach ./sample.txt --verbose
+    * Example: messages email myEmailProfile 'Hello from email.' -t 'first@test.com' -c 'second@test.com' -s 'TestSubject'
+    --attach ./sample.txt --verbose
     """
     send_message('email', kwds)
 
@@ -114,11 +114,11 @@ def main_email(ctx, **kwds):
 def main_twilio(ctx, **kwds):
     """Send twilio text message.
 
-    * PROFILE: Pre-configured user profile.
+    * [PROFILE]: Pre-configured user profile.
 
-    * BODY:    message body text
+    * [BODY]:    Message body text.
 
-    * Example: messages twilio myTwilioProfile -t '+12223334444'  'hello from twilio'
+    * Example: messages twilio myTwilioProfile 'hello from twilio' -t '+12223334444' --verbose
     """
     send_message('twilio', kwds)
 
@@ -138,11 +138,11 @@ def main_twilio(ctx, **kwds):
 def main_slackwebhook(ctx, **kwds):
     """Send SlackWebhook message.
 
-    * PROFILE: Pre-configured user profile.
+    * [PROFILE]: Pre-configured user profile.
 
-    * BODY:    message body text
+    * [BODY]:    Message body text.
 
-    * Example: messages slackwebhook -a "https://somewebresource.jpg" mySlackWebhookProfile "Hello from slackwebhook."
+    * Example: messages slackwebhook mySlackWebhookProfile "Hello from slackwebhook." -a "https://somewebresource.jpg" --verbose
     """
     send_message('slackwebhook', kwds)
 
@@ -164,11 +164,11 @@ def main_slackwebhook(ctx, **kwds):
 def main_slackpost(ctx, **kwds):
     """Send SlackPost message.
 
-    * PROFILE: Pre-configured user profile.
+    * [PROFILE]: Pre-configured user profile.
 
-    * BODY:    message body text
+    * [BODY]:    Message body text.
 
-    * Example: messages slackpost -c "#general" mySlackProfile "Hello from Slack." --verbose
+    * Example: mesages slackpost mySlackProfile "Hello from Slack." -c "#general" --verbose
     """
     send_message('slackpost', kwds)
 
@@ -190,10 +190,10 @@ def main_slackpost(ctx, **kwds):
 def main_telegram(ctx, **kwds):
     """Send TelegramBot message.
 
-    * PROFILE: Pre-configured user profile.
+    * [PROFILE]: Pre-configured user profile.
 
-    * BODY:    message body text
+    * [BODY]:    Message body text.
 
-    * Example: messages telegram --attach "https://somefile.jpg" myTelegramProfile "Hello from Telegram." --verbose
+    * Example: messages telegram myTelegramProfile "Hello from Telegram." -a "https://somefile.jpg" --verbose
     """
     send_message('telegrambot', kwds)
