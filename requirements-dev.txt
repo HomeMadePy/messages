@@ -1,5 +1,2 @@
 pytest-cov
-pytest-pep8
 pytest-mock
-flake8
-tox

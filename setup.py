@@ -57,8 +57,6 @@ setup(
     test_requires=[
         'pytest-cov',
         'pytest-mock',
-        'flake8',
-        'tox',
     ],
 
     setup_requires=['pytest-runner'],
