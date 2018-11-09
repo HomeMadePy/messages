@@ -19,53 +19,37 @@ from ._exceptions import UnknownProfileError
 ##############################################################################
 
 CONFIG = {
-    'email': {
-        'settings': {
-            'from_': 'From email address (e.g. you@here.com)',
-            'server': 'Email server url (e.g. smtp.here.com)',
-            'port': 'Email server port number (e.g. 465)',
+    "email": {
+        "settings": {
+            "from_": "From email address (e.g. you@here.com)",
+            "server": "Email server url (e.g. smtp.here.com)",
+            "port": "Email server port number (e.g. 465)",
         },
-        'auth': {
-            'auth': 'Email service password',
-        },
+        "auth": {"auth": "Email service password"},
     },
-
-    'slackwebhook': {
-        'settings': {
-            'from_': 'Name or alias of sender (optional)',
-        },
-        'auth': {
-            'auth': 'Slack API Webhook URL',
-        },
+    "slackwebhook": {
+        "settings": {"from_": "Name or alias of sender (optional)"},
+        "auth": {"auth": "Slack API Webhook URL"},
     },
-
-    'slackpost': {
-        'settings': {
-            'from_': 'Name or alias of sender (optional)',
-            'channel': 'Channel to post message to (e.g. #general)',
+    "slackpost": {
+        "settings": {
+            "from_": "Name or alias of sender (optional)",
+            "channel": "Channel to post message to (e.g. #general)",
         },
-        'auth': {
-            'auth': 'Slack API authentication token',
-        },
+        "auth": {"auth": "Slack API authentication token"},
     },
-
-    'twilio': {
-        'settings': {
-            'from_': 'Twilio phone number (e.g. +19998675309)',
-        },
-        'auth': OrderedDict([
-            ('auth_sid', 'Twilio API account SID'),
-            ('auth_token', 'Twilio API authorization token'),
-        ]),
+    "twilio": {
+        "settings": {"from_": "Twilio phone number (e.g. +19998675309)"},
+        "auth": OrderedDict(
+            [
+                ("auth_sid", "Twilio API account SID"),
+                ("auth_token", "Twilio API authorization token"),
+            ]
+        ),
     },
-
-    'telegrambot': {
-        'settings': {
-            'channel_id': 'Telegram Channel ID of chat',
-        },
-        'auth': {
-            'auth': 'Telegram authorization token',
-        },
+    "telegrambot": {
+        "settings": {"channel_id": "Telegram Channel ID of chat"},
+        "auth": {"auth": "Telegram authorization token"},
     },
 }
 
@@ -74,6 +58,7 @@ CONFIG = {
 #  Config functions used by Message classes
 ##############################################################################
 
+
 def check_config_file(msg):
     """
     Checks the config.json file for default settings and auth values.
@@ -81,7 +66,7 @@ def check_config_file(msg):
     Args:
         :msg: (Message class) an instance of a message class.
     """
-    with jsonconfig.Config('messages', indent=4) as cfg:
+    with jsonconfig.Config("messages", indent=4) as cfg:
         verify_profile_name(msg, cfg)
 
         retrieve_data_from_config(msg, cfg)
@@ -117,8 +102,7 @@ def retrieve_data_from_config(msg, cfg):
     """
     msg_type = msg.__class__.__name__.lower()
     for attr in msg:
-        if (getattr(msg, attr) is None and
-                attr in cfg.data[msg.profile][msg_type]):
+        if getattr(msg, attr) is None and attr in cfg.data[msg.profile][msg_type]:
             setattr(msg, attr, cfg.data[msg.profile][msg_type][attr])
 
 
@@ -131,8 +115,8 @@ def retrieve_pwd_from_config(msg, cfg):
         :cfg: (jsonconfig.Config) config instance.
     """
     msg_type = msg.__class__.__name__.lower()
-    key_fmt = msg.profile + '_' + msg_type
-    pwd = cfg.pwd[key_fmt].split(' :: ')
+    key_fmt = msg.profile + "_" + msg_type
+    pwd = cfg.pwd[key_fmt].split(" :: ")
     if len(pwd) == 1:
         msg.auth = pwd[0]
     else:
@@ -149,7 +133,7 @@ def update_config_data(msg, cfg):
         :cfg: (jsonconfig.Config) config instance.
     """
     for attr in msg:
-        if attr in cfg.data[msg.profile] and attr is not 'auth':
+        if attr in cfg.data[msg.profile] and attr is not "auth":
             cfg.data[msg.profile][attr] = getattr(msg, attr)
 
 
@@ -163,9 +147,9 @@ def update_config_pwd(msg, cfg):
         :cfg: (jsonconfig.Config) config instance.
     """
     msg_type = msg.__class__.__name__.lower()
-    key_fmt = msg.profile + '_' + msg_type
+    key_fmt = msg.profile + "_" + msg_type
     if isinstance(msg.auth, (MutableSequence, tuple)):
-        cfg.pwd[key_fmt] = ' :: '.join(msg.auth)
+        cfg.pwd[key_fmt] = " :: ".join(msg.auth)
     else:
         cfg.pwd[key_fmt] = msg.auth
 
@@ -173,6 +157,7 @@ def update_config_pwd(msg, cfg):
 ##############################################################################
 #  Config functions used by the CLI to create profile entries
 ##############################################################################
+
 
 def create_config_profile(msg_type):
     """
@@ -186,7 +171,7 @@ def create_config_profile(msg_type):
     display_required_items(msg_type)
 
     if get_user_ack():
-        profile_name = input('Profile Name: ')
+        profile_name = input("Profile Name: ")
         data = get_data_from_user(msg_type)
         auth = get_auth_from_user(msg_type)
         configure_profile(msg_type, profile_name, data, auth)
@@ -200,13 +185,13 @@ def display_required_items(msg_type):
     Args:
         :msg_type: (str) message type to create config entry.
     """
-    print('Configure a profile for: ' + msg_type)
-    print('You will need the following information:')
-    for k, v in CONFIG[msg_type]['settings'].items():
-        print('   * ' + v)
-    print('Authorization/credentials required:')
-    for k, v in CONFIG[msg_type]['auth'].items():
-        print('   * ' + v)
+    print("Configure a profile for: " + msg_type)
+    print("You will need the following information:")
+    for k, v in CONFIG[msg_type]["settings"].items():
+        print("   * " + v)
+    print("Authorization/credentials required:")
+    for k, v in CONFIG[msg_type]["auth"].items():
+        print("   * " + v)
 
 
 def get_user_ack():
@@ -215,23 +200,23 @@ def get_user_ack():
 
     Returns: bool
     """
-    ack = input('\nContinue [Y/N]? ')
-    return ack in ('y', 'Y')
+    ack = input("\nContinue [Y/N]? ")
+    return ack in ("y", "Y")
 
 
 def get_data_from_user(msg_type):
     """Get the required 'settings' from the user and return as a dict."""
     data = {}
-    for k, v in CONFIG[msg_type]['settings'].items():
-        data[k] = input(v + ': ')
+    for k, v in CONFIG[msg_type]["settings"].items():
+        data[k] = input(v + ": ")
     return data
 
 
 def get_auth_from_user(msg_type):
     """Get the required 'auth' from the user and return as a dict."""
     auth = []
-    for k, v in CONFIG[msg_type]['auth'].items():
-        auth.append((k, getpass(v + ': ')))
+    for k, v in CONFIG[msg_type]["auth"].items():
+        auth.append((k, getpass(v + ": ")))
     return OrderedDict(auth)
 
 
@@ -245,12 +230,12 @@ def configure_profile(msg_type, profile_name, data, auth):
         :data: (dict) dict values for the 'settings'
         :auth: (dict) auth parameters
     """
-    with jsonconfig.Config('messages', indent=4) as cfg:
+    with jsonconfig.Config("messages", indent=4) as cfg:
         write_data(msg_type, profile_name, data, cfg)
         write_auth(msg_type, profile_name, auth, cfg)
 
-    print('[+] Configuration entry for <' + profile_name + '> created.')
-    print('[+] Configuration file location: ' + cfg.filename)
+    print("[+] Configuration entry for <" + profile_name + "> created.")
+    print("[+] Configuration file location: " + cfg.filename)
 
 
 def write_data(msg_type, profile_name, data, cfg):
@@ -264,7 +249,7 @@ def write_data(msg_type, profile_name, data, cfg):
         :cfg: (jsonconfig.Config) config instance.
     """
     if profile_name not in cfg.data:
-            cfg.data[profile_name] = {}
+        cfg.data[profile_name] = {}
     cfg.data[profile_name][msg_type] = data
 
 
@@ -278,12 +263,12 @@ def write_auth(msg_type, profile_name, auth, cfg):
         :auth: (dict) auth parameters
         :cfg: (jsonconfig.Config) config instance.
     """
-    key_fmt = profile_name + '_' + msg_type
+    key_fmt = profile_name + "_" + msg_type
     pwd = []
-    for k, v in CONFIG[msg_type]['auth'].items():
+    for k, v in CONFIG[msg_type]["auth"].items():
         pwd.append(auth[k])
 
     if len(pwd) > 1:
-        cfg.pwd[key_fmt] = ' :: '.join(pwd)
+        cfg.pwd[key_fmt] = " :: ".join(pwd)
     else:
         cfg.pwd[key_fmt] = pwd[0]

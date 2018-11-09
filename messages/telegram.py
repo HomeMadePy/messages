@@ -54,9 +54,18 @@ class TelegramBot(Message):
     """
 
     def __init__(
-        self, from_=None, auth=None, chat_id=None, to=None,
-        subject=None, body='', attachments=None, params=None,
-        profile=None, save=False, verbose=False
+        self,
+        from_=None,
+        auth=None,
+        chat_id=None,
+        to=None,
+        subject=None,
+        body="",
+        attachments=None,
+        params=None,
+        profile=None,
+        save=False,
+        verbose=False,
     ):
 
         self.from_ = from_
@@ -75,87 +84,95 @@ class TelegramBot(Message):
         if self.profile:
             check_config_file(self)
 
-        self.base_url = 'https://api.telegram.org/bot' + self.auth
+        self.base_url = "https://api.telegram.org/bot" + self.auth
 
-
-    def __str__(self, indentation='\n'):
+    def __str__(self, indentation="\n"):
         """print(Telegram(**args)) method.
            Indentation value can be overridden in the function call.
            The default is new line"""
-        return('{}From: {}'
-               '{}To: {}'
-               '{}Chat ID: {}'
-               '{}Subject: {}'
-               '{}Body: {}'
-               '{}Attachments: {}'
-               .format(indentation, self.from_,
-                       indentation, self.to,
-                       indentation, self.chat_id,
-                       indentation, self.subject,
-                       indentation, reprlib.repr(self.body),
-                       indentation, self.attachments))
-
+        return (
+            "{}From: {}"
+            "{}To: {}"
+            "{}Chat ID: {}"
+            "{}Subject: {}"
+            "{}Body: {}"
+            "{}Attachments: {}".format(
+                indentation,
+                self.from_,
+                indentation,
+                self.to,
+                indentation,
+                self.chat_id,
+                indentation,
+                self.subject,
+                indentation,
+                reprlib.repr(self.body),
+                indentation,
+                self.attachments,
+            )
+        )
 
     def get_chat_id(self, username):
         """Lookup chat_id of username if chat_id is unknown via API call."""
         if username is not None:
-            chats = requests.get(self.base_url + '/getUpdates').json()
-            user = username.split('@')[-1]
-            for chat in chats['result']:
-                if chat['message']['from']['username'] == user:
-                    return chat['message']['from']['id']
-
+            chats = requests.get(self.base_url + "/getUpdates").json()
+            user = username.split("@")[-1]
+            for chat in chats["result"]:
+                if chat["message"]["from"]["username"] == user:
+                    return chat["message"]["from"]["id"]
 
     def construct_message(self):
         """Build the message params."""
-        self.message['chat_id'] = self.chat_id
-        self.message['text'] = ''
+        self.message["chat_id"] = self.chat_id
+        self.message["text"] = ""
         if self.from_:
-            self.message['text'] += ('From: ' + self.from_ + '\n')
+            self.message["text"] += "From: " + self.from_ + "\n"
         if self.subject:
-            self.message['text'] += ('Subject: ' + self.subject + '\n')
+            self.message["text"] += "Subject: " + self.subject + "\n"
 
-        self.message['text'] += self.body
+        self.message["text"] += self.body
         self.message.update(self.params)
 
-
-    def send_content(self, method='/sendMessage'):
+    def send_content(self, method="/sendMessage"):
         """send via HTTP Post."""
-        if method == '/sendMessage':
-            content_type = 'Message body'
-        elif method == '/sendDocument':
-            content_type = ('Attachment: ' + self.message['document'])
+        if method == "/sendMessage":
+            content_type = "Message body"
+        elif method == "/sendDocument":
+            content_type = "Attachment: " + self.message["document"]
 
         url = self.base_url + method
         r = requests.post(url, json=self.message)
 
         if r.status_code == 200 and self.verbose:
-            print(timestamp(), content_type + ' sent.')
+            print(timestamp(), content_type + " sent.")
         if r.status_code > 300 and self.verbose:
-            print(timestamp(), 'Error while sending ' + content_type)
+            print(timestamp(), "Error while sending " + content_type)
             print(r.text)
-
 
     def send(self):
         """Start sending the message and attachments."""
         self.construct_message()
         if self.verbose:
-            print('Debugging info'
-                  '\n--------------'
-                  '\n{} Message created.'.format(timestamp()))
+            print(
+                "Debugging info"
+                "\n--------------"
+                "\n{} Message created.".format(timestamp())
+            )
 
-        self.send_content('/sendMessage')
+        self.send_content("/sendMessage")
 
         for a in self.attachments:
-            self.message['document'] = a
-            self.send_content(method='/sendDocument')
+            self.message["document"] = a
+            self.send_content(method="/sendDocument")
 
         if self.verbose:
-            print(timestamp(), type(self).__name__ + ' info:',
-                self.__str__(indentation='\n * '))
+            print(
+                timestamp(),
+                type(self).__name__ + " info:",
+                self.__str__(indentation="\n * "),
+            )
 
-        print('Message sent.')
-
+        print("Message sent.")
 
     def send_async(self):
         """Send message asynchronously."""
