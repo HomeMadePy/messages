@@ -27,21 +27,19 @@ from ._interface import Message
 from ._utils import timestamp
 
 
-
 class Slack(Message):
     """Base class that Slack* classes inherit from."""
 
     def construct_message(self):
         """Build the message params."""
-        self.message['text'] = ''
+        self.message["text"] = ""
         if self.from_:
-            self.message['text'] += ('From: ' + self.from_ + '\n')
+            self.message["text"] += "From: " + self.from_ + "\n"
         if self.subject:
-            self.message['text'] += ('Subject: ' + self.subject + '\n')
+            self.message["text"] += "Subject: " + self.subject + "\n"
 
-        self.message['text'] += self.body
+        self.message["text"] += self.body
         self.add_attachments()
-
 
     def add_attachments(self):
         """Add attachments."""
@@ -49,38 +47,41 @@ class Slack(Message):
             if not isinstance(self.attachments, list):
                 self.attachments = [self.attachments]
 
-            self.message['attachments'] = [{'image_url': url,
-                                            'author_name': ''}
-                                           for url in self.attachments]
+            self.message["attachments"] = [
+                {"image_url": url, "author_name": ""} for url in self.attachments
+            ]
             if self.params:
-                for attachment in self.message['attachments']:
+                for attachment in self.message["attachments"]:
                     attachment.update(self.params)
 
-
-    def send(self, encoding='json'):
+    def send(self, encoding="json"):
         """Send the message via HTTP POST, default is json-encoded."""
         self.construct_message()
         if self.verbose:
-            print('Debugging info'
-                  '\n--------------'
-                  '\n{} Message created.'.format(timestamp()))
+            print(
+                "Debugging info"
+                "\n--------------"
+                "\n{} Message created.".format(timestamp())
+            )
 
-        if encoding == 'json':
+        if encoding == "json":
             requests.post(self.url, json=self.message)
-        elif encoding == 'url':
+        elif encoding == "url":
             requests.post(self.url, data=self.message)
 
         if self.verbose:
-            print(timestamp(), type(self).__name__, ' info:',
-                    self.__str__(indentation='\n * '))
+            print(
+                timestamp(),
+                type(self).__name__,
+                " info:",
+                self.__str__(indentation="\n * "),
+            )
 
-        print('Message sent.')
-
+        print("Message sent.")
 
     def send_async(self):
         """Send message asynchronously."""
         MESSAGELOOP.add_message(self)
-
 
 
 class SlackWebhook(Slack):
@@ -114,8 +115,16 @@ class SlackWebhook(Slack):
     """
 
     def __init__(
-        self, from_=None, auth=None, subject=None, body='',
-        attachments=None, params=None, profile=None, save=False, verbose=False
+        self,
+        from_=None,
+        auth=None,
+        subject=None,
+        body="",
+        attachments=None,
+        params=None,
+        profile=None,
+        save=False,
+        verbose=False,
     ):
 
         self.from_ = from_
@@ -134,21 +143,28 @@ class SlackWebhook(Slack):
 
         self.url = self.auth
 
-    def __str__(self, indentation='\n'):
+    def __str__(self, indentation="\n"):
         """print(SlackWebhook(**args)) method.
            Indentation value can be overridden in the function call.
            The default is new line"""
-        return('{}URL: {}'
-               '{}From: {}'
-               '{}Subject: {}'
-               '{}Body: {}'
-               '{}Attachments: {}'
-               .format(indentation, self.url,
-                       indentation, self.from_ or 'Not Specified',
-                       indentation, self.subject,
-                       indentation, reprlib.repr(self.body),
-                       indentation, self.attachments))
-
+        return (
+            "{}URL: {}"
+            "{}From: {}"
+            "{}Subject: {}"
+            "{}Body: {}"
+            "{}Attachments: {}".format(
+                indentation,
+                self.url,
+                indentation,
+                self.from_ or "Not Specified",
+                indentation,
+                self.subject,
+                indentation,
+                reprlib.repr(self.body),
+                indentation,
+                self.attachments,
+            )
+        )
 
 
 class SlackPost(Slack):
@@ -183,8 +199,17 @@ class SlackPost(Slack):
     """
 
     def __init__(
-        self, from_=None, auth=None, channel=None, subject=None, body='',
-        attachments=None, params=None, profile=None, save=False, verbose=False
+        self,
+        from_=None,
+        auth=None,
+        channel=None,
+        subject=None,
+        body="",
+        attachments=None,
+        params=None,
+        profile=None,
+        save=False,
+        verbose=False,
     ):
 
         self.from_ = from_
@@ -197,31 +222,36 @@ class SlackPost(Slack):
         self.profile = profile
         self.save = save
         self.verbose = verbose
-        self.url = 'https://slack.com/api/chat.postMessage'
+        self.url = "https://slack.com/api/chat.postMessage"
 
         if self.profile:
             check_config_file(self)
 
-        self.message = {'token': self.auth, 'channel': self.channel}
+        self.message = {"token": self.auth, "channel": self.channel}
 
-    def __str__(self, indentation='\n'):
+    def __str__(self, indentation="\n"):
         """print(SlackPost(**args)) method.
            Indentation value can be overridden in the function call.
            The default is new line"""
-        return('{}Channel: {}'
-               '{}From: {}'
-               '{}Subject: {}'
-               '{}Body: {}'
-               '{}Attachments: {}'
-               .format(indentation, self.channel,
-                       indentation, self.from_ or 'Not Specified',
-                       indentation, self.subject,
-                       indentation, reprlib.repr(self.body),
-                       indentation, self.attachments))
-
+        return (
+            "{}Channel: {}"
+            "{}From: {}"
+            "{}Subject: {}"
+            "{}Body: {}"
+            "{}Attachments: {}".format(
+                indentation,
+                self.channel,
+                indentation,
+                self.from_ or "Not Specified",
+                indentation,
+                self.subject,
+                indentation,
+                reprlib.repr(self.body),
+                indentation,
+                self.attachments,
+            )
+        )
 
     def send(self):
         """Send the message via HTTP POST, url-encoded."""
-        super().send(encoding='url')
-
-
+        super().send(encoding="url")

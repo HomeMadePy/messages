@@ -47,8 +47,15 @@ class Twilio(Message):
     """
 
     def __init__(
-        self, from_=None, to=None, auth=None, body='', attachments=None,
-        profile=None, save=False, verbose=False
+        self,
+        from_=None,
+        to=None,
+        auth=None,
+        body="",
+        attachments=None,
+        profile=None,
+        save=False,
+        verbose=False,
     ):
 
         self.from_ = from_
@@ -64,50 +71,63 @@ class Twilio(Message):
         if self.profile:
             check_config_file(self)
 
-
-    def __str__(self, indentation='\n'):
+    def __str__(self, indentation="\n"):
         """print(Email(**args)) method.
            Indentation value can be overridden in the function call.
            The default is new line"""
-        return('{}From: {}'
-               '{}To: {}'
-               '{}Body: {}'
-               '{}Attachments: {}'
-               '{}SID: {}'
-               .format(indentation, self.from_,
-                       indentation, self.to,
-                       indentation, reprlib.repr(self.body),
-                       indentation, self.attachments,
-                       indentation, self.sid))
-
+        return (
+            "{}From: {}"
+            "{}To: {}"
+            "{}Body: {}"
+            "{}Attachments: {}"
+            "{}SID: {}".format(
+                indentation,
+                self.from_,
+                indentation,
+                self.to,
+                indentation,
+                reprlib.repr(self.body),
+                indentation,
+                self.attachments,
+                indentation,
+                self.sid,
+            )
+        )
 
     def send(self):
         """
         Send the SMS/MMS message.
         Set self.sid to return code of message.
         """
-        url = ('https://api.twilio.com/2010-04-01/Accounts/'
-               + self.auth[0] + '/Messages.json')
+        url = (
+            "https://api.twilio.com/2010-04-01/Accounts/"
+            + self.auth[0]
+            + "/Messages.json"
+        )
         data = {
-            'From': self.from_,
-            'To': self.to,
-            'Body': self.body,
-            'MediaUrl': self.attachments,
+            "From": self.from_,
+            "To": self.to,
+            "Body": self.body,
+            "MediaUrl": self.attachments,
         }
 
         if self.verbose:
-            print('Debugging info'
-                  '\n--------------'
-                  '\n{} Message created.'.format(timestamp()))
+            print(
+                "Debugging info"
+                "\n--------------"
+                "\n{} Message created.".format(timestamp())
+            )
         r = requests.post(url, data=data, auth=(self.auth[0], self.auth[1]))
-        self.sid = r.json()['sid']
+        self.sid = r.json()["sid"]
 
         if self.verbose:
-            print(timestamp(), type(self).__name__ + ' info:',
-                self.__str__(indentation='\n * '))
+            print(
+                timestamp(),
+                type(self).__name__ + " info:",
+                self.__str__(indentation="\n * "),
+            )
 
-        print('Message sent.')
-
+        print("Message sent.")
 
     def send_async(self):
         """Send message asynchronously."""
