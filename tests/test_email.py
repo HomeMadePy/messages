@@ -12,6 +12,8 @@ from messages.email_ import Email
 from messages.email_ import check_config_file
 from messages._eventloop import MESSAGELOOP
 
+from conftest import skip_if_on_travisCI
+from conftest import skip_if_not_on_travisCI
 
 ##############################################################################
 # FIXTURES
@@ -33,17 +35,6 @@ def get_email(mocker):
     return e
 
 
-# skip this test if on travs-ci
-travis = pytest.mark.skipif("TRAVIS" in os.environ and
-                    os.environ["TRAVIS"] == "true",
-                    reason='skipping test if on travis-ci')
-
-
-# skip this test if NOT on travis-ci
-not_travis = pytest.mark.skipif("TRAVIS" not in os.environ,
-                    reason='skipping test if not on travis-ci')
-
-
 ##############################################################################
 # TESTS: Email.__init__
 ##############################################################################
@@ -58,7 +49,7 @@ def test_email_init_normal(get_email):
     assert e is not None
     assert e.server == 'smtp.gmail.com'
     assert e.port == 465
-    assert e.auth == 'password'
+    assert e.auth == '***obfuscated***'
     assert e.from_ == 'me@here.com'
     assert e.to == 'you@there.com'
     assert e.cc == 'someone@there.com'
@@ -208,7 +199,7 @@ def test_add_body(get_email, mocker):
 # TESTS: Email.add_attachments
 ##############################################################################
 
-@travis
+@skip_if_on_travisCI
 def test_add_attachments_list_local(get_email, mocker):
     """
     GIVEN a valid Email object, where Email.generate_email() has been called
@@ -226,7 +217,7 @@ def test_add_attachments_list_local(get_email, mocker):
     assert mime_attach_mock.call_count == 4
 
 
-@not_travis
+@skip_if_not_on_travisCI
 def test_add_attachments_list_travis(get_email, mocker):
     """
     GIVEN a valid Email object, where Email.generate_email() has been called
@@ -245,7 +236,7 @@ def test_add_attachments_list_travis(get_email, mocker):
     assert mime_attach_mock.call_count == 4
 
 
-@travis
+@skip_if_on_travisCI
 def test_add_attachments_str_local(get_email, mocker):
     """
     GIVEN a valid Email object, where Email.generate_email() has been called
@@ -262,7 +253,7 @@ def test_add_attachments_str_local(get_email, mocker):
     assert mime_attach_mock.call_count == 1
 
 
-@not_travis
+@skip_if_not_on_travisCI
 def test_add_attachments_str_travis(get_email, mocker):
     """
     GIVEN a valid Email object, where Email.generate_email() has been called

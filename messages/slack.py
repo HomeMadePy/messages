@@ -24,6 +24,8 @@ import requests
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+from ._utils import credential_property
+from ._utils import validate_property
 from ._utils import timestamp
 
 
@@ -65,9 +67,9 @@ class Slack(Message):
             )
 
         if encoding == "json":
-            requests.post(self.url, json=self.message)
+            resp = requests.post(self.url, json=self.message)
         elif encoding == "url":
-            requests.post(self.url, data=self.message)
+            resp = requests.post(self.url, data=self.message)
 
         if self.verbose:
             print(
@@ -75,6 +77,8 @@ class Slack(Message):
                 type(self).__name__,
                 " info:",
                 self.__str__(indentation="\n * "),
+                "\nresponse code:",
+                resp.status_code,
             )
 
         print("Message sent.")
@@ -105,6 +109,10 @@ class SlackWebhook(Slack):
     Attributes:
         :message: (dict) current form of the message to be constructed
 
+    Properties:
+        :auth: auth will set as a private attribute (_auth) and obscured when requested
+        :attachments: user input will be validated for a proper url
+
     Usage:
         Create a SlackWebhook object with required Args above.
         Send message with self.send() or self.send_async() methods.
@@ -113,6 +121,9 @@ class SlackWebhook(Slack):
         For API description:
         https://api.slack.com/incoming-webhooks
     """
+
+    auth = credential_property("auth")
+    attachments = validate_property("attachments")
 
     def __init__(
         self,
@@ -141,7 +152,7 @@ class SlackWebhook(Slack):
         if self.profile:
             check_config_file(self)
 
-        self.url = self.auth
+        self.url = self._auth
 
     def __str__(self, indentation="\n"):
         """print(SlackWebhook(**args)) method.
@@ -189,6 +200,11 @@ class SlackPost(Slack):
     Attributes:
         :message: (dict) current form of the message to be constructed
 
+    Properties:
+        :auth: auth will set as a private attribute (_auth) and obscured when requested
+        :attachments: user input will be validated for a proper url
+        :channel: user input will be validated for a proper string
+
     Usage:
         Create a SlackPost object with required Args above.
         Send message with self.send() or self.send_async() methods.
@@ -197,6 +213,10 @@ class SlackPost(Slack):
         For API description:
         https://api.slack.com/methods/chat.postMessage
     """
+
+    auth = credential_property("auth")
+    attachments = validate_property("attachments")
+    channel = validate_property("channel")
 
     def __init__(
         self,
@@ -227,7 +247,7 @@ class SlackPost(Slack):
         if self.profile:
             check_config_file(self)
 
-        self.message = {"token": self.auth, "channel": self.channel}
+        self.message = {"token": self._auth, "channel": self.channel}
 
     def __str__(self, indentation="\n"):
         """print(SlackPost(**args)) method.

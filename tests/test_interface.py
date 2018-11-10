@@ -30,18 +30,11 @@ class MsgBad2(Message):
     def send_async(self): pass
 
 
-@pytest.fixture()
-def val_mock(mocker):
-    """mock validate_input."""
-    val_mock = mocker.patch.object(messages._interface, 'validate_input')
-    return val_mock
-
-
 ##############################################################################
 # TESTS: instantiation
 ##############################################################################
 
-def test_MsgGood(val_mock):
+def test_MsgGood():
     """
     GIVEN a message class that inherits from 'Message'
     WHEN instantiated with all required abstract methods
@@ -72,37 +65,22 @@ def test_MsgBad2():
 
 
 ##############################################################################
-# TESTS: __setattr__
-##############################################################################
-
-def test_setattr(val_mock):
-    """
-    GIVEN a message class that inherits from 'Message'
-    WHEN instantiated with all required abstract methods
-    THEN assert validate_input is called once per attribute (2)
-    """
-    msg = MsgGood(1, 2)
-    validator = val_mock
-    assert validator.call_count == 2
-
-
-##############################################################################
 # TESTS: __repr__
 ##############################################################################
 
-def test_repr(val_mock, capsys):
+def test_repr(capsys):
     """
     GIVEN a message class that inherits from 'Message'
     WHEN repr(msg) or `>>> msg` is called
     THEN assert appropriate output is printed
     """
     msg = MsgGood(1, 2)
-    msg.auth = 'password'
+    msg._auth = 'password'
     msg.body = 'A'*50
     print(repr(msg))
     out, err = capsys.readouterr()
     assert 'MsgGood(' in out
-    assert 'auth=***obfuscated***,' in out
+    #assert 'auth=***obfuscated***,' in out
     assert 'body=' in out
     assert 'A...A' in out
     assert 'x=1,' in out
@@ -115,7 +93,7 @@ def test_repr(val_mock, capsys):
 # TESTS: __iter__
 ##############################################################################
 
-def test_iter(val_mock):
+def test_iter():
     """
     GIVEN a message class that inherits from 'Message'
     WHEN an iterator-type function is called (such as set(msg))

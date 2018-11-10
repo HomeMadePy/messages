@@ -5,7 +5,6 @@ import os
 import sys
 
 import pytest
-import conftest
 
 import click
 from click import Context
@@ -18,6 +17,8 @@ from messages.cli import send_message
 from messages.cli import main
 from messages.email_ import Email
 from messages._exceptions import UnsupportedMessageTypeError
+
+from conftest import skip_if_on_travisCI
 
 
 ##############################################################################
@@ -49,7 +50,7 @@ def main_mocks(mocker):
 # TESTS: cli.get_body_from_file
 ##############################################################################
 
-@conftest.travis  # skip test if on travis-ci
+@skip_if_on_travisCI
 def test_get_body_from_file(tmpdir):
     """
     GIVEN a call to messages via the CLI

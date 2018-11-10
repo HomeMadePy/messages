@@ -1,18 +1,55 @@
 """Utility Module - functions useful to other modules."""
 
 import datetime
+from collections import MutableSequence
+
 import validus
 
 from ._exceptions import InvalidMessageInputError
 
 
 """
-Functions below this header are used within the _interface.py module in
-order to validate user-input to specific fields.
+Functions below this header are property factories and input validation functions
+used by each of the message classes in order to obscure (credentials) or validate
+certain attributes.  Each will be defined as a class attribute for each message
+(before __init__).
 """
 
 
-def validate_input(msg, attr, valid=True):
+def credential_property(cred):
+    """
+    A credential property factory for each message class that will set
+    private attributes and return obfuscated credentials when requested.
+    """
+
+    def getter(instance):
+        return "***obfuscated***"
+
+    def setter(instance, value):
+        private = "_" + cred
+        instance.__dict__[private] = value
+
+    return property(fget=getter, fset=setter)
+
+
+def validate_property(attr):
+    """
+    A property factory that will dispatch the to a specific validator function
+    that will validate the user's input to ensure critical parameters are of a
+    specific type.
+    """
+
+    def getter(instance):
+        return instance.__dict__[attr]
+
+    def setter(instance, value):
+        validate_input(instance.__class__.__name__, attr, value)
+        instance.__dict__[attr] = value
+
+    return property(fget=getter, fset=setter)
+
+
+def validate_input(msg_type, attr, value):
     """Base function to validate input, dispatched via message type."""
     try:
         valid = {
@@ -21,65 +58,63 @@ def validate_input(msg, attr, valid=True):
             "SlackWebhook": validate_slackwebhook,
             "SlackPost": validate_slackpost,
             "TelegramBot": validate_telegrambot,
-        }[msg.__class__.__name__](msg, attr)
+        }[msg_type](attr, value)
     except KeyError:
-        pass
+        return 1
+    else:
+        return 0
 
 
-def check_valid(msg, attr, func, exec_info):
+def check_valid(msg_type, attr, value, func, exec_info):
     """
     Checker function all validate_* functions below will call.
     Raises InvalidMessageInputError if input is not valid as per
     given func.
     """
-    if getattr(msg, attr) is not None:
-        if isinstance(getattr(msg, attr), list):
-            for item in getattr(msg, attr):
-                if not func(item):
-                    raise InvalidMessageInputError(
-                        msg.__class__.__name__, attr, exec_info
-                    )
-
+    if value is not None:
+        if isinstance(value, MutableSequence):
+            for v in value:
+                if not func(v):
+                    raise InvalidMessageInputError(msg_type, attr, value, exec_info)
         else:
-            if not func(getattr(msg, attr)):
-                raise InvalidMessageInputError(msg.__class__.__name__, attr, exec_info)
+            if not func(value):
+                raise InvalidMessageInputError(msg_type, attr, value, exec_info)
 
 
-def validate_email(msg, attr):
+def validate_email(attr, value):
     """Email input validator function."""
-    if attr in ("from_", "to", "cc", "bcc"):
-        check_valid(msg, attr, validus.isemail, "email address")
+    check_valid("Email", attr, value, validus.isemail, "email address")
 
 
-def validate_twilio(msg, attr):
+def validate_twilio(attr, value):
     """Twilio input validator function."""
     if attr in ("from_", "to"):
-        check_valid(msg, attr, validus.isphone, "phone number")
+        check_valid("Twilio", attr, value, validus.isphone, "phone number")
     elif attr in ("media_url"):
-        check_valid(msg, attr, validus.isurl, "url")
+        check_valid("Twilio", attr, value, validus.isurl, "url")
 
 
-def validate_slackwebhook(msg, attr):
+def validate_slackwebhook(attr, value):
     """SlackWebhook input validator function."""
-    if attr in ("url", "attachments"):
-        check_valid(msg, attr, validus.isurl, "url")
+    check_valid("SlackWebhook", attr, value, validus.isurl, "url")
 
 
-def validate_slackpost(msg, attr):
+def validate_slackpost(attr, value):
     """SlackPost input validator function."""
     if attr in ("channel", "credentials"):
-        if not isinstance(getattr(msg, attr), str):
-            raise InvalidMessageInputError(msg.__class__.__name__, attr, "string")
+        if not isinstance(value, str):
+            raise InvalidMessageInputError("SlackPost", attr, value, "string")
+    elif attr in ("attachments"):
+        check_valid("SlackPost", attr, value, validus.isurl, "url")
 
 
-def validate_telegrambot(msg, attr):
+def validate_telegrambot(attr, value):
     """TelegramBot input validator function."""
-    if attr in ("chat_id"):
-        check_valid(msg, attr, validus.isint, "integer as a string")
+    check_valid("TelegramBot", attr, value, validus.isint, "integer as a string")
 
 
 """
-General utility functions below here.
+Functions below this hearder are general utility functions.
 """
 
 

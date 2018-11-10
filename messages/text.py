@@ -15,6 +15,8 @@ import requests
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+from ._utils import credential_property
+from ._utils import validate_property
 from ._utils import timestamp
 
 
@@ -37,6 +39,12 @@ class Twilio(Message):
         :client: (Client) twilio.rest client for authentication
         :sid: (str) return value from send, record of sent message
 
+    Properties:
+        :auth: auth will set as a private attribute (_auth) and obscured when requested
+        :from_: user input will be validated for a proper phone number
+        :to: user input will be validated for a proper phone number
+        :attachments: user input will be validated for a proper url
+
     Usage:
         Create a text message (SMS/MMS) object with required Args above.
         Send text message with self.send() or self.send_async() methods.
@@ -45,6 +53,11 @@ class Twilio(Message):
         For API description:
         https://www.twilio.com/docs/api/messaging/send-messages
     """
+
+    auth = credential_property("auth")
+    from_ = validate_property("from_")
+    to = validate_property("to")
+    attachments = validate_property("attachments")
 
     def __init__(
         self,
@@ -101,7 +114,7 @@ class Twilio(Message):
         """
         url = (
             "https://api.twilio.com/2010-04-01/Accounts/"
-            + self.auth[0]
+            + self._auth[0]
             + "/Messages.json"
         )
         data = {
@@ -117,7 +130,8 @@ class Twilio(Message):
                 "\n--------------"
                 "\n{} Message created.".format(timestamp())
             )
-        r = requests.post(url, data=data, auth=(self.auth[0], self.auth[1]))
+
+        r = requests.post(url, data=data, auth=(self._auth[0], self._auth[1]))
         self.sid = r.json()["sid"]
 
         if self.verbose:

@@ -4,10 +4,11 @@
 class InvalidMessageInputError(ValueError):
     """Exception for invalid inputs in message classes."""
 
-    def __init__(self, msg_type, attr, input_type):
+    def __init__(self, msg_type, attr, value, input_type):
         self.err = "Invalid input for specified message class: " + msg_type
-        self.err += '\n\t* argument: "{}"'.format(attr)
-        self.err += "\n\t* input type must be: {}".format(input_type)
+        self.err += "\n    * param: {}".format(attr)
+        self.err += "\n    * value given: {!r}".format(value)
+        self.err += "\n    * input type must be: {}".format(input_type)
         super(InvalidMessageInputError, self).__init__(self.err)
 
 
@@ -17,7 +18,7 @@ class UnsupportedMessageTypeError(TypeError):
     def __init__(self, msg_type, msg_types=None):
         self.err = "Invalid message type: " + msg_type
         if msg_types:
-            self.err += "\n\t* Supported message types: "
+            self.err += "\n    * Supported message types: "
             self.err += str(msg_types)
         super(UnsupportedMessageTypeError, self).__init__(self.err)
 

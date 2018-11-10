@@ -71,7 +71,7 @@ def check_config_file(msg):
 
         retrieve_data_from_config(msg, cfg)
 
-        if msg.auth is None:
+        if msg._auth is None:
             retrieve_pwd_from_config(msg, cfg)
 
         if msg.save:
@@ -148,10 +148,10 @@ def update_config_pwd(msg, cfg):
     """
     msg_type = msg.__class__.__name__.lower()
     key_fmt = msg.profile + "_" + msg_type
-    if isinstance(msg.auth, (MutableSequence, tuple)):
-        cfg.pwd[key_fmt] = " :: ".join(msg.auth)
+    if isinstance(msg._auth, (MutableSequence, tuple)):
+        cfg.pwd[key_fmt] = " :: ".join(msg._auth)
     else:
-        cfg.pwd[key_fmt] = msg.auth
+        cfg.pwd[key_fmt] = msg._auth
 
 
 ##############################################################################

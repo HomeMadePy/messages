@@ -13,6 +13,8 @@ import requests
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+from ._utils import credential_property
+from ._utils import validate_property
 from ._utils import timestamp
 
 
@@ -44,6 +46,10 @@ class TelegramBot(Message):
     Attributes:
         :message: (dict) current form of the message to be constructed
 
+    Properties:
+        :auth: auth will set as a private attribute (_auth) and obscured when requested
+        :chat_id: user input will validate a proper integer as a string
+
     Usage:
         Create a TelegramBot object with required Args above.
         Send message with self.send() or self.send_async() methods.
@@ -52,6 +58,9 @@ class TelegramBot(Message):
         For API description:
         https://core.telegram.org/bots/api#available-methods
     """
+
+    auth = credential_property("auth")
+    chat_id = validate_property("chat_id")
 
     def __init__(
         self,
@@ -84,7 +93,7 @@ class TelegramBot(Message):
         if self.profile:
             check_config_file(self)
 
-        self.base_url = "https://api.telegram.org/bot" + self.auth
+        self.base_url = "https://api.telegram.org/bot" + self._auth
 
     def __str__(self, indentation="\n"):
         """print(Telegram(**args)) method.

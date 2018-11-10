@@ -23,6 +23,7 @@ from messages._config import configure_profile
 from messages._config import write_data
 from messages._config import write_auth
 from messages._exceptions import UnknownProfileError
+from messages._utils import credential_property
 
 
 ##############################################################################
@@ -31,6 +32,7 @@ from messages._exceptions import UnknownProfileError
 
 class Msg:
     """A test message class."""
+    auth = credential_property('auth')
     def __init__(self, from_=None, auth=None, profile=None, save=False):
         self.from_ = from_
         self.auth = auth
@@ -187,7 +189,7 @@ def test_ret_pwd_from_config_singular(get_msg, get_cfg):
     cfg = get_cfg
     cfg.pwd = {'myProfile_msg': 'n3w_passw0rd'}
     retrieve_pwd_from_config(msg, cfg)
-    assert msg.auth == 'n3w_passw0rd'
+    assert msg._auth == 'n3w_passw0rd'
 
 
 def test_ret_pwd_from_config_parsed(get_msg, get_cfg):
@@ -202,7 +204,7 @@ def test_ret_pwd_from_config_parsed(get_msg, get_cfg):
     cfg = get_cfg
     cfg.pwd = {'myProfile_msg': 'n3w :: passw0rd'}
     retrieve_pwd_from_config(msg, cfg)
-    assert msg.auth == ('n3w', 'passw0rd')
+    assert msg._auth == ('n3w', 'passw0rd')
 
 
 ##############################################################################
