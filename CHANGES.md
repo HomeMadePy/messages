@@ -3,7 +3,8 @@ Change Log
 
 Upcoming
 --------
--
+- Adds code formating with Black
+- Removes __setattr__ from Message Interface (ABC) and instead uses a property factory defined in _utils.py
 
 
 0.4.4

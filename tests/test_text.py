@@ -40,7 +40,9 @@ def test_twilio_init(get_twilio, cfg_mock):
     t = get_twilio
     assert t.from_ == '+16198675309'
     assert t.to == '+16195551212'
-    assert t.auth == ('test_sid', 'test_token')
+    assert t.auth == '***obfuscated***'
+    assert '_auth' in t.__dict__
+    assert t._auth == ('test_sid', 'test_token')
     assert t.body == 'test text!'
     assert t.attachments == 'https://imgs.xkcd.com/comics/python.png'
 

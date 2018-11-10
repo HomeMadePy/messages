@@ -33,6 +33,9 @@ def test_tgram_init(get_tgram):
     """
     t = get_tgram
     assert t.body == 'message'
+    assert t.auth == '***obfuscated***'
+    assert '_auth' in t.__dict__
+    assert t._auth == '34563:ABCDEFG'
     assert isinstance(t.message, dict)
 
 

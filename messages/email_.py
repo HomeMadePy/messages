@@ -15,6 +15,8 @@ from email.mime.application import MIMEApplication
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
 from ._interface import Message
+from ._utils import credential_property
+from ._utils import validate_property
 from ._utils import timestamp
 
 
@@ -63,6 +65,13 @@ class Email(Message):
     Attributes:
         :message: (MIMEMultipart) current form of the message to be constructed
 
+    Properties:
+        :auth: auth will set as a private attribute (_auth) and obscured when requested
+        :from_: user input will validate a proper email address
+        :to: user input will be validated for a proper email address
+        :cc: user input will be validated for a proper email address
+        :bcc: user input will be validated for a proper email address
+
     Usage:
         Create an email object with required Args above.
         Send email with self.send() or self.send_async() methods.
@@ -72,6 +81,12 @@ class Email(Message):
         gmail allowing "less secure apps" to access the account.  Otherwise
         failure may occur when attempting to send.
     """
+
+    auth = credential_property("auth")
+    from_ = validate_property("from_")
+    to = validate_property("to")
+    cc = validate_property("cc")
+    bcc = validate_property("bcc")
 
     def __init__(
         self,
@@ -202,7 +217,7 @@ class Email(Message):
             session = self.get_ssl()
         elif self.port in (587, "587"):
             session = self.get_tls()
-        session.login(self.from_, self.auth)
+        session.login(self.from_, self._auth)
         return session
 
     def get_ssl(self):

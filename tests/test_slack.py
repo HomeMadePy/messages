@@ -43,6 +43,9 @@ def test_slackWH_init(get_slackWH):
     """
     s = get_slackWH
     assert s.body == 'message'
+    assert s.auth == '***obfuscated***'
+    assert '_auth' in s.__dict__
+    assert s._auth == 'https://testurl.com'
     assert isinstance(s.message, dict)
 
 
@@ -54,6 +57,9 @@ def test_slackP_init(get_slackP):
     """
     s = get_slackP
     assert s.body == 'message'
+    assert s.auth == '***obfuscated***'
+    assert '_auth' in s.__dict__
+    assert s._auth == '1234:ABCD'
     assert isinstance(s.message, dict)
 
 
