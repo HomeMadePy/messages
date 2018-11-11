@@ -73,7 +73,7 @@ def test_twilio_str(get_twilio,cfg_mock, capsys):
 # TESTS: Twilio.send
 ##############################################################################
 
-def test_send_verbose_false(get_twilio, cfg_mock, capsys, mocker):
+def test_send_verbose_false_status201(get_twilio, cfg_mock, capsys, mocker):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() is called
@@ -82,6 +82,7 @@ def test_send_verbose_false(get_twilio, cfg_mock, capsys, mocker):
         set to False)
     """
     msg_mock = mocker.patch.object(requests, 'post')
+    msg_mock.return_value.status_code = 201
     t = get_twilio
     t.send()
     t.sid = 12345
@@ -93,11 +94,12 @@ def test_send_verbose_false(get_twilio, cfg_mock, capsys, mocker):
     assert '* Body: test text!' not in out
     assert '* Attachments: https://imgs.xkcd.com/comics/python.png' not in out
     assert '* SID: ' not in out
+    assert '* HTTP status code:' not in out
     assert out == 'Message sent.\n'
     assert err == ''
 
 
-def test_send_verbose_true(get_twilio, cfg_mock, capsys, mocker):
+def test_send_verbose_true_status201(get_twilio, cfg_mock, capsys, mocker):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() is called
@@ -106,6 +108,7 @@ def test_send_verbose_true(get_twilio, cfg_mock, capsys, mocker):
         set to True)
     """
     msg_mock = mocker.patch.object(requests, 'post')
+    msg_mock.return_value.status_code = 201
     t = get_twilio
     t.verbose = True
     t.send()
@@ -117,7 +120,23 @@ def test_send_verbose_true(get_twilio, cfg_mock, capsys, mocker):
     assert '* Body: \'test text!\'' in out
     assert '* Attachments: https://imgs.xkcd.com/comics/python.png' in out
     assert '* SID: ' in out
+    assert '* HTTP status code: 201' in out
     assert 'Message sent.' in out
+    assert err == ''
+
+
+def test_send_statusGT300(get_twilio, cfg_mock, capsys, mocker):
+    """
+    GIVEN a valid Twilio object
+    WHEN Twilio.send() is called but an HTTP status code >= 300 is returned
+    THEN assert 'Error while sending' prints
+    """
+    msg_mock = mocker.patch.object(requests, 'post')
+    msg_mock.return_value.status_code = 301
+    t = get_twilio
+    t.send()
+    out, err = capsys.readouterr()
+    assert 'Error while sending.' in out
     assert err == ''
 
 

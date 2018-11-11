@@ -36,7 +36,6 @@ class Twilio(Message):
             sending messages faster.
 
     Attributes:
-        :client: (Client) twilio.rest client for authentication
         :sid: (str) return value from send, record of sent message
 
     Properties:
@@ -131,17 +130,21 @@ class Twilio(Message):
                 "\n{} Message created.".format(timestamp())
             )
 
-        r = requests.post(url, data=data, auth=(self._auth[0], self._auth[1]))
-        self.sid = r.json()["sid"]
+        resp = requests.post(url, data=data, auth=(self._auth[0], self._auth[1]))
+        self.sid = resp.json()["sid"]
 
         if self.verbose:
             print(
                 timestamp(),
                 type(self).__name__ + " info:",
                 self.__str__(indentation="\n * "),
+                "\n * HTTP status code:", resp.status_code,
             )
 
-        print("Message sent.")
+        if resp.status_code >= 200 and resp.status_code < 300:
+            print("Message sent.")
+        else:
+            print("Error while sending.")
 
     def send_async(self):
         """Send message asynchronously."""
