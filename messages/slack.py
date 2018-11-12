@@ -112,7 +112,7 @@ class SlackWebhook(Slack):
     Attributes:
         :message: (dict) current form of the message to be constructed
 
-    Properties:
+    Managed Attributes (Properties):
         :auth: auth will set as a private attribute (_auth) and obscured when requested
         :attachments: user input will be validated for a proper url
 
@@ -203,7 +203,7 @@ class SlackPost(Slack):
     Attributes:
         :message: (dict) current form of the message to be constructed
 
-    Properties:
+    Managed Attributes (Properties):
         :auth: auth will set as a private attribute (_auth) and obscured when requested
         :attachments: user input will be validated for a proper url
         :channel: user input will be validated for a proper string

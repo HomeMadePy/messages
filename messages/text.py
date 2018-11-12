@@ -39,7 +39,7 @@ class Twilio(Message):
     Attributes:
         :sid: (str) return value from send, record of sent message
 
-    Properties:
+    Managed Attributes (Properties):
         :auth: auth will set as a private attribute (_auth) and obscured when requested
         :from_: user input will be validated for a proper phone number
         :to: user input will be validated for a proper phone number
