@@ -28,7 +28,8 @@ class Twilio(Message):
         :from_: (str) phone number of originating text, e.g. '+15558675309'
         :to: (str) phone number of destination text, e.g. '+15558675309'
         :auth: (list or tuple) twilio api credentials: (acct_sid, auth_token)
-        :body: (str) message to send
+        :body: (str) message to send.  Defaults to body=" " (one space) since
+            Twilio doesn't allow an empty body to be sent
         :attachments: (str) url of any image to send along with message
         :profile: (str) use a separate account profile specified by name
         :save: (bool) save pertinent values in the messages config file,
@@ -63,7 +64,7 @@ class Twilio(Message):
         from_=None,
         to=None,
         auth=None,
-        body="",
+        body=" ",
         attachments=None,
         profile=None,
         save=False,
@@ -144,7 +145,7 @@ class Twilio(Message):
         if resp.status_code >= 200 and resp.status_code < 300:
             print("Message sent.")
         else:
-            print("Error while sending.")
+            print("Error while sending.  HTTP status code =", resp.status_code)
 
     def send_async(self):
         """Send message asynchronously."""

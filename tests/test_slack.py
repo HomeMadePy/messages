@@ -97,7 +97,7 @@ def test_slackP_str(get_slackP, capsys):
 
 
 ##############################################################################
-# TESTS: Slack*.construct_message
+# TESTS: Slack*._construct_message
 ##############################################################################
 
 def test_slackWH_construct_message(get_slackWH, mocker):
@@ -106,9 +106,9 @@ def test_slackWH_construct_message(get_slackWH, mocker):
     WHEN construct_message() is called
     THEN assert the message is properly created
     """
-    add_mock = mocker.patch.object(SlackWebhook, 'add_attachments')
+    add_mock = mocker.patch.object(SlackWebhook, '_add_attachments')
     s = get_slackWH
-    s.construct_message()
+    s._construct_message()
     assert s.message['text'] == 'message'
     assert add_mock.call_count == 1
 
@@ -119,9 +119,9 @@ def test_slackP_construct_message(get_slackP, mocker):
     WHEN construct_message() is called
     THEN assert the message is properly created
     """
-    add_mock = mocker.patch.object(SlackPost, 'add_attachments')
+    add_mock = mocker.patch.object(SlackPost, '_add_attachments')
     s = get_slackP
-    s.construct_message()
+    s._construct_message()
     assert s.message['text'] == 'message'
     assert add_mock.call_count == 1
 
@@ -132,11 +132,11 @@ def test_slackWH_construct_message_withFromSubj(get_slackWH, mocker):
     WHEN construct_message() is called
     THEN assert the message is properly created
     """
-    add_mock = mocker.patch.object(SlackWebhook, 'add_attachments')
+    add_mock = mocker.patch.object(SlackWebhook, '_add_attachments')
     s = get_slackWH
     s.from_ = 'me'
     s.subject = 'Tst Msg'
-    s.construct_message()
+    s._construct_message()
     expected = 'From: me\nSubject: Tst Msg\nmessage'
     assert s.message['text'] == expected
     assert add_mock.call_count == 1
@@ -148,18 +148,18 @@ def test_slackP_construct_message_withFromSubj(get_slackP, mocker):
     WHEN construct_message() is called
     THEN assert the message is properly created
     """
-    add_mock = mocker.patch.object(SlackPost, 'add_attachments')
+    add_mock = mocker.patch.object(SlackPost, '_add_attachments')
     s = get_slackP
     s.from_ = 'me'
     s.subject = 'Tst Msg'
-    s.construct_message()
+    s._construct_message()
     expected = 'From: me\nSubject: Tst Msg\nmessage'
     assert s.message['text'] == expected
     assert add_mock.call_count == 1
 
 
 ##############################################################################
-# TESTS: Slack*.add_attachments
+# TESTS: Slack*._add_attachments
 ##############################################################################
 
 def test_slackWH_add_attachments_list(get_slackWH):
@@ -169,7 +169,7 @@ def test_slackWH_add_attachments_list(get_slackWH):
     THEN assert the urls are properly attached to the message
     """
     s = get_slackWH
-    s.add_attachments()
+    s._add_attachments()
     expected = [{'image_url': 'https://url1.com', 'author_name': ''},
                 {'image_url': 'https://url2.com', 'author_name': ''}]
     assert s.message['attachments'] == expected
@@ -182,7 +182,7 @@ def test_slackP_add_attachments_list(get_slackP):
     THEN assert the urls are properly attached to the message
     """
     s = get_slackP
-    s.add_attachments()
+    s._add_attachments()
     expected = [{'image_url': 'https://url1.com', 'author_name': ''},
                 {'image_url': 'https://url2.com', 'author_name': ''}]
     assert s.message['attachments'] == expected
@@ -196,7 +196,7 @@ def test_slackWH_add_attachments_str(get_slackWH):
     """
     s = get_slackWH
     s.attachments = 'https://url1.com'
-    s.add_attachments()
+    s._add_attachments()
     expected = [{'image_url': 'https://url1.com', 'author_name': ''}]
     assert s.message['attachments'] == expected
 
@@ -209,7 +209,7 @@ def test_slackP_add_attachments_str(get_slackP):
     """
     s = get_slackP
     s.attachments = 'https://url1.com'
-    s.add_attachments()
+    s._add_attachments()
     expected = [{'image_url': 'https://url1.com', 'author_name': ''}]
     assert s.message['attachments'] == expected
 
@@ -223,7 +223,7 @@ def test_slackWH_add_attachments_with_params(get_slackWH):
     s = get_slackWH
     s.attachments = 'https://url1.com'
     s.params = {'author_name': 'me', 'text': 'image of me'}
-    s.add_attachments()
+    s._add_attachments()
     expected = [{'image_url': 'https://url1.com', 'author_name': 'me',
                 'text': 'image of me'}]
     assert s.message['attachments'] == expected
@@ -238,7 +238,7 @@ def test_slackP_add_attachments_with_params(get_slackP):
     s = get_slackP
     s.attachments = 'https://url1.com'
     s.params = {'author_name': 'me', 'text': 'image of me'}
-    s.add_attachments()
+    s._add_attachments()
     expected = [{'image_url': 'https://url1.com', 'author_name': 'me',
                 'text': 'image of me'}]
     assert s.message['attachments'] == expected
@@ -248,14 +248,15 @@ def test_slackP_add_attachments_with_params(get_slackP):
 # TESTS: Slack*.send
 ##############################################################################
 
-def test_slackWH_send(get_slackWH, capsys, mocker):
+def test_slackWH_send_status201(get_slackWH, capsys, mocker):
     """
     GIVEN a valid SlackWebhook object
     WHEN send() is called
     THEN assert the proper send sequence occurs
     """
-    con_mock = mocker.patch.object(SlackWebhook, 'construct_message')
+    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 201
     s = get_slackWH
     s.send()
     out, err = capsys.readouterr()
@@ -265,14 +266,33 @@ def test_slackWH_send(get_slackWH, capsys, mocker):
     assert err == ''
 
 
-def test_slackP_send(get_slackP, capsys, mocker):
+def test_slackWH_send_status301(get_slackWH, capsys, mocker):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN send() is called
+    THEN assert the proper send sequence occurs
+    """
+    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 301
+    s = get_slackWH
+    s.send()
+    out, err = capsys.readouterr()
+    assert con_mock.call_count == 1
+    assert req_mock.call_count == 1
+    assert 'Error while sending.  HTTP status code = 301' in out
+    assert err == ''
+
+
+def test_slackP_send_status_201(get_slackP, capsys, mocker):
     """
     GIVEN a valid SlackPost object
     WHEN send() is called
     THEN assert the proper send sequence occurs
     """
-    con_mock = mocker.patch.object(SlackPost, 'construct_message')
+    con_mock = mocker.patch.object(SlackPost, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 201
     s = get_slackP
     s.send()
     out, err = capsys.readouterr()
@@ -290,8 +310,9 @@ def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to True)
     """
-    con_mock = mocker.patch.object(SlackWebhook, 'construct_message')
+    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 201
     s = get_slackWH
     s.verbose = True
     s.send()
@@ -303,6 +324,7 @@ def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
     assert ' * Subject: None' in out
     assert ' * Body: \'message\'' in out
     assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' in out
+    assert ' * HTTP status code: 201' in out
     assert 'Message sent.' in out
     assert err == ''
 
@@ -315,8 +337,9 @@ def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to False)
     """
-    con_mock = mocker.patch.object(SlackWebhook, 'construct_message')
+    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 201
     s = get_slackWH
     s.verbose = False
     s.send()
@@ -340,8 +363,9 @@ def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to True)
     """
-    con_mock = mocker.patch.object(SlackPost, 'construct_message')
+    con_mock = mocker.patch.object(SlackPost, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 201
     s = get_slackP
     s.verbose = True
     s.send()
@@ -365,8 +389,9 @@ def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to False)
     """
-    con_mock = mocker.patch.object(SlackPost, 'construct_message')
+    con_mock = mocker.patch.object(SlackPost, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.status_code = 201
     s = get_slackP
     s.verbose = False
     s.send()

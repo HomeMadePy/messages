@@ -32,7 +32,7 @@ from ._utils import timestamp
 class Slack(Message):
     """Base class that Slack* classes inherit from."""
 
-    def construct_message(self):
+    def _construct_message(self):
         """Build the message params."""
         self.message["text"] = ""
         if self.from_:
@@ -41,9 +41,9 @@ class Slack(Message):
             self.message["text"] += "Subject: " + self.subject + "\n"
 
         self.message["text"] += self.body
-        self.add_attachments()
+        self._add_attachments()
 
-    def add_attachments(self):
+    def _add_attachments(self):
         """Add attachments."""
         if self.attachments:
             if not isinstance(self.attachments, list):
@@ -58,7 +58,7 @@ class Slack(Message):
 
     def send(self, encoding="json"):
         """Send the message via HTTP POST, default is json-encoded."""
-        self.construct_message()
+        self._construct_message()
         if self.verbose:
             print(
                 "Debugging info"
@@ -77,11 +77,14 @@ class Slack(Message):
                 type(self).__name__,
                 " info:",
                 self.__str__(indentation="\n * "),
-                "\nresponse code:",
+                "\n * HTTP status code:",
                 resp.status_code,
             )
 
-        print("Message sent.")
+        if resp.status_code >= 200 and resp.status_code < 300:
+            print("Message sent.")
+        else:
+            print("Error while sending.  HTTP status code =", resp.status_code)
 
     def send_async(self):
         """Send message asynchronously."""
