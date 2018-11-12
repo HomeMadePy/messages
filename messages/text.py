@@ -139,7 +139,8 @@ class Twilio(Message):
                 timestamp(),
                 type(self).__name__ + " info:",
                 self.__str__(indentation="\n * "),
-                "\n * HTTP status code:", resp.status_code,
+                "\n * HTTP status code:",
+                resp.status_code,
             )
 
         if resp.status_code >= 200 and resp.status_code < 300:

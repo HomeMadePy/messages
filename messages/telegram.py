@@ -155,7 +155,9 @@ class TelegramBot(Message):
         if resp.status_code == 200 and self.verbose:
             print(timestamp(), content_type + " sent.")
         if resp.status_code > 300 and self.verbose:
-            print(timestamp(), "Error while sending.  HTTP status code:", resp.status_code)
+            print(
+                timestamp(), "Error while sending.  HTTP status code:", resp.status_code
+            )
             print(resp.text)
 
     def send(self):
