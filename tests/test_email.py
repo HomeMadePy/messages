@@ -148,11 +148,11 @@ def test_generate_email(get_email, mocker):
     WHEN Email.generate_email() is called
     THEN assert the email structure is created
     """
-    header_mock = mocker.patch.object(Email, 'add_header')
-    body_mock = mocker.patch.object(Email, 'add_body')
-    attach_mock = mocker.patch.object(Email, 'add_attachments')
+    header_mock = mocker.patch.object(Email, '_add_header')
+    body_mock = mocker.patch.object(Email, '_add_body')
+    attach_mock = mocker.patch.object(Email, '_add_attachments')
     e = get_email
-    e.generate_email()
+    e._generate_email()
     assert isinstance(e.message, MIMEMultipart)
     assert header_mock.call_count == 1
     assert body_mock.call_count == 1
@@ -169,10 +169,10 @@ def test_add_header(get_email, mocker):
     WHEN Email.add_header() is called
     THEN assert correct parameters are set
     """
-    body_mock = mocker.patch.object(Email, 'add_body')
-    attach_mock = mocker.patch.object(Email, 'add_attachments')
+    body_mock = mocker.patch.object(Email, '_add_body')
+    attach_mock = mocker.patch.object(Email, '_add_attachments')
     e = get_email
-    e.generate_email()
+    e._generate_email()
     assert e.message['From'] == 'me@here.com'
     assert e.message['Subject'] == 'subject'
 
@@ -187,11 +187,11 @@ def test_add_body(get_email, mocker):
     WHEN Email.add_body() is called
     THEN assert body_text is attached
     """
-    attach_mock = mocker.patch.object(Email, 'add_attachments')
-    header_mock = mocker.patch.object(Email, 'add_header')
+    attach_mock = mocker.patch.object(Email, '_add_attachments')
+    header_mock = mocker.patch.object(Email, '_add_header')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
-    e.generate_email()
+    e._generate_email()
     assert mime_attach_mock.call_count == 1
 
 
@@ -207,13 +207,13 @@ def test_add_attachments_list_local(get_email, mocker):
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
     """
-    header_mock = mocker.patch.object(Email, 'add_header')
-    body_mock = mocker.patch.object(Email, 'add_body')
+    header_mock = mocker.patch.object(Email, '_add_header')
+    body_mock = mocker.patch.object(Email, '_add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
     e.attachments = ['tests/data/file1.txt', 'tests/data/file2.png',
                      'tests/data/file3.pdf', 'tests/data/file4.xlsx']
-    e.generate_email()
+    e._generate_email()
     assert mime_attach_mock.call_count == 4
 
 
@@ -225,14 +225,14 @@ def test_add_attachments_list_travis(get_email, mocker):
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
     """
-    header_mock = mocker.patch.object(Email, 'add_header')
-    body_mock = mocker.patch.object(Email, 'add_body')
+    header_mock = mocker.patch.object(Email, '_add_header')
+    body_mock = mocker.patch.object(Email, '_add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
     PATH = '/home/travis/build/trp07/messages/tests/data/'
     e.attachments = [PATH + 'file1.txt', PATH + 'file2.png',
                      PATH + 'file3.pdf', PATH + 'file4.xlsx']
-    e.generate_email()
+    e._generate_email()
     assert mime_attach_mock.call_count == 4
 
 
@@ -244,12 +244,12 @@ def test_add_attachments_str_local(get_email, mocker):
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
     """
-    header_mock = mocker.patch.object(Email, 'add_header')
-    body_mock = mocker.patch.object(Email, 'add_body')
+    header_mock = mocker.patch.object(Email, '_add_header')
+    body_mock = mocker.patch.object(Email, '_add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
     e.attachments = 'tests/data/file1.txt'
-    e.generate_email()
+    e._generate_email()
     assert mime_attach_mock.call_count == 1
 
 
@@ -261,13 +261,13 @@ def test_add_attachments_str_travis(get_email, mocker):
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
     """
-    header_mock = mocker.patch.object(Email, 'add_header')
-    body_mock = mocker.patch.object(Email, 'add_body')
+    header_mock = mocker.patch.object(Email, '_add_header')
+    body_mock = mocker.patch.object(Email, '_add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
     PATH = '/home/travis/build/trp07/messages/tests/data/'
     e.attachments = PATH + 'file1.txt'
-    e.generate_email()
+    e._generate_email()
     assert mime_attach_mock.call_count == 1
 
 
@@ -281,11 +281,9 @@ def test_get_session_ssl(get_email, mocker):
     WHEN Email.get_session() is called
     THEN assert the correct functions are called
     """
-    getssl_mock = mocker.patch.object(Email, 'get_ssl')
-    gen_email_mock = mocker.patch.object(Email, 'generate_email')
+    getssl_mock = mocker.patch.object(Email, '_get_ssl')
     e = get_email
-    e.generate_email()
-    e.get_session()
+    e._get_session()
     assert getssl_mock.call_count == 1
 
 
@@ -295,12 +293,10 @@ def test_get_session_tls(get_email, mocker):
     WHEN Email.get_session() is called
     THEN assert the correct functions are called
     """
-    gettls_mock = mocker.patch.object(Email, 'get_tls')
-    gen_email_mock = mocker.patch.object(Email, 'generate_email')
+    gettls_mock = mocker.patch.object(Email, '_get_tls')
     e = get_email
     e.port = 587
-    e.generate_email()
-    e.get_session()
+    e._get_session()
     assert gettls_mock.call_count == 1
 
 
@@ -316,7 +312,7 @@ def test_get_ssl(get_email, mocker):
     """
     smtpssl_mock = mocker.patch.object(smtplib, 'SMTP_SSL')
     e = get_email
-    e.get_ssl()
+    e._get_ssl()
     assert smtpssl_mock.call_count == 1
 
 
@@ -326,12 +322,10 @@ def test_get_ssl_port_string(get_email, mocker):
     WHEN port type is set to string
     THEN assert the correct functions are called
     """
-    getssl_mock = mocker.patch.object(Email, 'get_ssl')
-    gen_email_mock = mocker.patch.object(Email, 'generate_email')
+    getssl_mock = mocker.patch.object(Email, '_get_ssl')
     e = get_email
     e.port = '465'
-    e.generate_email()
-    e.get_session()
+    e._get_session()
     assert getssl_mock.call_count == 1
 
 
@@ -347,7 +341,7 @@ def test_get_tls(get_email, mocker):
     """
     smtp_mock = mocker.patch.object(smtplib, 'SMTP')
     e = get_email
-    e.get_tls()
+    e._get_tls()
     assert smtp_mock.call_count == 1
 
 
@@ -357,12 +351,10 @@ def test_get_tls_port_string(get_email, mocker):
     WHEN port type is set to string
     THEN assert the correct functions are called
     """
-    gettls_mock = mocker.patch.object(Email, 'get_tls')
-    gen_email_mock = mocker.patch.object(Email, 'generate_email')
+    gettls_mock = mocker.patch.object(Email, '_get_tls')
     e = get_email
     e.port = '587'
-    e.generate_email()
-    e.get_session()
+    e._get_session()
     assert gettls_mock.call_count == 1
 
 
@@ -377,10 +369,10 @@ def test_send(get_email, capsys, mocker):
     THEN assert the correct functions are called and correct attributes
         updated
     """
-    header_mock = mocker.patch.object(Email, 'add_header')
-    body_mock = mocker.patch.object(Email, 'add_body')
-    attach_mock = mocker.patch.object(Email, 'add_attachments')
-    session_mock = mocker.patch.object(Email, 'get_session')
+    header_mock = mocker.patch.object(Email, '_add_header')
+    body_mock = mocker.patch.object(Email, '_add_body')
+    attach_mock = mocker.patch.object(Email, '_add_attachments')
+    session_mock = mocker.patch.object(Email, '_get_session')
     e = get_email
     e.send()
     out, err = capsys.readouterr()
@@ -396,10 +388,10 @@ def test_send_verbose_true(get_email, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to True)
     """
-    header_mock = mocker.patch.object(Email, 'add_header')
-    body_mock = mocker.patch.object(Email, 'add_body')
-    attach_mock = mocker.patch.object(Email, 'add_attachments')
-    session_mock = mocker.patch.object(Email, 'get_session')
+    header_mock = mocker.patch.object(Email, '_add_header')
+    body_mock = mocker.patch.object(Email, '_add_body')
+    attach_mock = mocker.patch.object(Email, '_add_attachments')
+    session_mock = mocker.patch.object(Email, '_get_session')
     e = get_email
     e.verbose = True
     e.send()
@@ -428,10 +420,10 @@ def test_send_verbose_false(get_email, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to False)
     """
-    header_mock = mocker.patch.object(Email, 'add_header')
-    body_mock = mocker.patch.object(Email, 'add_body')
-    attach_mock = mocker.patch.object(Email, 'add_attachments')
-    session_mock = mocker.patch.object(Email, 'get_session')
+    header_mock = mocker.patch.object(Email, '_add_header')
+    body_mock = mocker.patch.object(Email, '_add_body')
+    attach_mock = mocker.patch.object(Email, '_add_attachments')
+    session_mock = mocker.patch.object(Email, '_get_session')
     e = get_email
     e.verbose = False
     e.send()

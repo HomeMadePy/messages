@@ -130,7 +130,7 @@ class TelegramBot(Message):
                 if chat["message"]["from"]["username"] == user:
                     return chat["message"]["from"]["id"]
 
-    def construct_message(self):
+    def _construct_message(self):
         """Build the message params."""
         self.message["chat_id"] = self.chat_id
         self.message["text"] = ""
@@ -142,7 +142,7 @@ class TelegramBot(Message):
         self.message["text"] += self.body
         self.message.update(self.params)
 
-    def send_content(self, method="/sendMessage"):
+    def _send_content(self, method="/sendMessage"):
         """send via HTTP Post."""
         if method == "/sendMessage":
             content_type = "Message body"
@@ -150,17 +150,17 @@ class TelegramBot(Message):
             content_type = "Attachment: " + self.message["document"]
 
         url = self.base_url + method
-        r = requests.post(url, json=self.message)
+        resp = requests.post(url, json=self.message)
 
-        if r.status_code == 200 and self.verbose:
+        if resp.status_code == 200 and self.verbose:
             print(timestamp(), content_type + " sent.")
-        if r.status_code > 300 and self.verbose:
-            print(timestamp(), "Error while sending " + content_type)
-            print(r.text)
+        if resp.status_code > 300 and self.verbose:
+            print(timestamp(), "Error while sending.  HTTP status code:", resp.status_code)
+            print(resp.text)
 
     def send(self):
         """Start sending the message and attachments."""
-        self.construct_message()
+        self._construct_message()
         if self.verbose:
             print(
                 "Debugging info"
@@ -168,11 +168,11 @@ class TelegramBot(Message):
                 "\n{} Message created.".format(timestamp())
             )
 
-        self.send_content("/sendMessage")
+        self._send_content("/sendMessage")
 
         for a in self.attachments:
             self.message["document"] = a
-            self.send_content(method="/sendDocument")
+            self._send_content(method="/sendDocument")
 
         if self.verbose:
             print(

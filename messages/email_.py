@@ -178,26 +178,26 @@ class Email(Message):
                 return ", ".join(recipient)
             return recipient
 
-    def generate_email(self):
+    def _generate_email(self):
         """Put the parts of the email together."""
         self.message = MIMEMultipart()
-        self.add_header()
-        self.add_body()
-        self.add_attachments()
+        self._add_header()
+        self._add_body()
+        self._add_attachments()
 
-    def add_header(self):
+    def _add_header(self):
         """Add email header info."""
         self.message["From"] = self.from_
         self.message["Subject"] = self.subject
 
-    def add_body(self):
+    def _add_body(self):
         """Add body content of email."""
         if self.body:
             b = MIMEText("text", "plain")
             b.set_payload(self.body)
             self.message.attach(b)
 
-    def add_attachments(self):
+    def _add_attachments(self):
         """Add required attachments."""
         num_attached = 0
         if self.attachments:
@@ -211,20 +211,20 @@ class Email(Message):
                 num_attached += 1
         return num_attached
 
-    def get_session(self):
+    def _get_session(self):
         """Start session with email server."""
         if self.port in (465, "465"):
-            session = self.get_ssl()
+            session = self._get_ssl()
         elif self.port in (587, "587"):
-            session = self.get_tls()
+            session = self._get_tls()
         session.login(self.from_, self._auth)
         return session
 
-    def get_ssl(self):
+    def _get_ssl(self):
         """Get an SMTP session with SSL."""
         return smtplib.SMTP_SSL(self.server, self.port)
 
-    def get_tls(self):
+    def _get_tls(self):
         """Get an SMTP session with TLS."""
         session = smtplib.SMTP(self.server, self.port)
         session.ehlo()
@@ -234,7 +234,8 @@ class Email(Message):
 
     def send(self):
         """Send the message."""
-        self.generate_email()
+        self._generate_email()
+
         if self.verbose:
             print(
                 "Debugging info"
@@ -242,7 +243,7 @@ class Email(Message):
                 "\n{} Message created.".format(timestamp())
             )
 
-        session = self.get_session()
+        session = self._get_session()
         if self.verbose:
             print(timestamp(), "Login successful.")
 
@@ -259,6 +260,7 @@ class Email(Message):
 
         session.sendmail(self.from_, recipients, self.message.as_string())
         session.quit()
+
         if self.verbose:
             print(timestamp(), "Logged out.")
 
