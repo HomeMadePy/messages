@@ -46,7 +46,7 @@ class TelegramBot(Message):
     Attributes:
         :message: (dict) current form of the message to be constructed
 
-    Properties:
+    Managed Attributes (Properties):
         :auth: auth will set as a private attribute (_auth) and obscured when requested
         :chat_id: user input will validate a proper integer as a string
 

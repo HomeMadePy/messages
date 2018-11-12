@@ -65,7 +65,7 @@ class Email(Message):
     Attributes:
         :message: (MIMEMultipart) current form of the message to be constructed
 
-    Properties:
+    Managed Attributes (Properties):
         :auth: auth will set as a private attribute (_auth) and obscured when requested
         :from_: user input will validate a proper email address
         :to: user input will be validated for a proper email address
