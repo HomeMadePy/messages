@@ -21,7 +21,7 @@ setup(
     url='https://github.com/trp07/messages',
     keywords=['message', 'messages', 'wrapper', 'email', 'text', 'SMS', 'MMS',
               'chat', 'chats', 'slack', 'twilio', 'async', 'asynchronous',
-              'telegram', 'bot', 'telegrambot'],
+              'telegram', 'bot', 'telegrambot', 'whatsapp'],
 
     author='Tim Phillips',
     author_email='phillipstr@gmail.com',
