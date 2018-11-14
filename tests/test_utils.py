@@ -15,6 +15,7 @@ from messages._utils import validate_twilio
 from messages._utils import validate_slackwebhook
 from messages._utils import validate_slackpost
 from messages._utils import validate_telegrambot
+from messages._utils import validate_whatsapp
 from messages._utils import timestamp
 from messages._utils import validus
 from messages._exceptions import InvalidMessageInputError
@@ -109,6 +110,7 @@ def test_val_input_NotSupported():
     ('SlackPost', 'validate_slackpost', 0),
     ('SlackWebhook', 'validate_slackwebhook', 0),
     ('TelegramBot', 'validate_telegrambot', 0),
+    ('WhatsApp', 'validate_whatsapp', 0),
 ])
 def test_val_input_supported(msg_type, func, result, mocker):
     """
@@ -129,10 +131,11 @@ def test_val_input_supported(msg_type, func, result, mocker):
 @pytest.mark.parametrize('msg_type, func, attr', [
     ('Email', validate_email, 'address'),
     ('Twilio', validate_twilio, 'from_'),
-    ('Twilio', validate_twilio, 'media_url'),
+    ('Twilio', validate_twilio, 'attachments'),
     ('SlackWebhook', validate_slackwebhook, 'url'),
-    ('TelegramBot', validate_telegrambot, 'id_num' )
-
+    ('TelegramBot', validate_telegrambot, 'id_num' ),
+    ('WhatsApp', validate_whatsapp, 'from_'),
+    ('WhatsApp', validate_whatsapp, 'attachments')
 ])
 def test_val_funcs(msg_type, func, attr, mocker):
     """

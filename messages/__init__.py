@@ -11,9 +11,10 @@ from .slack import SlackWebhook
 from .slack import SlackPost
 from .telegram import TelegramBot
 from .text import Twilio
+from .whatsapp import WhatsApp
 
 
-__version__ = "0.4.4"
+__version__ = "0.5.0"
 
 
 # Setup logger

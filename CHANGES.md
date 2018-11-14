@@ -1,8 +1,9 @@
 Change Log
 ==========
 
-Upcoming
---------
+0.5.0
+-----
+- Adds support for **WhatsApp** via the [Twilio-WhatsApp API](https://www.twilio.com/docs/sms/whatsapp)
 - Adds code formating with Black
 - Removes __setattr__ from Message Interface (ABC) and instead uses a property factory defined in _utils.py
 

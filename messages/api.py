@@ -5,11 +5,12 @@ from .slack import SlackWebhook
 from .slack import SlackPost
 from .telegram import TelegramBot
 from .text import Twilio
+from .whatsapp import WhatsApp
 
 from ._exceptions import UnsupportedMessageTypeError
 
 
-MESSAGE_CLASSES = {Email, SlackWebhook, SlackPost, TelegramBot, Twilio}
+MESSAGE_CLASSES = {Email, SlackWebhook, SlackPost, TelegramBot, Twilio, WhatsApp}
 
 MESSAGE_TYPES = {i.__name__.lower(): i for i in MESSAGE_CLASSES}
 

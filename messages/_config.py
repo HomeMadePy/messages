@@ -51,6 +51,15 @@ CONFIG = {
         "settings": {"channel_id": "Telegram Channel ID of chat"},
         "auth": {"auth": "Telegram authorization token"},
     },
+    "whatsapp": {
+        "settings": {"from_": "Twilio phone number (e.g. +19998675309)"},
+        "auth": OrderedDict(
+            [
+                ("auth_sid", "Twilio API account SID"),
+                ("auth_token", "Twilio API authorization token"),
+            ]
+        ),
+    },
 }
 
 

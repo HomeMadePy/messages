@@ -169,6 +169,7 @@ def test_main_configure(mocker):
                           'slackwebhook',
                           'slackpost',
                           'telegram',
+                          'whatsapp'
                          ])
 def test_main_message(subcommand, mocker):
     """
