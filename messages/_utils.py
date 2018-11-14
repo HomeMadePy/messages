@@ -58,6 +58,7 @@ def validate_input(msg_type, attr, value):
             "SlackWebhook": validate_slackwebhook,
             "SlackPost": validate_slackpost,
             "TelegramBot": validate_telegrambot,
+            "WhatsApp": validate_whatsapp,
         }[msg_type](attr, value)
     except KeyError:
         return 1
@@ -90,7 +91,7 @@ def validate_twilio(attr, value):
     """Twilio input validator function."""
     if attr in ("from_", "to"):
         check_valid("Twilio", attr, value, validus.isphone, "phone number")
-    elif attr in ("media_url"):
+    elif attr in ("attachments"):
         check_valid("Twilio", attr, value, validus.isurl, "url")
 
 
@@ -111,6 +112,21 @@ def validate_slackpost(attr, value):
 def validate_telegrambot(attr, value):
     """TelegramBot input validator function."""
     check_valid("TelegramBot", attr, value, validus.isint, "integer as a string")
+
+
+def validate_whatsapp(attr, value):
+    """WhatsApp input validator function."""
+    if attr in ("from_", "to"):
+        value = value.split("whatsapp:+")[-1]
+        check_valid(
+            "WhatsApp",
+            attr,
+            value,
+            validus.isint,
+            "phone number starting with the '+' symbol",
+        )
+    elif attr in ("attachments"):
+        check_valid("WhatsApp", attr, value, validus.isurl, "url")
 
 
 """

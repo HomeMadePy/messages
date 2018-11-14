@@ -312,11 +312,12 @@ def test_create_config_profile_Ack(mocker):
 ##############################################################################
 
 @pytest.mark.parametrize(['msg', 'expected'],[
-    ('email', 'Email service password'),
-    ('slackpost', 'Slack API authentication token'),
-    ('slackwebhook', 'Slack API Webhook URL'),
-    ('telegrambot', 'Telegram authorization token'),
-    ('twilio', 'Twilio API account SID'),
+    ('email', ['From email address', 'Email server url', 'Email server port number', 'Email service password']),
+    ('slackpost', ['Name or alias of sender', 'Channel to post message to', 'Slack API authentication token']),
+    ('slackwebhook', ['Name or alias of sender', 'Slack API Webhook URL']),
+    ('telegrambot', ['Telegram Channel ID of chat', 'Telegram authorization token']),
+    ('twilio', ['Twilio phone numbe', 'Twilio API account SID', 'Twilio API authorization token']),
+    ('whatsapp', ['Twilio phone numbe', 'Twilio API account SID', 'Twilio API authorization token'])
 ])
 def test_display_required_items(msg, expected, capsys):
     """
@@ -329,7 +330,8 @@ def test_display_required_items(msg, expected, capsys):
     assert 'Configure a profile for:' in out
     assert 'You will need the following information:' in out
     assert 'Authorization/credentials required:' in out
-    assert expected in out
+    for e in expected:
+        assert e in out
 
 
 ##############################################################################
@@ -369,6 +371,7 @@ def test_get_user_ack_no(mocker):
     ('slackwebhook', 1),
     ('telegrambot', 1),
     ('twilio', 1),
+    ('whatsapp', 1)
 ])
 def test_get_data_from_user(msg, expected, mocker):
     """
@@ -391,6 +394,7 @@ def test_get_data_from_user(msg, expected, mocker):
     ('slackwebhook', 1),
     ('telegrambot', 1),
     ('twilio', 2),
+    ('whatsapp', 2)
 ])
 def test_get_auth_from_user(msg, expected, mocker):
     """
@@ -459,6 +463,8 @@ def test_write_data(get_cfg):
     ('telegrambot', {'auth': 's3cr3t'}, 's3cr3t'),
     ('twilio', OrderedDict([('auth_sid', 'ABCD'), ('auth_token', '1234')]),
         'ABCD :: 1234'),
+    ('whatsapp', OrderedDict([('auth_sid', 'ABCD'), ('auth_token', '1234')]),
+        'ABCD :: 1234')
 ])
 def test_write_auth(msg, auth, pwd, get_cfg):
     """
