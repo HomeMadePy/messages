@@ -23,13 +23,16 @@ Join the conversation in the [Messages Slack Team](https://messages-py.herokuapp
 $ pip3 install messages
 ```
 
+## Documentation in the [Wiki](https://github.com/trp07/messages/wiki)
+
 ## Supported Messages
 
 * [Email](https://github.com/trp07/messages/wiki/Email)
 * [Telegram](https://github.com/trp07/messages/wiki/TelegramBot)
 * [Twilio](https://github.com/trp07/messages/wiki/Twilio)
 * [Slack](https://github.com/trp07/messages/wiki/Slack)
-* Read the [Wiki](https://github.com/trp07/messages/wiki) for usage.
+* [WhatsApp](https://github.com/trp07/messages/wiki/WhatsApp)
+* **Read the [Wiki](https://github.com/trp07/messages/wiki) for usage**.
 
 
 ## Upcoming Messages
