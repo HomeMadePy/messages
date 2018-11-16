@@ -16,7 +16,8 @@
 
 
 ## Installation
-```console
+**Python3 only**
+```shell
 $ pip install messages
 ```
 
