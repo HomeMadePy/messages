@@ -36,16 +36,14 @@ $ pip install messages
 ## [Email](https://github.com/trp07/messages/wiki/Email)
 
 ### REPL
-
 ```python
 >>> from messages import Email
 >>> msg = 'Hello,\n\tBuy more Bitcoin!'
 >>> m = Email(
-            from_='me@here.com',
             to='you@there.com',
             body=msg,
             attachments=['./file1.txt', '~/Documents/file2.pdf'],
-            profile='myProfileName'
+            profile='myProfileName',
    )
 >>>
 >>> m.send()        # send synchronously
