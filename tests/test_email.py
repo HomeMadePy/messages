@@ -15,6 +15,10 @@ from messages._eventloop import MESSAGELOOP
 from conftest import skip_if_on_travisCI
 from conftest import skip_if_not_on_travisCI
 
+from smtplib import SMTPResponseException
+from smtplib import SMTPException
+
+
 ##############################################################################
 # FIXTURES
 ##############################################################################
@@ -24,10 +28,10 @@ def get_email(mocker):
     """Return a valid Email object."""
     config_mock = mocker.patch.object(messages.email_, 'check_config_file')
     e = Email(from_='me@here.com', to='you@there.com',
-            server='smtp.gmail.com', port=465, auth='password',
-            cc='someone@there.com', bcc='them@there.com',
-            subject='subject', body='message', attachments=['file1', 'file2'],
-            profile='myName', save=False)
+              server='smtp.gmail.com', port=465, auth='password',
+              cc='someone@there.com', bcc='them@there.com',
+              subject='subject', body='message', attachments=['file1', 'file2'],
+              profile='myName', save=False)
     e.from_ = 'me@here.com'
     e.server = 'smtp.gmail.com'
     e.port = 465
@@ -298,6 +302,21 @@ def test_get_session_tls(get_email, mocker):
     e.port = 587
     e._get_session()
     assert gettls_mock.call_count == 1
+
+
+def test_get_session_ssl_raisesExc(get_email, mocker):
+    """
+    GIVEN an incorrect password in a valid Email object
+    WHEN Email.get_session() is called
+    THEN assert Exception is raised
+    """
+    get_ssl_mock = mocker.patch.object(Email, '_get_ssl')
+    get_ssl_mock.return_value.login.side_effect = Exception()
+    e = get_email
+
+    with pytest.raises(Exception):
+        print('Exception was not raised, but it should be.')
+        e._get_session()
 
 
 ##############################################################################
