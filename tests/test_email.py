@@ -310,9 +310,7 @@ def test_get_session_ssl_raisesSMTPExc(get_email, mocker):
     THEN assert Exception is raised
     """
     get_ssl_mock = mocker.patch.object(Email, '_get_ssl')
-    get_ssl_mock.return_value.login.side_effect = \
-        SMTPResponseException(code=535, msg=b'5.7.8 Error: authentication failed: '
-                                            b'authentication failure')
+    get_ssl_mock.return_value.login.side_effect = SMTPResponseException(code=0, msg=b'')
     e = get_email
 
     with pytest.raises(SMTPResponseException):
@@ -328,8 +326,7 @@ def test_get_session_tls_raisesSMTPExc(get_email, mocker):
     """
     get_tls_mock = mocker.patch.object(Email, '_get_tls')
     get_tls_mock.return_value.login.side_effect = \
-        SMTPResponseException(code=535, msg=b'5.7.8 Error: authentication failed: '
-                                            b'authentication failure')
+        SMTPResponseException(code=0, msg=b'')
     e = get_email
 
     with pytest.raises(Exception):
