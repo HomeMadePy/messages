@@ -304,20 +304,38 @@ def test_get_session_tls(get_email, mocker):
     assert gettls_mock.call_count == 1
 
 
-def test_get_session_ssl_raisesExc(get_email, mocker):
+def test_get_session_ssl_raisesSMTPExc(get_email, mocker):
     """
     GIVEN an incorrect password in a valid Email object
     WHEN Email.get_session() is called
     THEN assert Exception is raised
     """
     get_ssl_mock = mocker.patch.object(Email, '_get_ssl')
-    get_ssl_mock.return_value.login.side_effect = Exception()
+    get_ssl_mock.return_value.login.side_effect = \
+        SMTPResponseException(code=535, msg=b'5.7.8 Error: authentication failed: '
+                                            b'authentication failure')
+    e = get_email
+
+    with pytest.raises(SMTPResponseException):
+        print('Exception was not raised, but it should be.')
+        e._get_session()
+
+
+def test_get_session_tls_raisesSMTPExc(get_email, mocker):
+    """
+    GIVEN an incorrect password in a valid Email object
+    WHEN Email.get_session() is called
+    THEN assert Exception is raised
+    """
+    get_tls_mock = mocker.patch.object(Email, '_get_tls')
+    get_tls_mock.return_value.login.side_effect = \
+        SMTPResponseException(code=535, msg=b'5.7.8 Error: authentication failed: '
+                                            b'authentication failure')
     e = get_email
 
     with pytest.raises(Exception):
         print('Exception was not raised, but it should be.')
         e._get_session()
-
 
 ##############################################################################
 # TESTS: Email.get_ssl

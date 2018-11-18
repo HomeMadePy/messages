@@ -223,6 +223,7 @@ class Email(Message):
         except SMTPResponseException as e:
             # decodes bytestring from response to unicode string for readability
             print(e.smtp_error.decode('unicode_escape'))
+            raise
         return session
 
 
