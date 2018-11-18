@@ -18,6 +18,7 @@ from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
 from ._utils import timestamp
+from smtplib import SMTPResponseException
 
 
 SMTP_SERVERS = {
@@ -213,12 +214,16 @@ class Email(Message):
 
     def _get_session(self):
         """Start session with email server."""
-        if self.port in (465, "465"):
-            session = self._get_ssl()
-        elif self.port in (587, "587"):
-            session = self._get_tls()
-        session.login(self.from_, self._auth)
-        return session
+        try:
+            if self.port in (465, "465"):
+                session = self._get_ssl()
+            elif self.port in (587, "587"):
+                session = self._get_tls()
+            session.login(self.from_, self._auth)
+            return session
+        except SMTPResponseException as e:
+            # decodes bytestring from response to unicode string for readability
+            print(e.smtp_error.decode('unicode_escape'))
 
     def _get_ssl(self):
         """Get an SMTP session with SSL."""
