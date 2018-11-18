@@ -16,7 +16,6 @@ from conftest import skip_if_on_travisCI
 from conftest import skip_if_not_on_travisCI
 
 from smtplib import SMTPResponseException
-from smtplib import SMTPException
 
 
 ##############################################################################
