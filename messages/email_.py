@@ -8,6 +8,7 @@ Module designed to make creating and sending emails easy.
 
 import reprlib
 import smtplib
+from smtplib import SMTPResponseException
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
@@ -18,7 +19,6 @@ from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
 from ._utils import timestamp
-from smtplib import SMTPResponseException
 
 
 SMTP_SERVERS = {
