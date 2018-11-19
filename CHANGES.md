@@ -1,6 +1,12 @@
 Change Log
 ==========
 
+Upcoming
+--------
+- Improved and more robust exception handling to handle events like login failure, incorrect profile names, etc.
+- Working to migrate documentation from the github wiki to readthedocs.
+
+
 0.5.0
 -----
 - Adds support for **WhatsApp** via the [Twilio-WhatsApp API](https://www.twilio.com/docs/sms/whatsapp)
