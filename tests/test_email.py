@@ -328,7 +328,7 @@ def test_get_session_tls_raisesSMTPExc(get_email, mocker):
         SMTPResponseException(code=0, msg=b'')
     e = get_email
 
-    with pytest.raises(Exception):
+    with pytest.raises(SMTPResponseException):
         e._get_session()
 
 ##############################################################################
