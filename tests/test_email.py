@@ -4,6 +4,7 @@ import getpass
 import os
 import pytest
 import smtplib
+from smtplib import SMTPResponseException
 
 from email.mime.multipart import MIMEMultipart
 
@@ -14,8 +15,6 @@ from messages._eventloop import MESSAGELOOP
 
 from conftest import skip_if_on_travisCI
 from conftest import skip_if_not_on_travisCI
-
-from smtplib import SMTPResponseException
 
 
 ##############################################################################
