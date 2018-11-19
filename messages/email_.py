@@ -218,13 +218,14 @@ class Email(Message):
             session = self._get_ssl()
         elif self.port in (587, "587"):
             session = self._get_tls()
+
         try:
             session.login(self.from_, self._auth)
         except SMTPResponseException as e:
-            print(e.smtp_error.decode('unicode_escape'))
+            print(e.smtp_error.decode("unicode_escape"))
             raise
-        return session
 
+        return session
 
     def _get_ssl(self):
         """Get an SMTP session with SSL."""
