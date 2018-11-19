@@ -8,6 +8,7 @@ Module designed to make creating and sending emails easy.
 
 import reprlib
 import smtplib
+from smtplib import SMTPResponseException
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
@@ -217,8 +218,13 @@ class Email(Message):
             session = self._get_ssl()
         elif self.port in (587, "587"):
             session = self._get_tls()
-        session.login(self.from_, self._auth)
+        try:
+            session.login(self.from_, self._auth)
+        except SMTPResponseException as e:
+            print(e.smtp_error.decode('unicode_escape'))
+            raise
         return session
+
 
     def _get_ssl(self):
         """Get an SMTP session with SSL."""
