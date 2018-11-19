@@ -221,7 +221,6 @@ class Email(Message):
         try:
             session.login(self.from_, self._auth)
         except SMTPResponseException as e:
-            # decodes bytestring from response to unicode string for readability
             print(e.smtp_error.decode('unicode_escape'))
             raise
         return session

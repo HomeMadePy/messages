@@ -314,7 +314,6 @@ def test_get_session_ssl_raisesSMTPExc(get_email, mocker):
     e = get_email
 
     with pytest.raises(SMTPResponseException):
-        print('Exception was not raised, but it should be.')
         e._get_session()
 
 
@@ -330,7 +329,6 @@ def test_get_session_tls_raisesSMTPExc(get_email, mocker):
     e = get_email
 
     with pytest.raises(Exception):
-        print('Exception was not raised, but it should be.')
         e._get_session()
 
 ##############################################################################
