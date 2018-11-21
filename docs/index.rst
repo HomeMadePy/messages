@@ -1,14 +1,5 @@
-.. Messages documentation master file, created by
-   sphinx-quickstart on Sun Nov 18 08:13:25 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Messages v0.5
 ====================================
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
 
 Welcome to the **messages** docs!
 
@@ -21,15 +12,22 @@ Join the conversation on our `Slack Team <https://messages-py.herokuapp.com/>`_
 
 Getting Started
 ---------------
-* Installation
-* Contributing Code
-* TODO List
+.. toctree::
+   :maxdepth: 1
+   
+   installation
+   tutorial
+   contributing
+   todo
 
 Usage
 -----
-* Configuration
-* Command-Line Interface
-* API
+.. toctree::
+   :maxdepth: 1
+
+   config
+   cli
+   api
 
 Message Types
 ^^^^^^^^^^^^^
