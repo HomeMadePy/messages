@@ -15,6 +15,7 @@ from email.mime.application import MIMEApplication
 
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
+from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
@@ -218,13 +219,13 @@ class Email(Message):
             session = self._get_ssl()
         elif self.port in (587, "587"):
             session = self._get_tls()
+
         try:
             session.login(self.from_, self._auth)
         except SMTPResponseException as e:
-            print(e.smtp_error.decode('unicode_escape'))
-            raise
-        return session
+            raise MessageSendError(e.smtp_error.decode("unicode_escape"))
 
+        return session
 
     def _get_ssl(self):
         """Get an SMTP session with SSL."""

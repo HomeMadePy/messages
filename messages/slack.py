@@ -23,6 +23,7 @@ import requests
 
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
+from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
@@ -71,6 +72,11 @@ class Slack(Message):
         elif encoding == "url":
             resp = requests.post(self.url, data=self.message)
 
+        try:
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise MessageSendError(e)
+
         if self.verbose:
             print(
                 timestamp(),
@@ -81,10 +87,7 @@ class Slack(Message):
                 resp.status_code,
             )
 
-        if resp.status_code >= 200 and resp.status_code < 300:
-            print("Message sent.")
-        else:
-            print("Error while sending.  HTTP status code =", resp.status_code)
+        print("Message sent.")
 
     def send_async(self):
         """Send message asynchronously."""

@@ -7,6 +7,7 @@ import messages.text
 from messages.text import Twilio
 from messages.text import check_config_file
 from messages._eventloop import MESSAGELOOP
+from messages._exceptions import MessageSendError
 
 
 ##############################################################################
@@ -125,19 +126,17 @@ def test_send_verbose_true_status201(get_twilio, cfg_mock, capsys, mocker):
     assert err == ''
 
 
-def test_send_statusGT300(get_twilio, cfg_mock, capsys, mocker):
+def test_send_status_raisesMessSendErr(get_twilio, cfg_mock, mocker):
     """
     GIVEN a valid Twilio object
-    WHEN Twilio.send() is called but an HTTP status code >= 300 is returned
-    THEN assert 'Error while sending' prints
+    WHEN Twilio.send() causes an http error
+    THEN assert MessageSendError is raised
     """
     msg_mock = mocker.patch.object(requests, 'post')
-    msg_mock.return_value.status_code = 301
+    msg_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
     t = get_twilio
-    t.send()
-    out, err = capsys.readouterr()
-    assert 'Error while sending.' in out
-    assert err == ''
+    with pytest.raises(MessageSendError):
+        t.send()
 
 
 ##############################################################################

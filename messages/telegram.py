@@ -12,6 +12,7 @@ import requests
 
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
+from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
@@ -144,25 +145,25 @@ class TelegramBot(Message):
 
     def _send_content(self, method="/sendMessage"):
         """send via HTTP Post."""
-        if method == "/sendMessage":
-            content_type = "Message body"
-        elif method == "/sendDocument":
-            content_type = "Attachment: " + self.message["document"]
-
         url = self.base_url + method
-        resp = requests.post(url, json=self.message)
 
-        if resp.status_code == 200 and self.verbose:
-            print(timestamp(), content_type + " sent.")
-        if resp.status_code > 300 and self.verbose:
-            print(
-                timestamp(), "Error while sending.  HTTP status code:", resp.status_code
-            )
-            print(resp.text)
+        try:
+            resp = requests.post(url, json=self.message)
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise MessageSendError(e)
+
+        if self.verbose:
+            if method == "/sendMessage":
+                content_type = "Message body"
+            elif method == "/sendDocument":
+                content_type = "Attachment: " + self.message["document"]
+            print(timestamp(), content_type, "sent.")
 
     def send(self):
         """Start sending the message and attachments."""
         self._construct_message()
+
         if self.verbose:
             print(
                 "Debugging info"

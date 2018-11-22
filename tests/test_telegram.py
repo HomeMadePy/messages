@@ -6,6 +6,7 @@ import requests
 import messages.telegram
 from messages.telegram import TelegramBot
 from messages._eventloop import MESSAGELOOP
+from messages._exceptions import MessageSendError
 
 
 ##############################################################################
@@ -122,7 +123,6 @@ def test_tgram_send_content_verbose_false(get_tgram, capsys, mocker):
     THEN assert the proper send sequence occurs
     """
     req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.status_code = 200
     t = get_tgram
     t._send_content()
     out, err = capsys.readouterr()
@@ -138,7 +138,6 @@ def test_tgram_send_content_msgBody_verbose_true(get_tgram, capsys, mocker):
     THEN assert the proper send sequence occurs
     """
     req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.status_code = 200
     t = get_tgram
     t.verbose = True
     t._send_content()
@@ -157,7 +156,6 @@ def test_tgram_send_content_attachments_verbose_true(get_tgram, capsys, mocker):
     THEN assert the proper send sequence occurs
     """
     req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.status_code = 200
     t = get_tgram
     t.verbose = True
     t.message['document'] = 'https://url1.com'
@@ -169,23 +167,18 @@ def test_tgram_send_content_attachments_verbose_true(get_tgram, capsys, mocker):
     assert err == ''
 
 
-def test_tgram_send_content_statusGT300_verbose_true(get_tgram, capsys, mocker):
+def test_tgram_send_content_raisesMessSendErr(get_tgram, mocker):
     """
     GIVEN a valid TelegramBot object
-    WHEN send_content() is called but an error occurs, status_code > 300, verbose=True
-    THEN assert the proper send sequence occurs
+    WHEN send_content() is called but an http error occurs
+    THEN assert MessageSendError is raised
     """
     req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.status_code = 403
-    req_mock.return_value.text = 'test error'
+    req_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
     t = get_tgram
-    t.verbose = True
-    t._send_content()
-    out, err = capsys.readouterr()
-    assert req_mock.call_count == 1
-    assert 'Error while sending.  HTTP status code: 403' in out
-    assert 'test error' in out
-    assert err == ''
+    with pytest.raises(MessageSendError):
+        t._send_content()
+
 
 ##############################################################################
 # TESTS: TelegramBot.send
