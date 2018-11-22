@@ -29,3 +29,11 @@ class UnknownProfileError(KeyError):
     def __init__(self, profile):
         self.err = "Unknown Profile name: " + profile
         super(UnknownProfileError, self).__init__(self.err)
+
+
+class MessageSendError(Exception):
+    """Exception for errors received while sending messages."""
+
+    def __init__(self, msg):
+        self.err = msg
+        super(MessageSendError, self).__init__(self.err)

@@ -14,6 +14,7 @@ import requests
 
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
+from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
@@ -131,7 +132,12 @@ class Twilio(Message):
                 "\n{} Message created.".format(timestamp())
             )
 
-        resp = requests.post(url, data=data, auth=(self._auth[0], self._auth[1]))
+        try:
+            resp = requests.post(url, data=data, auth=(self._auth[0], self._auth[1]))
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as e:
+            raise MessageSendError(e)
+
         self.sid = resp.json()["sid"]
 
         if self.verbose:
@@ -143,10 +149,7 @@ class Twilio(Message):
                 resp.status_code,
             )
 
-        if resp.status_code >= 200 and resp.status_code < 300:
-            print("Message sent.")
-        else:
-            print("Error while sending.  HTTP status code =", resp.status_code)
+        print("Message sent.")
 
     def send_async(self):
         """Send message asynchronously."""

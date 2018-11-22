@@ -3,7 +3,7 @@ Change Log
 
 Upcoming
 --------
-- Improved and more robust exception handling to handle events like login failure, incorrect profile names, etc.
+- Improved and more robust exception handling to handle events like login failure, incorrect profile names, etc. in a more graceful manner.
 - Working to migrate documentation from the github wiki to readthedocs.
 
 

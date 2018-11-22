@@ -15,6 +15,7 @@ from email.mime.application import MIMEApplication
 
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
+from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
@@ -222,8 +223,7 @@ class Email(Message):
         try:
             session.login(self.from_, self._auth)
         except SMTPResponseException as e:
-            print(e.smtp_error.decode("unicode_escape"))
-            raise
+            raise MessageSendError(e.smtp_error.decode("unicode_escape"))
 
         return session
 

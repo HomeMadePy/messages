@@ -12,6 +12,7 @@ import messages
 from messages.email_ import Email
 from messages.email_ import check_config_file
 from messages._eventloop import MESSAGELOOP
+from messages._exceptions import MessageSendError
 
 from conftest import skip_if_on_travisCI
 from conftest import skip_if_not_on_travisCI
@@ -302,7 +303,7 @@ def test_get_session_tls(get_email, mocker):
     assert gettls_mock.call_count == 1
 
 
-def test_get_session_ssl_raisesSMTPExc(get_email, mocker):
+def test_get_session_ssl_raisesMessSendErr(get_email, mocker):
     """
     GIVEN an incorrect password in a valid Email object
     WHEN Email.get_session() is called
@@ -311,23 +312,23 @@ def test_get_session_ssl_raisesSMTPExc(get_email, mocker):
     get_ssl_mock = mocker.patch.object(Email, '_get_ssl')
     get_ssl_mock.return_value.login.side_effect = SMTPResponseException(code=0, msg=b'')
     e = get_email
-    with pytest.raises(SMTPResponseException):
+    with pytest.raises(MessageSendError):
         e._get_session()
 
 
-def test_get_session_tls_raisesSMTPExc(get_email, mocker):
+def test_get_session_tls_raisesMessSendErr(get_email, mocker):
     """
     GIVEN an incorrect password in a valid Email object
     WHEN Email.get_session() is called
     THEN assert Exception is raised
     """
     get_tls_mock = mocker.patch.object(Email, '_get_tls')
-    get_tls_mock.return_value.login.side_effect = \
-        SMTPResponseException(code=0, msg=b'')
+    get_tls_mock.return_value.login.side_effect = SMTPResponseException(code=0, msg=b'')
     e = get_email
     e.port = 587
-    with pytest.raises(SMTPResponseException):
+    with pytest.raises(MessageSendError):
         e._get_session()
+
 
 ##############################################################################
 # TESTS: Email._get_ssl

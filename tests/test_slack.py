@@ -7,6 +7,7 @@ import messages.slack
 from messages.slack import SlackWebhook
 from messages.slack import SlackPost
 from messages._eventloop import MESSAGELOOP
+from messages._exceptions import MessageSendError
 
 
 ##############################################################################
@@ -248,60 +249,6 @@ def test_slackP_add_attachments_with_params(get_slackP):
 # TESTS: Slack*.send
 ##############################################################################
 
-def test_slackWH_send_status201(get_slackWH, capsys, mocker):
-    """
-    GIVEN a valid SlackWebhook object
-    WHEN send() is called
-    THEN assert the proper send sequence occurs
-    """
-    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.status_code = 201
-    s = get_slackWH
-    s.send()
-    out, err = capsys.readouterr()
-    assert con_mock.call_count == 1
-    assert req_mock.call_count == 1
-    assert out == 'Message sent.\n'
-    assert err == ''
-
-
-def test_slackWH_send_status301(get_slackWH, capsys, mocker):
-    """
-    GIVEN a valid SlackWebhook object
-    WHEN send() is called
-    THEN assert the proper send sequence occurs
-    """
-    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.status_code = 301
-    s = get_slackWH
-    s.send()
-    out, err = capsys.readouterr()
-    assert con_mock.call_count == 1
-    assert req_mock.call_count == 1
-    assert 'Error while sending.  HTTP status code = 301' in out
-    assert err == ''
-
-
-def test_slackP_send_status_201(get_slackP, capsys, mocker):
-    """
-    GIVEN a valid SlackPost object
-    WHEN send() is called
-    THEN assert the proper send sequence occurs
-    """
-    con_mock = mocker.patch.object(SlackPost, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.status_code = 201
-    s = get_slackP
-    s.send()
-    out, err = capsys.readouterr()
-    assert con_mock.call_count == 1
-    assert req_mock.call_count == 1
-    assert out == 'Message sent.\n'
-    assert err == ''
-
-
 def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
     """
     GIVEN a valid SlackWebhook object
@@ -355,6 +302,20 @@ def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
     assert err == ''
 
 
+def test_slackWH_send_raisesMessSendErr(get_slackWH, mocker):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN *.send() is called and a http error occurs
+    THEN assert MessageSendError is raised
+    """
+    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
+    s = get_slackWH
+    with pytest.raises(MessageSendError):
+        s.send()
+
+
 def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
     """
     GIVEN a valid SlackPost object
@@ -405,6 +366,21 @@ def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
     assert ' * Attachments: [\'https://url1.com\', \'https://url2.com\']' not in out
     assert 'Message sent.' in out
     assert err == ''
+
+
+def test_slackP_send_raisesMessSendErr(get_slackP, mocker):
+    """
+    GIVEN a valid SlackPost object
+    WHEN *.send() is called and a http error occurs
+    THEN assert MessageSendError is raised
+    """
+    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
+    s = get_slackP
+    with pytest.raises(MessageSendError):
+        s.send()
+
 
 ##############################################################################
 # TESTS: Slack*.send_async

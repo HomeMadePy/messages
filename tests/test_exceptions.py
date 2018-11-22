@@ -5,11 +5,8 @@ import pytest
 from messages._exceptions import InvalidMessageInputError
 from messages._exceptions import UnsupportedMessageTypeError
 from messages._exceptions import UnknownProfileError
+from messages._exceptions import MessageSendError
 
-
-##############################################################################
-# TESTS: MessageInputError
-##############################################################################
 
 def test_InvalidMessageInputError(capsys):
     """
@@ -65,4 +62,17 @@ def test_UnknownProfileError(capsys):
         raise UnknownProfileError('unknown_user')
         out, err = capsys.readouterr()
         assert 'Unknown Profile name: unknown_user' in out
+        assert err == ''
+
+
+def test_MessageSendError(capsys):
+    """
+    GIVEN no object instantiated, just raise the exception
+    WHEN the exception is raised with given args
+    THEN assert it raises exception and prints proper output
+    """
+    with pytest.raises(MessageSendError):
+        raise MessageSendError('login failed')
+        out, err = capsys.readouterr()
+        assert 'login failed' in out
         assert err == ''
