@@ -68,9 +68,7 @@ def message_factory(msg_type, msg_types=MESSAGE_TYPES, *args, **kwargs):
     """
     try:
         return msg_types[msg_type.lower()](*args, **kwargs)
-    except UnknownProfileError as e:
-        err_exit("Unable to send message: ", e)
-    except InvalidMessageInputError as e:
+    except (UnknownProfileError, InvalidMessageInputError) as e:
         err_exit("Unable to send message: ", e)
     except KeyError:
         raise UnsupportedMessageTypeError(msg_type, msg_types)
