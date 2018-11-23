@@ -41,7 +41,7 @@ def send_message(msg_type, kwds):
     if kwds["file"]:
         get_body_from_file(kwds)
     kwargs = trim_args(kwds)
-    send(msg_type, send_async=True, **kwargs)
+    send(msg_type, send_async=False, **kwargs)
 
 
 ##############################################################################
