@@ -61,15 +61,15 @@ class Twilio(Message):
     attachments = validate_property("attachments")
 
     def __init__(
-        self,
-        from_=None,
-        to=None,
-        auth=None,
-        body=" ",
-        attachments=None,
-        profile=None,
-        save=False,
-        verbose=False,
+            self,
+            from_=None,
+            to=None,
+            auth=None,
+            body=" ",
+            attachments=None,
+            profile=None,
+            save=False,
+            verbose=False,
     ):
 
         self.from_ = from_
@@ -114,9 +114,9 @@ class Twilio(Message):
         Set self.sid to return code of message.
         """
         url = (
-            "https://api.twilio.com/2010-04-01/Accounts/"
-            + self._auth[0]
-            + "/Messages.json"
+                "https://api.twilio.com/2010-04-01/Accounts/"
+                + self._auth[0]
+                + "/Messages.json"
         )
         data = {
             "From": self.from_,
@@ -134,22 +134,22 @@ class Twilio(Message):
 
         try:
             resp = requests.post(url, data=data, auth=(self._auth[0], self._auth[1]))
-            resp.raise_for_status()
+
+            if self.verbose:
+                print(
+                    timestamp(),
+                    type(self).__name__ + " info:",
+                    self.__str__(indentation="\n * "),
+                    "\n * HTTP status code:",
+                    resp.status_code,
+                )
+
+            if resp.status_code == 201:
+                print("Message sent.")
+
         except requests.exceptions.HTTPError as e:
             raise MessageSendError(e)
 
-        self.sid = resp.json()["sid"]
-
-        if self.verbose:
-            print(
-                timestamp(),
-                type(self).__name__ + " info:",
-                self.__str__(indentation="\n * "),
-                "\n * HTTP status code:",
-                resp.status_code,
-            )
-
-        print("Message sent.")
         return resp
 
     def send_async(self):
