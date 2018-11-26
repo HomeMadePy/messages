@@ -150,6 +150,7 @@ class Twilio(Message):
             )
 
         print("Message sent.")
+        return resp
 
     def send_async(self):
         """Send message asynchronously."""
