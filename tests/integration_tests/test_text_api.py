@@ -1,32 +1,34 @@
-"""TODO - add 8 more tests (do these later) [test use cases: from, to, area code,
-        credentials, attachment]
-        - add test that raises HTTPrequestsError
-        - put Twillio object into setUp to only write it once and then override
-        phone numbers (t.to = ..., t.from = ...)
-        - change unittest to pytest
-        - figure out why 'empty body' test isn't working
-        - write docstring GIVE, WHEN, THEN under each test - formata per other tests
-        - rename tests to as used in other tests if necessary
-        - cleanup"""
-
+import pytest
 from messages.text import Twilio
 
 
-###############################################################################
-# From
-###############################################################################
-def test_01_text_successful():
+##############################################################################
+# FIXTURES
+##############################################################################
+
+@pytest.fixture()
+def get_twilio(profile='mtwilio_test'):
+    """Return a valid Twilio object."""
+    t = Twilio(from_='+15005550006', to='+14159999999',
+               body='test text!',
+               attachments='https://imgs.xkcd.com/comics/python.png',
+               profile=profile, save=False)
+    return t
+
+
+##############################################################################
+# TESTS: Send from
+##############################################################################
+
+def test_01_text_successful(get_twilio):
     """
     GIVEN a valid Twilio object
-    WHEN the sends text message fromvalid number to valid number
+    WHEN sending text message from valid number to valid number
     THEN assert response contains correct values
     """
-    t = Twilio(from_='+15005550006', to='+14159999999',
-               body='Test text from Twillio messages object!',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
-
+    t = get_twilio
     resp = t.send()
+
     resp_dict = resp.json()
     assert resp.status_code == 201
     assert resp_dict['from'] == t.from_
@@ -36,24 +38,37 @@ def test_01_text_successful():
     assert resp_dict['error_message'] is None
     assert 'media' in resp_dict['subresource_uris']
 
-def test_02_text_with_empty_body():
-    t = Twilio(from_='+15005550006', to='+14159999999',
-               body='',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
+
+def test_02_text_with_empty_body(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text with empty body
+    THEN assert error message body is required
+    """
+    t = get_twilio
+    t.body = ''
+    t.attachments = None
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 400
+    resp_full = {
+        'code': 21602,
+        'message': 'Message body is required.',
+        'more_info': 'https://www.twilio.com/docs/errors/21602',
+        'status': 400}
+    assert resp.json() == resp_full
 
-def test_03_send_from_unavailable_number():
-    t = Twilio(from_='+15005550000', to='+14159999999',
-               body='Text from unavailable number.',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
+
+def test_03_send_from_unavailable_number(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text from unavailable number
+    THEN assert error "from" number is not valid inbound phone number
+    """
+    t = get_twilio
+    t.from_ = '+15005550000'
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 400
     resp_full = {
         "code": 21606,
@@ -62,16 +77,19 @@ def test_03_send_from_unavailable_number():
         "more_info": "https://www.twilio.com/docs/errors/21606",
         "status": 400
     }
-    assert resp_dict == resp_full
+    assert resp.json() == resp_full
 
-def test_04_send_from_invalid_number():
-    t = Twilio(from_='+15005550001', to='+14159999999',
-               body='Text from invalid number.',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
+
+def test_04_send_from_invalid_number(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text from invalid number
+    THEN assert error "from" number is not valid phone number
+    """
+    t = get_twilio
+    t.from_ = '+15005550001'
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 400
     resp_full = {
         "code": 21212,
@@ -80,19 +98,19 @@ def test_04_send_from_invalid_number():
         "more_info": "https://www.twilio.com/docs/errors/21212",
         "status": 400
     }
-    assert resp_dict == resp_full
+    assert resp.json() == resp_full
 
-def test_05_send_from_another_invalid_number():
-    """Completely invalid "from_" number"""
-    t = Twilio(from_='+15005550001', to='+14159999999',
-               body='Text from another invalid number.',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
 
+def test_05_send_from_another_invalid_number(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text from a not valid sms-capable inbound number
+    THEN assert error "from" number is not valid inbound phone number
+    """
+    t = get_twilio
     t.__dict__['from_'] = '+123'
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 400
     resp_full = {
         'code': 21606,
@@ -101,20 +119,19 @@ def test_05_send_from_another_invalid_number():
         'more_info': 'https://www.twilio.com/docs/errors/21606',
         'status': 400
     }
-    assert resp_dict == resp_full
+    assert resp.json() == resp_full
 
 
-# DONE  - TODO - CHECK DOES IT THROW EXCEPTION IN REAL TWILIO TEST? - DOESN'T
-def test_06_text_from_number_that_is_not_owned_by_your_account():
-    """This phone number is not owned by your account or is not SMS-capable.
-     +15005550007"""
-    t = Twilio(from_='+15005550007', to='+14159999999',
-               body='',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
+def test_06_text_from_number_that_is_not_owned_by_your_account(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text from a number that is not owned by your account
+    THEN assert error is not a valid, SMS-capable inbound phone number
+    """
+    t = get_twilio
+    t.from_ = '+15005550007'
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 400
 
     resp_full = {
@@ -124,17 +141,19 @@ def test_06_text_from_number_that_is_not_owned_by_your_account():
         "more_info": "https://www.twilio.com/docs/errors/21606",
         "status": 400
     }
-    assert resp_dict == resp_full
+    assert resp.json() == resp_full
 
-def test_07_text_from_full_sms_queue():
-    """This number has an SMS message queue that is full. +15005550008"""
-    t = Twilio(from_='+15005550008', to='+14159999999',
-               body='',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
+
+def test_07_text_from_full_sms_queue(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text from a sms queue that is full
+    THEN assert error SMS queue is full
+    """
+    t = get_twilio
+    t.from_ = '+15005550008'
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 429
 
     resp_full = {
@@ -143,22 +162,23 @@ def test_07_text_from_full_sms_queue():
         "more_info": "https://www.twilio.com/docs/errors/21611",
         "status": 429
     }
-    assert resp_dict == resp_full
+    assert resp.json() == resp_full
 
-###############################################################################
-# To
-###############################################################################
-def test_08_text_to_non_mobile_number():
-    """This number is incapable of receiving SMS messages because it's a non-mobile
-        number. +15005550009. In real twilio account this only applies to countries
-        other than US, UK and Canada."""
-    t = Twilio(from_='+15005550006', to='+15005550009',
-               body='Test text from Twillio messages object!',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
+
+##############################################################################
+# TESTS: Send to
+##############################################################################
+
+def test_08_text_to_non_mobile_number(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text to a non-mobile number
+    THEN assert error "to" number is not a mobile number
+    """
+    t = get_twilio
+    t.to = '+15005550009'
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 400
 
     resp_full = {
@@ -167,19 +187,19 @@ def test_08_text_to_non_mobile_number():
         "more_info": "https://www.twilio.com/docs/errors/21614",
         "status": 400
     }
-    assert resp_dict == resp_full
+    assert resp.json() == resp_full
 
-def test_09_send_to_invalid_number():
-    """Completely invalid "from_" number"""
-    t = Twilio(from_='+15005550006', to='+14159999999',
-               body='Text from another invalid number.',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
 
+def test_09_send_to_invalid_number(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text to invalid number
+    THEN assert error "to" number is not a valid phone number
+    """
+    t = get_twilio
     t.__dict__['to'] = '123'
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 400
 
     resp_full = {
@@ -188,23 +208,46 @@ def test_09_send_to_invalid_number():
         'more_info': 'https://www.twilio.com/docs/errors/21211',
         'status': 400
     }
-    assert resp_dict == resp_full
+    assert resp.json() == resp_full
 
-###############################################################################
-# AUTHENTICATION
-###############################################################################
-def test_10_invalid_account_sid():
-    """Completely invalid "from_" number"""
-    t = Twilio(from_='+15005550006', to='+14159999999',
-               body='Text from another invalid number.',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
 
+def test_10_twilio_cant_route_to_number(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text to number that Twilio can't route to
+    THEN assert error "to" number is not reachable via MMS
+    """
+    t = get_twilio
+    t.to = '+15005550002'
+
+    resp = t.send()
+    assert resp.status_code == 400
+
+    resp_full = {
+        'code': 21612,
+        'message': "The 'To' phone number: +15005550002, is not currently reachable "
+                   "using the 'From' phone number: +15005550006 via MMS.",
+        'more_info': 'https://www.twilio.com/docs/errors/21612',
+        'status': 400
+    }
+    assert resp.json() == resp_full
+
+
+##############################################################################
+# TESTS: Send to
+##############################################################################
+
+def test_11_invalid_account_sid(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text with invalid account sid credential
+    THEN assert error resource not found
+    """
+    t = get_twilio
     token = t.__dict__['_auth'][1]
     t.__dict__['_auth'] = ('invalid_sid', token)
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 404
 
     resp_full = {
@@ -214,20 +257,20 @@ def test_10_invalid_account_sid():
         'more_info': 'https://www.twilio.com/docs/errors/20404',
         'status': 404
     }
-    assert resp_dict == resp_full
+    assert resp.json() == resp_full
 
-def test_11_invalid_auth_token():
-    """Completely invalid "from_" number"""
-    t = Twilio(from_='+15005550006', to='+14159999999',
-               body='Text from another invalid number.',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='mtwilio_test', save=False)
 
+def test_12_invalid_auth_token(get_twilio):
+    """
+    GIVEN a valid Twilio object
+    WHEN sending text with invalid authentication token
+    THEN assert error auth token was incorrect
+    """
+    t = get_twilio
     sid = t.__dict__['_auth'][0]
     t.__dict__['_auth'] = (sid, 'invalid_token')
 
     resp = t.send()
-    resp_dict = resp.json()
     assert resp.status_code == 401
 
     resp_full = {
@@ -237,20 +280,4 @@ def test_11_invalid_auth_token():
         'more_info': 'https://www.twilio.com/docs/errors/20003',
         'status': 401
     }
-    assert resp_dict == resp_full
-
-
-# TODO ADD THESE TESTS (TO)
-# This phone number is invalid. +15005550001
-# Twilio cannot route to this number. +15005550002
-# Your account doesn't have the international permissions necessary to SMS this
-# number. +15005550003
-# This number is blacklisted for your account. +15005550004
-# This number is incapable of receiving SMS messages. +15005550009
-# Any other phone number is validated normally. All other numbers
-
-###############################################################################
-# Area code
-###############################################################################
-# This area code doesn't have any available phone numbers.
-# This area code has an available number. (no error)
+    assert resp.json() == resp_full
