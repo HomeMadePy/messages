@@ -60,15 +60,15 @@ class Twilio(Message):
     attachments = validate_property("attachments")
 
     def __init__(
-            self,
-            from_=None,
-            to=None,
-            auth=None,
-            body=" ",
-            attachments=None,
-            profile=None,
-            save=False,
-            verbose=False,
+        self,
+        from_=None,
+        to=None,
+        auth=None,
+        body=" ",
+        attachments=None,
+        profile=None,
+        save=False,
+        verbose=False,
     ):
 
         self.from_ = from_
@@ -113,9 +113,9 @@ class Twilio(Message):
         Set self.sid to return code of message.
         """
         url = (
-                "https://api.twilio.com/2010-04-01/Accounts/"
-                + self._auth[0]
-                + "/Messages.json"
+            "https://api.twilio.com/2010-04-01/Accounts/"
+            + self._auth[0]
+            + "/Messages.json"
         )
         data = {
             "From": self.from_,
