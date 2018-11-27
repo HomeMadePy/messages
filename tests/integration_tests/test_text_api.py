@@ -234,7 +234,7 @@ def test_10_twilio_cant_route_to_number(get_twilio):
 
 
 ##############################################################################
-# TESTS: Send to
+# TESTS: Authentication
 ##############################################################################
 
 def test_11_invalid_account_sid(get_twilio):
