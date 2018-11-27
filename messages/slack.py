@@ -87,7 +87,10 @@ class Slack(Message):
                 resp.status_code,
             )
 
-        print("Message sent.")
+        if resp.status_code >= 200 and resp.status_code < 300:
+            print("Message sent.")
+        else:
+            print("Error while sending.  HTTP status code =", resp.status_code)
 
     def send_async(self):
         """Send message asynchronously."""
