@@ -14,11 +14,12 @@ import requests
 
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
+from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
 from ._utils import timestamp
-from messages._exceptions import MessageSendError
+
 
 
 class Twilio(Message):
