@@ -13,3 +13,5 @@ eggs/
 #Integrated Development Environments
 /.idea
 .idea/
+
+.coverage
