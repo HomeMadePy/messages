@@ -267,3 +267,38 @@ def main_whatsapp(ctx, **kwds):
     * Example: messages whatsapp myWhatsAppProfile 'hello from whatsapp' -t '+12223334444' --verbose
     """
     send_message("whatsapp", kwds)
+
+
+@main.command("facebook")
+@click.argument("profile", type=click.STRING, required=False)
+@click.argument("body", type=click.STRING, default="", required=False)
+@option("-f", "--from", "from_", help="Email used to log into Facebook.")
+@option("-t", "--to", help="User or Group ID to send message to.")
+@option("-tt", "--thread-type", help="Thread type: USER or GROUP")
+@option("-m", "--file", help="Read message body from filepath.")
+@option(
+    "-a",
+    "--attach",
+    "attachments",
+    multiple=True,
+    help="Attachments -- url for image to attach.",
+)
+@option("-l", "--logout", is_flag=True, help="Logout of Facebook account after sending message.")
+@option("-S", "--save", is_flag=True, help="Save default values in current profile.")
+@option(
+    "-V",
+    "--verbose",
+    is_flag=True,
+    help="Display verbose output and debug information.",
+)
+@click.pass_context
+def main_facebook(ctx, **kwds):
+    """Send Facebook text message.
+
+    * [PROFILE]: Pre-configured user profile.
+
+    * [BODY]:    Message body text.
+
+    * Example: messages facebook myFacebookProfile 'hello from facebook' -t '1234567890' -tt 'USER' -l --verbose
+    """
+    send_message("facebook", kwds)

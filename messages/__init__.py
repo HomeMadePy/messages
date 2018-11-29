@@ -7,6 +7,7 @@ import logging
 from .api import send
 
 from .email_ import Email
+from .facebook import Facebook
 from .slack import SlackWebhook
 from .slack import SlackPost
 from .telegram import TelegramBot
