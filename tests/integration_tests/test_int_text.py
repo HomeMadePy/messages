@@ -13,8 +13,10 @@ from messages._exceptions import MessageSendError
 ##############################################################################
 
 def twilio_test_configured():
-    """Does the user have an 'integration_tester' config profile set up, and
-    do they have 'twilio' set up in that profile?"""
+    """
+    Does the user have an 'integration_tester' config profile set up, and
+    do they have 'twilio' set up in that profile?
+    """
     with jsonconfig.Config('messages') as cfg:
         data = cfg.data
         return ('integration_tester' in cfg.data.keys()
@@ -45,7 +47,7 @@ def get_twilio():
 # TESTS: Send from
 ##############################################################################
 
-def test_01_text_successful(get_twilio):
+def test_twilio_normal_execution(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text message from valid number to valid number
@@ -64,7 +66,7 @@ def test_01_text_successful(get_twilio):
     assert 'media' in resp_dict['subresource_uris']
 
 
-def test_02_text_with_empty_body(get_twilio):
+def test_twilio_with_empty_body(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text with empty body
@@ -82,7 +84,7 @@ def test_02_text_with_empty_body(get_twilio):
     assert 'Message body is required.' in response
 
 
-def test_03_send_from_unavailable_number(get_twilio):
+def test_twilio_send_from_unavailable_number(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text from unavailable number
@@ -96,11 +98,11 @@ def test_03_send_from_unavailable_number(get_twilio):
 
     response = str(resp.value)
     assert '400' in response
-    assert 'The From phone number {} is not a valid, SMS-capable inbound ' \
-           'phone number or short code for your account.'.format(t.from_) in response
+    assert ('The From phone number {} is not a valid, SMS-capable inbound '
+           'phone number or short code for your account.'.format(t.from_)) in response
 
 
-def test_04_send_from_invalid_number(get_twilio):
+def test_twilio_send_from_invalid_number(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text from invalid number
@@ -114,11 +116,11 @@ def test_04_send_from_invalid_number(get_twilio):
 
     response = str(resp.value)
     assert '400' in response
-    assert "The 'From' number {} is not a valid phone number, " \
-           "shortcode, or alphanumeric sender ID.".format(t.from_) in response
+    assert ("The 'From' number {} is not a valid phone number, "
+           "shortcode, or alphanumeric sender ID.".format(t.from_)) in response
 
 
-def test_05_send_from_another_invalid_number(get_twilio):
+def test_twilio_send_from_another_invalid_number(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text from a not valid sms-capable inbound number
@@ -132,11 +134,11 @@ def test_05_send_from_another_invalid_number(get_twilio):
 
     response = str(resp.value)
     assert '400' in response
-    assert 'The From phone number {} is not a valid, SMS-capable inbound ' \
-           'phone number or short code for your account.'.format(t.from_) in response
+    assert ('The From phone number {} is not a valid, SMS-capable inbound '
+           'phone number or short code for your account.'.format(t.from_)) in response
 
 
-def test_06_text_from_number_that_is_not_owned_by_your_account(get_twilio):
+def test_twilio_from_number_that_is_not_owned_by_your_account(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text from a number that is not owned by your account
@@ -150,11 +152,11 @@ def test_06_text_from_number_that_is_not_owned_by_your_account(get_twilio):
 
     response = str(resp.value)
     assert '400' in response
-    assert 'The From phone number {} is not a valid, SMS-capable inbound ' \
-           'phone number or short code for your account.'.format(t.from_) in response
+    assert ('The From phone number {} is not a valid, SMS-capable inbound '
+           'phone number or short code for your account.'.format(t.from_)) in response
 
 
-def test_07_text_from_full_sms_queue(get_twilio):
+def test_twilio_from_full_sms_queue(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text from a sms queue that is full
@@ -175,7 +177,7 @@ def test_07_text_from_full_sms_queue(get_twilio):
 # TESTS: Send to
 ##############################################################################
 
-def test_08_text_to_non_mobile_number(get_twilio):
+def test_twilio_to_non_mobile_number(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text to a non-mobile number
@@ -192,7 +194,7 @@ def test_08_text_to_non_mobile_number(get_twilio):
     assert 'To number: {}, is not a mobile number'.format(t.to) in response
 
 
-def test_09_send_to_invalid_number(get_twilio):
+def test_twilio_send_to_invalid_number(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text to invalid number
@@ -209,7 +211,7 @@ def test_09_send_to_invalid_number(get_twilio):
     assert "The 'To' number {} is not a valid phone number.".format(t.to) in response
 
 
-def test_10_twilio_cant_route_to_number(get_twilio):
+def test_twilio_cant_route_to_number(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text to number that Twilio can't route to
@@ -223,15 +225,15 @@ def test_10_twilio_cant_route_to_number(get_twilio):
 
     response = str(resp.value)
     assert '400' in response
-    assert "The 'To' phone number: {}, is not currently reachable using the " \
-           "'From' phone number: {} via MMS.'.format(t.to, t.from_) in response"
+    assert ("The 'To' phone number: {}, is not currently reachable using the "
+           "'From' phone number: {} via MMS.'.format(t.to, t.from_) in response")
 
 
 ##############################################################################
 # TESTS: Authentication
 ##############################################################################
 
-def test_11_invalid_account_sid(get_twilio):
+def test_twilio_invalid_account_sid(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text with invalid account sid credential
@@ -246,11 +248,11 @@ def test_11_invalid_account_sid(get_twilio):
 
     response = str(resp.value)
     assert '404 ' in response
-    assert 'The requested resource /2010-04-01/Accounts/invalid_sid/Messages.json ' \
-           'was not found'
+    assert ('The requested resource /2010-04-01/Accounts/invalid_sid/Messages.json '
+           'was not found') in response
 
 
-def test_12_invalid_auth_token(get_twilio):
+def test_twilio_invalid_auth_token(get_twilio):
     """
     GIVEN a valid Twilio object
     WHEN sending text with invalid authentication token
