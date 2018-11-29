@@ -20,12 +20,12 @@ def twilio_test_configured():
     with jsonconfig.Config('messages') as cfg:
         data = cfg.data
         return ('integration_tester' in cfg.data.keys()
-            and 'twilio' in data['integration_tester'])
+                and 'twilio' in data['integration_tester'])
 
 
-#Skip all tests if not configured
+# Skip all tests if not configured
 pytestmark = pytest.mark.skipif(not twilio_test_configured(),
-    reason='Tester not configured for messages.text.Twilio')
+                                reason='Tester not configured for messages.text.Twilio')
 
 
 ##############################################################################
@@ -99,7 +99,7 @@ def test_twilio_send_from_unavailable_number(get_twilio):
     response = str(resp.value)
     assert '400' in response
     assert ('The From phone number {} is not a valid, SMS-capable inbound '
-           'phone number or short code for your account.'.format(t.from_)) in response
+            'phone number or short code for your account.'.format(t.from_)) in response
 
 
 def test_twilio_send_from_invalid_number(get_twilio):
@@ -117,25 +117,7 @@ def test_twilio_send_from_invalid_number(get_twilio):
     response = str(resp.value)
     assert '400' in response
     assert ("The 'From' number {} is not a valid phone number, "
-           "shortcode, or alphanumeric sender ID.".format(t.from_)) in response
-
-
-def test_twilio_send_from_another_invalid_number(get_twilio):
-    """
-    GIVEN a valid Twilio object
-    WHEN sending text from a not valid sms-capable inbound number
-    THEN assert error "from" number is not valid inbound phone number
-    """
-    t = get_twilio
-    t.__dict__['from_'] = '+123'
-
-    with pytest.raises(MessageSendError) as resp:
-        t.send()
-
-    response = str(resp.value)
-    assert '400' in response
-    assert ('The From phone number {} is not a valid, SMS-capable inbound '
-           'phone number or short code for your account.'.format(t.from_)) in response
+            "shortcode, or alphanumeric sender ID.".format(t.from_)) in response
 
 
 def test_twilio_from_number_that_is_not_owned_by_your_account(get_twilio):
@@ -153,7 +135,7 @@ def test_twilio_from_number_that_is_not_owned_by_your_account(get_twilio):
     response = str(resp.value)
     assert '400' in response
     assert ('The From phone number {} is not a valid, SMS-capable inbound '
-           'phone number or short code for your account.'.format(t.from_)) in response
+            'phone number or short code for your account.'.format(t.from_)) in response
 
 
 def test_twilio_from_full_sms_queue(get_twilio):
@@ -226,7 +208,7 @@ def test_twilio_cant_route_to_number(get_twilio):
     response = str(resp.value)
     assert '400' in response
     assert ("The 'To' phone number: {}, is not currently reachable using the "
-           "'From' phone number: {} via MMS.'.format(t.to, t.from_) in response")
+            "'From' phone number: {} via MMS.'.format(t.to, t.from_) in response")
 
 
 ##############################################################################
@@ -249,7 +231,7 @@ def test_twilio_invalid_account_sid(get_twilio):
     response = str(resp.value)
     assert '404 ' in response
     assert ('The requested resource /2010-04-01/Accounts/invalid_sid/Messages.json '
-           'was not found') in response
+            'was not found') in response
 
 
 def test_twilio_invalid_auth_token(get_twilio):
