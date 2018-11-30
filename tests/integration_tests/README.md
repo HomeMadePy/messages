@@ -1,37 +1,41 @@
+# Integration Testing
+- This document discusses the end-to-end testing of each message class.
+- The goal of integration testing is to ensure the most current version of _Messages_ properly implements the latest version of the specific service/api invoked in each module.
+- As it stands, the integration test suite is not run on CI build systems, such as Travis-CI, since user-specific credentials and test credentials are required to run the tests.
+- Integration tests are run locally, by the developer, using their own credentials.
 
-## Integration tests for sending texts (Twilio API)
+## Integration Testing Setup
+In order to setup your work environment to perform integration testing, do the following:
+1. First, ensure all unit-tests pass.
+2. Configure each message class with `profile = integration_tester`, providing either real credentials or a set of test credentials.  See each message classes' sub-section for test credentials.  Each test file is guarded to not run if that message class wasn't configured in the **integration_tester** profile.
+3. That's it.  Run the tests with `pytest --verbose`.  For each message class configured, as in step 2, the test file will automatically run.  For each message class not configured, the test file will automatically skip all tests.
 
-### Steps
-1. Set up Twilio [test account](https://www.twilio.com/try-twilio)
-    - get test credentials on the account setting of Twilio console
-2. Create twilio profile named 'integration_tester' (using test sid and token)
-    - 'integration_tester' is profile name that is automatically recognized by the tests
-3. Run `pytest tests/integration_tests/test_int_text.py --verbose`
+## Email
+Integration testing not yet implemented
+
+## Slack
+Integration testing not yet implemented
+
+## Telegram
+Integration testing not yet implemented
+
+## Twilio
+### Test Credentials
+1. Set up a Twilio [test account](https://www.twilio.com/try-twilio).
+2. Get test credentials from the account setting of the Twilio console.
+3. Ensure you configure a twilio under the **integration_tester** profile with the credentials obstained in step 2.
 
 ### Tests
-Main use cases are inputs to Twilio object:
-- send from number
-- send to number
-- message body
-- authentication
+Main parameters tested, in-line with [Twilio API test reference](https://www.twilio.com/docs/iam/test-credentials):
+- send `from_` number
+- send `to` number
+- message `body`
+- authentication, `auth`
 
-Test cases for above use cases are taken from [Twilio API test reference](https://www.twilio.com/docs/iam/test-credentials)
+### Noteable Test API Input Parameters
+- `from_ = +15005550006` is a number that passes all validations and is used for a happy scenario.
+- `from_ = +15005550001` generates an _invalid number_ response.
+- `from_ = +15005550007` outputs _This phone number is not owned by your account or is not SMS-capable_.  
 
-For example in [this section](https://www.twilio.com/docs/iam/test-credentials#test-sms-messages),  
-+15005550001 phone number is a test number that, when sending text from it, it generates 
-response 'invalid number'
-+15005550007 creates response 'This phone number is not owned by your account or is not
- SMS-capable.'  
-+15005550006 is a number that passes all validation and is used for happy scenario
-
-One test case is a happy scenario (send from valid 'from' number to valid 'to' number, 
-with message body and valid credentials). All other tests are negative tests asserting 
-generated error based on invalid 'from' number, invalid authentication etc. 
-
-### Test pathway
-Each test phone number generates specific response from Twilio API. When tests run, 
-test Twilio object is passed to send() method in text.py file's Twilio class. From there 
-an API POST request is made to Twilio endpoint. When response is positive (201) it is 
-returned. Happy test scenario parses the response and asserts that entered inputs match 
-response values. In cases when response is negative (400 family) MessageSendError is 
-raised. Tests pick up raised exception, parse it and assert on its content. 
+## WhatsApp
+Integration testing not yet implemented
