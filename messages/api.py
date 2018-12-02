@@ -3,6 +3,7 @@
 import sys
 
 from .email_ import Email
+from .facebook import Facebook
 from .slack import SlackWebhook
 from .slack import SlackPost
 from .telegram import TelegramBot
@@ -15,7 +16,7 @@ from ._exceptions import UnknownProfileError
 from ._exceptions import MessageSendError
 
 
-MESSAGE_CLASSES = {Email, SlackWebhook, SlackPost, TelegramBot, Twilio, WhatsApp}
+MESSAGE_CLASSES = {Email, Facebook, SlackWebhook, SlackPost, TelegramBot, Twilio, WhatsApp}
 MESSAGE_TYPES = {i.__name__.lower(): i for i in MESSAGE_CLASSES}
 
 

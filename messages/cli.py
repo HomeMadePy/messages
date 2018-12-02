@@ -277,11 +277,16 @@ def main_whatsapp(ctx, **kwds):
 @option("-tt", "--thread-type", help="Thread type: USER or GROUP")
 @option("-m", "--file", help="Read message body from filepath.")
 @option(
-    "-a",
-    "--attach",
-    "attachments",
-    multiple=True,
-    help="Attachments -- url for image to attach.",
+    "-al",
+    "--local-attach",
+    "local_attachment",
+    help="Local attachments -- path for file to attach.",
+)
+@option(
+    "-ar",
+    "--remote-attach",
+    "remote_attachment",
+    help="Remote attachments -- url for file to attach.",
 )
 @option("-l", "--logout", is_flag=True, help="Logout of Facebook account after sending message.")
 @option("-S", "--save", is_flag=True, help="Save default values in current profile.")
