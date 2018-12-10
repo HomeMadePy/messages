@@ -157,7 +157,7 @@ class Facebook(Message):
             raise ValueError("Thread type must be either USER or GROUP.")
         else:
             if self.thread_type == "USER":
-                if self.local_attachment and self.remote_attachment:
+                if self.local_attachment or self.remote_attachment:
                     self.message_id = client.sendLocalFiles(
                         self.local_attachment,
                         message=self.body,
@@ -166,20 +166,6 @@ class Facebook(Message):
                     )
                     self.message_id = client.sendRemoteFiles(
                         self.remote_attachment,
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
-                    )
-                elif self.local_attachment and not self.remote_attachment:
-                    self.message_id = client.sendLocalFiles(
-                        self.local_attachment,
-                        message=self.body,
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
-                    )
-                elif self.remote_attachment and not self.local_attachment:
-                    self.message_id = client.sendRemoteFiles(
-                        self.remote_attachment,
-                        message=self.body,
                         thread_id=self.to,
                         thread_type=fbchat_models.ThreadType.USER,
                     )
@@ -191,7 +177,7 @@ class Facebook(Message):
                         thread_type=fbchat_models.ThreadType.USER,
                     )
             elif self.thread_type == "GROUP":
-                if self.local_attachment and self.remote_attachment:
+                if self.local_attachment or self.remote_attachment:
                     self.message_id = client.sendLocalFiles(
                         self.local_attachment,
                         message=self.body,
@@ -200,20 +186,6 @@ class Facebook(Message):
                     )
                     self.message_id = client.sendRemoteFiles(
                         self.remote_attachment,
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
-                    )
-                elif self.local_attachment and not self.remote_attachment:
-                    self.message_id = client.sendLocalFiles(
-                        self.local_attachment,
-                        message=self.body,
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
-                    )
-                elif self.remote_attachment and not self.local_attachment:
-                    self.message_id = client.sendRemoteFiles(
-                        self.remote_attachment,
-                        message=self.body,
                         thread_id=self.to,
                         thread_type=fbchat_models.ThreadType.USER,
                     )
@@ -236,7 +208,6 @@ class Facebook(Message):
             )
 
         print("Message sent.")
-
 
     def send_async(self):
         """Send message asynchronously."""
