@@ -16,9 +16,9 @@ from messages._eventloop import MESSAGELOOP
 def get_facebook(mocker):
     """Return a valid Facebook object."""
     configure_mock = mocker.patch.object(messages.text, 'check_config_file')
-    t = Facebook(from_='messagespytester@gmail.com',
+    t = Facebook(from_='1xrickybobbyx1@gmail.com',
                  to='100030753302336',
-                 auth='Welcome1@',
+                 auth='Welcome1!',
                  thread_type='user',
                  body='test text!',
                  local_attachment=['file1', 'file2'],
