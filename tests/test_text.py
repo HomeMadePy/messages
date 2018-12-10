@@ -1,4 +1,4 @@
-"""messages.facebook tests."""
+"""messages.text tests."""
 
 import pytest
 import requests

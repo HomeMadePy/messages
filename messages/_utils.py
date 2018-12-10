@@ -131,9 +131,7 @@ def validate_whatsapp(attr, value):
 
 def validate_facebook(attr, value):
     """Facebook input validator function."""
-    if attr in "from_":
-        check_valid("Facebook", attr, value, validus.isemail, "email")
-    elif attr in "attachments":
+    if attr in "to":
         check_valid("Facebook", attr, value, validus.isint, "integer as a string")
     elif attr in "local_attachment":
         check_valid("Facebook", attr, value, validus.isurl, "isfilepath")

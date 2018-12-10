@@ -280,12 +280,14 @@ def main_whatsapp(ctx, **kwds):
     "-al",
     "--local-attach",
     "local_attachment",
+    multiple=True,
     help="Local attachments -- path for file to attach.",
 )
 @option(
     "-ar",
     "--remote-attach",
     "remote_attachment",
+    multiple=True,
     help="Remote attachments -- url for file to attach.",
 )
 @option("-l", "--logout", is_flag=True, help="Logout of Facebook account after sending message.")
