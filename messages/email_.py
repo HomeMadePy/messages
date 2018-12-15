@@ -8,7 +8,9 @@ Module designed to make creating and sending emails easy.
 
 import reprlib
 import smtplib
+import ssl
 from smtplib import SMTPResponseException
+from collections import MutableSequence
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
@@ -176,7 +178,7 @@ class Email(Message):
                  output='you@there.com, her@there.com'
         """
         if recipient:
-            if isinstance(recipient, list):
+            if isinstance(recipient, MutableSequence):
                 return ", ".join(recipient)
             return recipient
 
@@ -191,6 +193,12 @@ class Email(Message):
         """Add email header info."""
         self.message["From"] = self.from_
         self.message["Subject"] = self.subject
+        if self.to:
+            self.message["To"] = self.list_to_string(self.to)
+        if self.cc:
+            self.message["Cc"] = self.list_to_string(self.cc)
+        if self.bcc:
+            self.message["Bcc"] = self.list_to_string(self.bcc)
 
     def _add_body(self):
         """Add body content of email."""
@@ -229,18 +237,25 @@ class Email(Message):
 
     def _get_ssl(self):
         """Get an SMTP session with SSL."""
-        return smtplib.SMTP_SSL(self.server, self.port)
+        return smtplib.SMTP_SSL(
+            self.server, self.port, context=ssl.create_default_context()
+        )
 
     def _get_tls(self):
         """Get an SMTP session with TLS."""
         session = smtplib.SMTP(self.server, self.port)
         session.ehlo()
-        session.starttls()
+        session.starttls(context=ssl.create_default_context())
         session.ehlo()
         return session
 
     def send(self):
-        """Send the message."""
+        """
+        Send the message.
+        First, a message is constructed, then a session with the email
+        servers is created, finally the message is sent and the session
+        is stopped.
+        """
         self._generate_email()
 
         if self.verbose:
@@ -250,20 +265,17 @@ class Email(Message):
                 "\n{} Message created.".format(timestamp())
             )
 
+        recipients = []
+        for i in (self.to, self.cc, self.bcc):
+            if i:
+                if isinstance(i, MutableSequence):
+                    recipients += i
+                else:
+                    recipients.append(i)
+
         session = self._get_session()
         if self.verbose:
             print(timestamp(), "Login successful.")
-
-        recipients = []
-        if self.to:
-            self.message["To"] = self.list_to_string(self.to)
-            recipients.append(self.to)
-        if self.cc:
-            self.message["Cc"] = self.list_to_string(self.cc)
-            recipients.append(self.cc)
-        if self.bcc:
-            self.message["Bcc"] = self.list_to_string(self.bcc)
-            recipients.append(self.bcc)
 
         session.sendmail(self.from_, recipients, self.message.as_string())
         session.quit()

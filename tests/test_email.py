@@ -28,7 +28,7 @@ def get_email(mocker):
     config_mock = mocker.patch.object(messages.email_, 'check_config_file')
     e = Email(from_='me@here.com', to='you@there.com',
               server='smtp.gmail.com', port=465, auth='password',
-              cc='someone@there.com', bcc='them@there.com',
+              cc='someone@there.com', bcc=['them@there.com'],
               subject='subject', body='message', attachments=['file1', 'file2'],
               profile='myName', save=False)
     e.from_ = 'me@here.com'
@@ -56,7 +56,7 @@ def test_email_init_normal(get_email):
     assert e.from_ == 'me@here.com'
     assert e.to == 'you@there.com'
     assert e.cc == 'someone@there.com'
-    assert e.bcc == 'them@there.com'
+    assert e.bcc == ['them@there.com']
     assert e.subject == 'subject'
     assert e.body == 'message'
     assert e.attachments == ['file1', 'file2']
@@ -78,7 +78,7 @@ def test_email_str(get_email, capsys):
                 '\nFrom: me@here.com'
                 '\nTo: you@there.com'
                 '\nCc: someone@there.com'
-                '\nBcc: them@there.com'
+                '\nBcc: [\'them@there.com\']'
                 '\nSubject: subject'
                 '\nBody: \'message\''
                 '\nAttachments: [\'file1\', \'file2\']\n')
@@ -434,7 +434,7 @@ def test_send_verbose_true(get_email, capsys, mocker):
     assert ' * From: me@here.com' in out
     assert ' * To: you@there.com' in out
     assert ' * Cc: someone@there.com' in out
-    assert ' * Bcc: them@there.com' in out
+    assert ' * Bcc: [\'them@there.com\']' in out
     assert ' * Subject: subject' in out
     assert ' * Body: \'message\'' in out
     assert ' * Attachments: [\'file1\', \'file2\']' in out
