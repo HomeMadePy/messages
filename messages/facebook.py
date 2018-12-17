@@ -182,18 +182,18 @@ class Facebook(Message):
                         self.local_attachment,
                         message=self.body,
                         thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
+                        thread_type=fbchat_models.ThreadType.GROUP,
                     )
                     self.message_id = client.sendRemoteFiles(
                         self.remote_attachment,
                         thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
+                        thread_type=fbchat_models.ThreadType.GROUP,
                     )
                 else:
                     self.message_id = client.send(
                         fbchat_models.Message(text=self.body),
                         thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
+                        thread_type=fbchat_models.ThreadType.GROUP,
                     )
 
         if self.logout:
