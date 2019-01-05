@@ -152,10 +152,10 @@ class Facebook(Message):
         if self.verbose:
             print(timestamp(), "Login successful.")
 
-        if self.thread_type not in ('USER', 'GROUP'):
+        if self.thread_type not in ("USER", "GROUP"):
             raise MessageSendError("Thread type must be either USER or GROUP.")
 
-        if self.thread_type == 'USER':
+        if self.thread_type == "USER":
             model = fbchat_models.ThreadType.USER
         else:
             model = fbchat_models.ThreadType.GROUP
@@ -177,17 +177,20 @@ class Facebook(Message):
                 thread_type=model,
             )
             if self.verbose:
-                print(timestamp(), "Local attachment sent, message id {}.".format(self.message_id))
-
+                print(
+                    timestamp(),
+                    "Local attachment sent, message id {}.".format(self.message_id),
+                )
 
         if self.remote_attachment:
             self.message_id = client.sendRemoteFiles(
-                self.remote_attachment,
-                thread_id=self.to,
-                thread_type=model,
+                self.remote_attachment, thread_id=self.to, thread_type=model
             )
             if self.verbose:
-                print(timestamp(), "Remote attachment sent, message id {}.".format(self.message_id))
+                print(
+                    timestamp(),
+                    "Remote attachment sent, message id {}.".format(self.message_id),
+                )
 
         client.logout()
 

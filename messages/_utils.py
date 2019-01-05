@@ -144,6 +144,7 @@ def validate_facebook(attr, value):
 Functions below this hearder are general utility functions.
 """
 
+
 def timestamp():
     """Get current date and time."""
     return "{:%Y-%b-%d %H:%M:%S}".format(datetime.datetime.now())

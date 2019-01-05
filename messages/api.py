@@ -16,7 +16,15 @@ from ._exceptions import UnknownProfileError
 from ._exceptions import MessageSendError
 
 
-MESSAGE_CLASSES = {Email, Facebook, SlackWebhook, SlackPost, TelegramBot, Twilio, WhatsApp}
+MESSAGE_CLASSES = {
+    Email,
+    Facebook,
+    SlackWebhook,
+    SlackPost,
+    TelegramBot,
+    Twilio,
+    WhatsApp,
+}
 MESSAGE_TYPES = {i.__name__.lower(): i for i in MESSAGE_CLASSES}
 
 

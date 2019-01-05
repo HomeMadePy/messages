@@ -21,7 +21,6 @@ from ._utils import validate_property
 from ._utils import timestamp
 
 
-
 class Twilio(Message):
     """
     Create and send text SMS/MMS text messages using the Twilio API.
@@ -62,15 +61,15 @@ class Twilio(Message):
     attachments = validate_property("attachments")
 
     def __init__(
-            self,
-            from_=None,
-            to=None,
-            auth=None,
-            body=" ",
-            attachments=None,
-            profile=None,
-            save=False,
-            verbose=False,
+        self,
+        from_=None,
+        to=None,
+        auth=None,
+        body=" ",
+        attachments=None,
+        profile=None,
+        save=False,
+        verbose=False,
     ):
 
         self.from_ = from_
@@ -115,9 +114,9 @@ class Twilio(Message):
         Set self.sid to return code of message.
         """
         url = (
-                "https://api.twilio.com/2010-04-01/Accounts/"
-                + self._auth[0]
-                + "/Messages.json"
+            "https://api.twilio.com/2010-04-01/Accounts/"
+            + self._auth[0]
+            + "/Messages.json"
         )
         data = {
             "From": self.from_,
@@ -137,7 +136,7 @@ class Twilio(Message):
             resp = requests.post(url, data=data, auth=(self._auth[0], self._auth[1]))
             resp.raise_for_status()
         except requests.exceptions.RequestException as e:
-            exc = '{}\n{}'.format(e, resp.json()["message"])
+            exc = "{}\n{}".format(e, resp.json()["message"])
             raise MessageSendError(exc)
 
         self.sid = resp.json()["sid"]
