@@ -21,7 +21,7 @@ setup(
     url='https://github.com/trp07/messages',
     keywords=['message', 'messages', 'wrapper', 'email', 'text', 'SMS', 'MMS',
               'chat', 'chats', 'slack', 'twilio', 'async', 'asynchronous',
-              'telegram', 'bot', 'telegrambot', 'whatsapp'],
+              'telegram', 'bot', 'telegrambot', 'whatsapp', 'facebook'],
 
     author='Tim Phillips',
     author_email='phillipstr@gmail.com',
@@ -51,6 +51,7 @@ setup(
         'requests',
         'jsonconfig-tool',
         'validus>=0.3.0',
+        'fbchat',
     ],
 
     test_suite='tests',
