@@ -28,11 +28,7 @@ CONFIG = {
         "auth": {"auth": "Email service password"},
     },
     "facebook": {
-        "settings": {
-            "from_": "Facebook login email address (e.g. you@here.com)",
-            "to": "User/Group ID (e.g. 1234567890)",
-            "thread_type": "Type of message (i.e. USER or GROUP)",
-        },
+        "settings": {"from_": "Facebook login email address (e.g. you@here.com)"},
         "auth": {"auth": "Facebook login password"},
     },
     "slackwebhook": {

@@ -9,6 +9,7 @@ from messages.api import send
 from messages.api import message_factory
 from messages.api import err_exit
 from messages.email_ import Email
+from messages.facebook import Facebook
 from messages.slack import SlackWebhook
 from messages.slack import SlackPost
 from messages.telegram import TelegramBot
@@ -24,24 +25,36 @@ from messages._exceptions import MessageSendError
 # FIXTURES
 ##############################################################################
 
-email_kwargs = {'server': 'smtp.gmail.com', 'port': 465,
+email_kwargs = {
+    'server': 'smtp.gmail.com', 'port': 465,
     'auth': 'passw0rd', 'from_': 'me@here.com',
     'to': 'you@there.com', 'cc': None, 'bcc': None,
     'subject': 'TEST', 'body': 'this is a message',
     'attachments': None
 }
 
-slackwebhook_kwargs = {'auth': 'https://slack.com', 'body': 'Test message',
+facebook_kwargs = {
+    'from_': 'testAccount@mail.com', 'auth': 'p@ssw0rd',
+    'to': '12345', 'thread_type': 'USER', 'body': 'test msg',
+    'local_attachment': None, 'remote_attachment': None,
+}
+
+slackwebhook_kwargs = {
+    'auth': 'https://slack.com', 'body': 'Test message',
     'attachments': None, 'params': {'author_name': 'me'}
 }
 
-slackpost_kwargs = {'auth': '12345abcdef', 'channel': 'general',
+slackpost_kwargs = {
+    'auth': '12345abcdef', 'channel': 'general',
     'body': 'Test message', 'attachments': None, 'params': {'author_name': 'me'}
 }
 
-telegrambot_kwargs = {'auth': '1234:ABCD', 'chat_id': '123456'}
+telegrambot_kwargs = {
+    'auth': '1234:ABCD', 'chat_id': '123456'
+}
 
-twilio_kwargs = {'auth': ('your sid', 'your token'),
+twilio_kwargs = {
+    'auth': ('your sid', 'your token'),
     'from_': '+19998675309', 'to': '+19998675309', 'body': 'Test!',
     'attachments': 'https://www.google.com'
 }
@@ -94,6 +107,7 @@ def test_send_raisesMessSendErr(mocker):
 
 @pytest.mark.parametrize('msg_type, msg_class, msg_args', [
     ('email', Email, email_kwargs),
+    ('facebook', Facebook, facebook_kwargs),
     ('twilio', Twilio, twilio_kwargs),
     ('slackwebhook', SlackWebhook, slackwebhook_kwargs),
     ('slackpost', SlackPost, slackpost_kwargs),

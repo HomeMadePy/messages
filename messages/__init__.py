@@ -14,8 +14,10 @@ from .telegram import TelegramBot
 from .text import Twilio
 from .whatsapp import WhatsApp
 
+from ._exceptions import MessageSendError
 
-__version__ = "0.5.0"
+
+__version__ = "0.6.0"
 
 
 # Setup logger

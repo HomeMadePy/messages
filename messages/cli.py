@@ -290,7 +290,6 @@ def main_whatsapp(ctx, **kwds):
     multiple=True,
     help="Remote attachments -- url for file to attach.",
 )
-@option("-l", "--logout", is_flag=True, help="Logout of Facebook account after sending message.")
 @option("-S", "--save", is_flag=True, help="Save default values in current profile.")
 @option(
     "-V",
@@ -306,6 +305,6 @@ def main_facebook(ctx, **kwds):
 
     * [BODY]:    Message body text.
 
-    * Example: messages facebook myFacebookProfile 'hello from facebook' -t '1234567890' -tt 'USER' -l --verbose
+    * Example: messages facebook myFacebookProfile 'hello from facebook' -t '1234567890' -tt 'USER' --verbose
     """
     send_message("facebook", kwds)

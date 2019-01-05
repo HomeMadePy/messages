@@ -13,6 +13,7 @@ import fbchat.models as fbchat_models
 
 from ._config import check_config_file
 from ._eventloop import MESSAGELOOP
+from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
 from ._utils import validate_property
@@ -81,7 +82,6 @@ class Facebook(Message):
         body="",
         local_attachment=None,
         remote_attachment=None,
-        logout=False,
         profile=None,
         save=False,
         verbose=False,
@@ -94,7 +94,6 @@ class Facebook(Message):
         self.body = body
         self.local_attachment = local_attachment or []
         self.remote_attachment = remote_attachment or []
-        self.logout = logout
         self.save = save
         self.verbose = verbose
         self.profile = profile
@@ -104,7 +103,7 @@ class Facebook(Message):
             check_config_file(self)
 
     def __str__(self, indentation="\n"):
-        """print(Email(**args)) method.
+        """print(Facebook(**args)) method.
            Indentation value can be overridden in the function call.
            The default is new line"""
         return (
@@ -133,15 +132,14 @@ class Facebook(Message):
         )
 
     def _add_body(self):
-        """Add body, (Y) - which is a thumbs up, if no attachments"""
-        if self.local_attachment or self.remote_attachment:
-            self.body = self.body
-        else:
-            if self.body is '':
-                self.body = "(Y)"
+        """Add body, (Y) - which is a :thumbsup: emoji, if no attachments"""
+        if not self.local_attachment and not self.remote_attachment and not self.body:
+            self.body = "(Y)"
 
     def send(self):
         """Compose and start sending the message."""
+        self._add_body()
+
         if self.verbose:
             print(
                 "Debugging info"
@@ -149,56 +147,49 @@ class Facebook(Message):
                 "\n{} Message created.".format(timestamp())
             )
 
-        self._add_body()
-
         client = Client(self.from_, self._auth)
 
-        if self.thread_type not in ['USER', 'GROUP']:
-            raise ValueError("Thread type must be either USER or GROUP.")
-        else:
-            if self.thread_type == "USER":
-                if self.local_attachment or self.remote_attachment:
-                    self.message_id = client.sendLocalFiles(
-                        self.local_attachment,
-                        message=self.body,
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
-                    )
-                    self.message_id = client.sendRemoteFiles(
-                        self.remote_attachment,
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
-                    )
-                else:
-                    print(self.body)
-                    self.message_id = client.send(
-                        fbchat_models.Message(text=self.body),
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.USER,
-                    )
-            elif self.thread_type == "GROUP":
-                if self.local_attachment or self.remote_attachment:
-                    self.message_id = client.sendLocalFiles(
-                        self.local_attachment,
-                        message=self.body,
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.GROUP,
-                    )
-                    self.message_id = client.sendRemoteFiles(
-                        self.remote_attachment,
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.GROUP,
-                    )
-                else:
-                    self.message_id = client.send(
-                        fbchat_models.Message(text=self.body),
-                        thread_id=self.to,
-                        thread_type=fbchat_models.ThreadType.GROUP,
-                    )
+        if self.verbose:
+            print(timestamp(), "Login successful.")
 
-        if self.logout:
-            print("Successfully logged out.")
-            client.logout()
+        if self.thread_type not in ('USER', 'GROUP'):
+            raise MessageSendError("Thread type must be either USER or GROUP.")
+
+        if self.thread_type == 'USER':
+            model = fbchat_models.ThreadType.USER
+        else:
+            model = fbchat_models.ThreadType.GROUP
+
+        if self.body:
+            self.message_id = client.send(
+                fbchat_models.Message(text=self.body),
+                thread_id=self.to,
+                thread_type=model,
+            )
+            if self.verbose:
+                print(timestamp(), "Body sent, message id {}.".format(self.message_id))
+
+        if self.local_attachment:
+            self.message_id = client.sendLocalFiles(
+                self.local_attachment,
+                message=self.body,
+                thread_id=self.to,
+                thread_type=model,
+            )
+            if self.verbose:
+                print(timestamp(), "Local attachment sent, message id {}.".format(self.message_id))
+
+
+        if self.remote_attachment:
+            self.message_id = client.sendRemoteFiles(
+                self.remote_attachment,
+                thread_id=self.to,
+                thread_type=model,
+            )
+            if self.verbose:
+                print(timestamp(), "Remote attachment sent, message id {}.".format(self.message_id))
+
+        client.logout()
 
         if self.verbose:
             print(

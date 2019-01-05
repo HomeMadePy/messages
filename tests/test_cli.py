@@ -163,14 +163,15 @@ def test_main_configure(mocker):
     assert config_mock.call_count == 1
 
 
-@pytest.mark.parametrize('subcommand',
-                         ['email',
-                          'twilio',
-                          'slackwebhook',
-                          'slackpost',
-                          'telegram',
-                          'whatsapp'
-                         ])
+@pytest.mark.parametrize('subcommand', [
+    'email',
+    'facebook',
+    'twilio',
+    'slackwebhook',
+    'slackpost',
+    'telegram',
+    'whatsapp'
+])
 def test_main_message(subcommand, mocker):
     """
     GIVEN a call to a messages via the CLI

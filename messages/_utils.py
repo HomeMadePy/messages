@@ -54,6 +54,7 @@ def validate_input(msg_type, attr, value):
     try:
         valid = {
             "Email": validate_email,
+            "Facebook": validate_facebook,
             "Twilio": validate_twilio,
             "SlackWebhook": validate_slackwebhook,
             "SlackPost": validate_slackpost,
@@ -134,7 +135,7 @@ def validate_facebook(attr, value):
     if attr in "to":
         check_valid("Facebook", attr, value, validus.isint, "integer as a string")
     elif attr in "local_attachment":
-        check_valid("Facebook", attr, value, validus.isurl, "isfilepath")
+        check_valid("Facebook", attr, value, validus.isfilepath, "isfilepath")
     elif attr in "remote_attachment":
         check_valid("Facebook", attr, value, validus.isurl, "url")
 
@@ -142,7 +143,6 @@ def validate_facebook(attr, value):
 """
 Functions below this hearder are general utility functions.
 """
-
 
 def timestamp():
     """Get current date and time."""

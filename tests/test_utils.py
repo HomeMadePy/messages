@@ -11,6 +11,7 @@ from messages._utils import validate_property
 from messages._utils import validate_input
 from messages._utils import check_valid
 from messages._utils import validate_email
+from messages._utils import validate_facebook
 from messages._utils import validate_twilio
 from messages._utils import validate_slackwebhook
 from messages._utils import validate_slackpost
@@ -106,6 +107,7 @@ def test_val_input_NotSupported():
 
 @pytest.mark.parametrize('msg_type, func, result', [
     ('Email', 'validate_email', 0),
+    ('Facebook', 'validate_facebook', 0),
     ('Twilio', 'validate_twilio', 0),
     ('SlackPost', 'validate_slackpost', 0),
     ('SlackWebhook', 'validate_slackwebhook', 0),
@@ -130,6 +132,9 @@ def test_val_input_supported(msg_type, func, result, mocker):
 
 @pytest.mark.parametrize('msg_type, func, attr', [
     ('Email', validate_email, 'address'),
+    ('Facebook', validate_facebook, 'to'),
+    ('Facebook', validate_facebook, 'local_attachment'),
+    ('Facebook', validate_facebook, 'remote_attachment'),
     ('Twilio', validate_twilio, 'from_'),
     ('Twilio', validate_twilio, 'attachments'),
     ('SlackWebhook', validate_slackwebhook, 'url'),
