@@ -1,12 +1,12 @@
 """messages.email_ tests."""
 
 import getpass
-import os
-import pytest
+import pathlib
 import smtplib
 from smtplib import SMTPResponseException
-
 from email.mime.multipart import MIMEMultipart
+
+import pytest
 
 import messages
 from messages.email_ import Email
@@ -17,6 +17,8 @@ from messages._exceptions import MessageSendError
 from conftest import skip_if_on_travisCI
 from conftest import skip_if_not_on_travisCI
 
+
+TESTDIR = pathlib.Path(__file__).absolute().parent.joinpath('data')
 
 ##############################################################################
 # FIXTURES
@@ -214,8 +216,8 @@ def test_add_attachments_list_local(get_email, mocker):
     body_mock = mocker.patch.object(Email, '_add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
-    e.attachments = ['tests/data/file1.txt', 'tests/data/file2.png',
-                     'tests/data/file3.pdf', 'tests/data/file4.xlsx']
+    e.attachments = [str(TESTDIR.joinpath('file1.txt')), str(TESTDIR.joinpath('file2.png')),
+                     str(TESTDIR.joinpath('file3.pdf')), str(TESTDIR.joinpath('file4.xlsx'))]
     e._generate_email()
     assert mime_attach_mock.call_count == 4
 
@@ -251,7 +253,7 @@ def test_add_attachments_str_local(get_email, mocker):
     body_mock = mocker.patch.object(Email, '_add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
-    e.attachments = 'tests/data/file1.txt'
+    e.attachments = str(TESTDIR.joinpath('file1.txt'))
     e._generate_email()
     assert mime_attach_mock.call_count == 1
 
