@@ -3,27 +3,43 @@ Module that will handle asynchronous message sending, so each message will
 be non-blocking.
 """
 
-import asyncio
+from concurrent.futures.thread import ThreadPoolExecutor as PoolExecutor
 
 from ._exceptions import UnsupportedMessageTypeError
+
+
+def _send_coroutine():
+    """
+    Creates a running coroutine to receive message instances and send
+    them in a futures executor.
+    """
+    with PoolExecutor() as executor:
+        while True:
+            msg = yield
+            future = executor.submit(msg.send)
+            future.add_done_callback(_exception_handler)
+
+
+def _exception_handler(future):
+    """Catch exceptions from pool executor and reraise in main thread."""
+    exc = future.exception()
+    if exc:
+        raise exc
 
 
 class MessageLoop:
     """Asynchronous message sending loop."""
 
     def __init__(self):
-        self.loop = asyncio.get_event_loop()
+        self._coro = _send_coroutine()
+        next(self._coro)
 
-    def add_message(self, message):
-        """Add a message to the event loop."""
+    def add_message(self, msg):
+        """Add a message to the futures executor."""
         try:
-            self.send_loop(message)
+            self._coro.send(msg)
         except AttributeError:
-            raise UnsupportedMessageTypeError(message.__class__.__name__)
-
-    def send_loop(self, msg, executor=None):
-        """Send the message via the event loop."""
-        self.loop.run_in_executor(executor, msg.send)
+            raise UnsupportedMessageTypeError(msg.__class__.__name__)
 
 
 MESSAGELOOP = MessageLoop()

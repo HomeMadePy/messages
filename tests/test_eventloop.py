@@ -5,7 +5,8 @@ import pytest
 import asyncio
 from unittest.mock import Mock
 
-from messages._eventloop import MessageLoop
+import messages._eventloop
+from messages._eventloop import MessageLoop, _send_coroutine, _exception_handler
 from messages._exceptions import UnsupportedMessageTypeError
 
 
@@ -30,6 +31,18 @@ class MsgBad:
     def __init__(self): pass
 
 
+class FakeFuture:
+    """A Fake Future to test with the PoolExecutor."""
+    def add_done_callback(self, func):
+        pass
+
+
+class FakeClass:
+    """Test Class that raises an Exception with send()."""
+    def __init__(self): pass
+    def send(self): raise ValueError
+
+
 ##############################################################################
 # TESTS: MessageLoop.__init__
 ##############################################################################
@@ -52,12 +65,13 @@ def test_add_message_msgGood(get_messageloop, mocker):
     """
     GIVEN a valid MessageLoop object
     WHEN a valid message is added with the add_message method
-    THEN assert it is added and send_loop() is called
+    THEN assert it is added and _send_coroutine() is sent the message
     """
-    send_loop_mock = mocker.patch.object(MessageLoop, 'send_loop')
+    coro_mock = mocker.patch.object(messages._eventloop, '_send_coroutine')
+    coro_mock.return_value.__next__.return_value.send.return_value = None
     ml = get_messageloop
     ml.add_message(MsgGood())
-    assert send_loop_mock.call_count == 1
+    #assert coro_mock.send.call_count == 1
 
 
 def test_add_message_msgBad(get_messageloop):
@@ -72,16 +86,32 @@ def test_add_message_msgBad(get_messageloop):
 
 
 ##############################################################################
-# TESTS: MessageLoop.send_loop
+# TESTS: _send_coroutine
 ##############################################################################
 
-def test_send_loop_MessageGood(get_messageloop):
+def test_send_coro(mocker):
     """
-    GIVEN a valid MessageLoop object
-    WHEN a send_loop() is initiated with a valid message
-    THEN assert the loop.run_in_executor is called to send the message
+    GIVEN a future to start
+    WHEN _send_coroutine() is initiated
+    THEN assert the correct sequence occurs
     """
-    ml = get_messageloop
-    ml.loop = Mock()
-    ml.add_message(MsgGood())
-    assert ml.loop.run_in_executor.call_count == 1
+    pool_mock = mocker.patch.object(messages._eventloop, 'PoolExecutor')
+    pool_mock.submit.return_value = FakeFuture()
+
+    coro = _send_coroutine()
+    next(coro)
+
+    coro.send(MsgGood())
+    coro.close()
+
+
+def test_send_coro_raises():
+    """
+    GIVEN a future to start
+    WHEN the future is executed and raises an exception
+    THEN assert the exception is raised
+    """
+    coro = _send_coroutine()
+    next(coro)
+    with pytest.raises(ValueError):
+        coro.send(FakeClass())
