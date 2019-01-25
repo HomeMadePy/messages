@@ -1,8 +1,7 @@
-"""integration tests for text.Twilio."""
+"""integration tests for messages.text module."""
 
 import pytest
-
-import jsonconfig
+import int_setup
 
 from messages.text import Twilio
 from messages._exceptions import MessageSendError
@@ -12,19 +11,8 @@ from messages._exceptions import MessageSendError
 # SKIP TESTS IF ENVIRONMENT NOT PREPPED
 ##############################################################################
 
-def twilio_test_configured():
-    """
-    Does the user have an 'integration_tester' config profile set up, and
-    do they have 'twilio' set up in that profile?
-    """
-    with jsonconfig.Config('messages') as cfg:
-        data = cfg.data
-        return ('integration_tester' in cfg.data.keys()
-            and 'twilio' in data['integration_tester'])
-
-
 #Skip all tests if not configured
-pytestmark = pytest.mark.skipif(not twilio_test_configured(),
+pytestmark = pytest.mark.skipif(not int_setup.integration_test_configured('twilio'),
     reason='Tester not configured for messages.text.Twilio')
 
 
@@ -32,15 +20,13 @@ pytestmark = pytest.mark.skipif(not twilio_test_configured(),
 # FIXTURES
 ##############################################################################
 
-
 @pytest.fixture()
 def get_twilio():
-    """Return a valid Twilio object."""
-    t = Twilio(from_='+15005550006', to='+14159999999',
-               body='test text!',
+    """Return a valid Twilio instance."""
+    return Twilio(from_='+15005550006', to='+14159999999',
+               body='[Messages] integration test',
                attachments='https://imgs.xkcd.com/comics/python.png',
                profile='integration_tester', save=False)
-    return t
 
 
 ##############################################################################
@@ -192,23 +178,6 @@ def test_twilio_to_non_mobile_number(get_twilio):
     response = str(resp.value)
     assert '400' in response
     assert 'To number: {}, is not a mobile number'.format(t.to) in response
-
-
-def test_twilio_send_to_invalid_number(get_twilio):
-    """
-    GIVEN a valid Twilio object
-    WHEN sending text to invalid number
-    THEN assert error "to" number is not a valid phone number
-    """
-    t = get_twilio
-    t.__dict__['to'] = '123'
-
-    with pytest.raises(MessageSendError) as resp:
-        t.send()
-
-    response = str(resp.value)
-    assert '400' in response
-    assert "The 'To' number {} is not a valid phone number.".format(t.to) in response
 
 
 def test_twilio_cant_route_to_number(get_twilio):
