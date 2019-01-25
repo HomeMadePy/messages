@@ -61,7 +61,6 @@ def test_slackP_init(get_slackP):
     assert s.auth == '***obfuscated***'
     assert '_auth' in s.__dict__
     assert s._auth == '1234:ABCD'
-    assert isinstance(s.message, dict)
 
 
 ##############################################################################
@@ -93,7 +92,7 @@ def test_slackP_str(get_slackP, capsys):
     out, err = capsys.readouterr()
     assert "['https://url1.com', 'https://url2.com']" in out
     assert "'message'" in out
-    assert 'gener' in out
+    assert 'general' in out
     assert err == ''
 
 
@@ -183,7 +182,7 @@ def test_slackP_add_attachments_list(get_slackP):
     THEN assert the urls are properly attached to the message
     """
     s = get_slackP
-    s._add_attachments()
+    s._construct_message()
     expected = [{'image_url': 'https://url1.com', 'author_name': ''},
                 {'image_url': 'https://url2.com', 'author_name': ''}]
     assert s.message['attachments'] == expected
@@ -210,7 +209,7 @@ def test_slackP_add_attachments_str(get_slackP):
     """
     s = get_slackP
     s.attachments = 'https://url1.com'
-    s._add_attachments()
+    s._construct_message()
     expected = [{'image_url': 'https://url1.com', 'author_name': ''}]
     assert s.message['attachments'] == expected
 
@@ -239,7 +238,7 @@ def test_slackP_add_attachments_with_params(get_slackP):
     s = get_slackP
     s.attachments = 'https://url1.com'
     s.params = {'author_name': 'me', 'text': 'image of me'}
-    s._add_attachments()
+    s._construct_message()
     expected = [{'image_url': 'https://url1.com', 'author_name': 'me',
                 'text': 'image of me'}]
     assert s.message['attachments'] == expected
@@ -260,6 +259,7 @@ def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
     req_mock.return_value.status_code = 201
+    req_mock.return_value.history = []
     s = get_slackWH
     s.verbose = True
     s.send()
@@ -287,6 +287,7 @@ def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
     req_mock.return_value.status_code = 201
+    req_mock.return_value.history = []
     s = get_slackWH
     s.verbose = False
     s.send()
@@ -302,7 +303,7 @@ def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
     assert err == ''
 
 
-def test_slackWH_send_raisesMessSendErr(get_slackWH, mocker):
+def test_slackWH_send_HTTPError(get_slackWH, mocker):
     """
     GIVEN a valid SlackWebhook object
     WHEN *.send() is called and a http error occurs
@@ -311,6 +312,22 @@ def test_slackWH_send_raisesMessSendErr(get_slackWH, mocker):
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
     req_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
+    s = get_slackWH
+    with pytest.raises(MessageSendError):
+        s.send()
+
+def test_slackWH_send_BadAuth(get_slackWH, mocker):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN *.send() is called with a bad auth param
+    THEN assert MessageSendError is raised
+    """
+    class BadStatusCode:
+        status_code = 301
+
+    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.history = [BadStatusCode()]
     s = get_slackWH
     with pytest.raises(MessageSendError):
         s.send()
@@ -324,9 +341,9 @@ def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to True)
     """
-    con_mock = mocker.patch.object(SlackPost, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
     req_mock.return_value.status_code = 201
+    req_mock.return_value.history = []
     s = get_slackP
     s.verbose = True
     s.send()
@@ -350,9 +367,9 @@ def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to False)
     """
-    con_mock = mocker.patch.object(SlackPost, '_construct_message')
     req_mock = mocker.patch.object(requests, 'post')
     req_mock.return_value.status_code = 201
+    req_mock.return_value.history = []
     s = get_slackP
     s.verbose = False
     s.send()
@@ -368,7 +385,7 @@ def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
     assert err == ''
 
 
-def test_slackP_send_raisesMessSendErr(get_slackP, mocker):
+def test_slackP_send_HTTPError(get_slackP, mocker):
     """
     GIVEN a valid SlackPost object
     WHEN *.send() is called and a http error occurs
@@ -381,6 +398,20 @@ def test_slackP_send_raisesMessSendErr(get_slackP, mocker):
     with pytest.raises(MessageSendError):
         s.send()
 
+
+def test_slackP_send_BadAuth(get_slackP, mocker):
+    """
+    GIVEN a valid SlackPost object
+    WHEN *.send() is called with a bad auth param
+    THEN assert MessageSendError is raised
+    """
+    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
+    req_mock = mocker.patch.object(requests, 'post')
+    req_mock.return_value.history = []
+    req_mock.return_value.text = 'invalid_auth'
+    s = get_slackP
+    with pytest.raises(MessageSendError):
+        s.send()
 
 ##############################################################################
 # TESTS: Slack*.send_async
