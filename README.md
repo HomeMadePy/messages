@@ -10,8 +10,9 @@
 
 ## Purpose
 - **Messages** is a package designed to make sending messages easy and efficient!
+- **Messages** intends to be a _lightweight_ package with minimal dependencies.
 - **Messages** wraps various standard library module, third-party module, web app API calls, etc. all in one package and with a **consistent API** across all message types.
-- **Messages** can send messages **asynchronously**.
+- **Messages** saves user parameters in config files and keyring backends to provide for easy invocation of all message types. 
 - **Messages** can send messages via the **command-line interface**.
 
 
@@ -35,19 +36,38 @@ $ pip install messages
 # Examples
 ## [Email](https://github.com/trp07/messages/wiki/Email)
 
-### REPL
+### REPL -- _before_ configuration
 ```python
 >>> from messages import Email
 >>> msg = 'Hello,\n\tBuy more Bitcoin!'
 >>> m = Email(
+            from_='me@here.com',
+            server='smtp.here.com',
+            port=465,
             to='you@there.com',
+            auth='p@ssw0rd',       
+            body=msg,
+            attachments=['./file1.txt', '~/Documents/file2.pdf'],
+            profile='myProfileName',
+            save=True               # save user params for easier invocations later
+   )
+>>>
+>>> m.send()        
+Message sent...
+```
+### REPL -- _after_ configuration
+Using the **_save_**=True keyword arg in the example above saves the _from__, _server_, _port_, and _auth_ params, under the profile name _myProfileName_ so you don't have include them in future calls, like below: 
+```python
+>>> from messages import Email
+>>> msg = 'Hello,\n\tBuy more Bitcoin!'
+>>> m = Email(
+            to='you@there.com',      
             body=msg,
             attachments=['./file1.txt', '~/Documents/file2.pdf'],
             profile='myProfileName',
    )
 >>>
->>> m.send()        # send synchronously
->>> m.send_async()  # send asynchronously
+>>> m.send()        
 Message sent...
 ```
 
