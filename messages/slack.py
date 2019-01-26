@@ -75,12 +75,11 @@ class Slack(Message):
         try:
             resp.raise_for_status()
             if resp.history and resp.history[0].status_code >= 300:
-                raise MessageSendError('HTTP Redirect: Possibly Invalid authentication')
-            elif 'invalid_auth' in resp.text:
-                raise MessageSendError('Invalid Auth: Possibly Bad Auth Token')
+                raise MessageSendError("HTTP Redirect: Possibly Invalid authentication")
+            elif "invalid_auth" in resp.text:
+                raise MessageSendError("Invalid Auth: Possibly Bad Auth Token")
         except (requests.exceptions.HTTPError, MessageSendError) as e:
             raise MessageSendError(e)
-
 
         if self.verbose:
             print(
@@ -233,7 +232,7 @@ class SlackPost(Slack):
         self,
         from_=None,
         auth=None,
-        channel='#general',
+        channel="#general",
         subject=None,
         body="",
         attachments=None,
@@ -285,7 +284,6 @@ class SlackPost(Slack):
         """Set the message token/channel, then call the bas class constructor."""
         self.message = {"token": self._auth, "channel": self.channel}
         super()._construct_message()
-
 
     def send(self):
         """Send the message via HTTP POST, url-encoded."""
