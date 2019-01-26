@@ -5,7 +5,7 @@ Handles the creation/editing of configuration files and saving of
 default attributes, credentials (auth), etc.
 """
 
-from collections import MutableSequence
+from collections.abc import MutableSequence
 from collections import OrderedDict
 from getpass import getpass
 

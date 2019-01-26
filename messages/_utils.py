@@ -1,7 +1,7 @@
 """Utility Module - functions useful to other modules."""
 
 import datetime
-from collections import MutableSequence
+from collections.abc import MutableSequence
 
 import validus
 
