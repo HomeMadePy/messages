@@ -118,7 +118,8 @@ def validate_telegrambot(attr, value):
 def validate_whatsapp(attr, value):
     """WhatsApp input validator function."""
     if attr in ("from_", "to"):
-        value = value.split("whatsapp:+")[-1]
+        if value is not None and "whatsapp:" in value:
+            value = value.split("whatsapp:+")[-1]
         check_valid(
             "WhatsApp",
             attr,

@@ -70,8 +70,8 @@ class WhatsApp(Twilio):
         verbose=False,
     ):
 
-        self.from_ = "whatsapp:" + from_
-        self.to = "whatsapp:" + to
+        self.from_ = from_
+        self.to = to
         self.auth = auth
         self.body = body
         self.attachments = attachments
@@ -82,3 +82,6 @@ class WhatsApp(Twilio):
 
         if self.profile:
             check_config_file(self)
+
+        self.from_ = "whatsapp:" + self.from_
+        self.to = "whatsapp:" + self.to
