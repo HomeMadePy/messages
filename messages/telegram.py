@@ -173,9 +173,12 @@ class TelegramBot(Message):
 
         self._send_content("/sendMessage")
 
-        for a in self.attachments:
-            self.message["document"] = a
-            self._send_content(method="/sendDocument")
+        if self.attachments:
+            if isinstance(self.attachments, str):
+                self.attachments = [self.attachments]
+            for a in self.attachments:
+                self.message["document"] = a
+                self._send_content(method="/sendDocument")
 
         if self.verbose:
             print(

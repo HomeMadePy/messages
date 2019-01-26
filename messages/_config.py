@@ -52,7 +52,7 @@ CONFIG = {
         ),
     },
     "telegrambot": {
-        "settings": {"channel_id": "Telegram Channel ID of chat"},
+        "settings": {"chat_id": "Telegram ID of chat"},
         "auth": {"auth": "Telegram authorization token"},
     },
     "whatsapp": {
