@@ -3,7 +3,7 @@ Change Log
 
 Upcoming
 --------
-- Add Poetry as the package installer/manager
+- Adds Poetry as the package installer/manager.
 - Improved and more robust exception handling to handle events like login failure, incorrect profile names, etc. in a more graceful manner.
 - Working to migrate documentation from the github wiki to readthedocs.
 

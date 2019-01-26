@@ -1,6 +1,0 @@
-include LICENSE
-include CHANGES.md
-include requirements.txt
-include requirements-dev.txt
-
-recursive-include tests *.py

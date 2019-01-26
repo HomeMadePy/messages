@@ -1,3 +1,0 @@
-pytest-cov
-pytest-mock
-black

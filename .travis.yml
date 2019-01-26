@@ -1,13 +1,19 @@
+sudo: false
 language: python
-python:
-  - "3.5"
-  - "3.6"
-env:
-  global:
-    - PYTHONPATH="/home/travis/build/trp07/messages"
-install:
-  - pip install .
-  - pip install pytest-cov pytest-mock coveralls
-script: py.test --cov=messages
+python: 3.6
+
+cache: pip
+
+before_install: pip install poetry coveralls
+install: poetry install
+script: pytest --cov=messages
 after_success:
-- coveralls
+  - coveralls
+
+jobs:
+  include:
+    - python: 3.5
+    - python: 3.6
+    - python: 3.7
+      dist: xenial
+      sudo: required
