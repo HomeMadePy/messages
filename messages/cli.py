@@ -9,6 +9,7 @@ from messages import __version__ as VERSION
 from .api import send
 from ._config import create_config_profile
 from ._config import CONFIG
+from ._exceptions import UnsupportedMessageTypeError
 
 
 ##############################################################################
@@ -60,7 +61,10 @@ def main():
 @click.argument("msg_type", required=True)
 def main_configure(msg_type):
     """Configure profiles for the given message type."""
-    create_config_profile(msg_type)
+    try:
+        create_config_profile(msg_type)
+    except UnsupportedMessageTypeError:
+        print("Message type not supported: {}".format(msg_type))
 
 
 @main.command("email")
@@ -204,7 +208,7 @@ def main_slackpost(ctx, **kwds):
     send_message("slackpost", kwds)
 
 
-@main.command("telegram")
+@main.command("telegrambot")
 @click.argument("profile", type=click.STRING, required=False)
 @click.argument("body", type=click.STRING, default="", required=False)
 @option("-c", "--chat-id", help="Chat ID to send message to.")
@@ -224,7 +228,7 @@ def main_slackpost(ctx, **kwds):
     help="Display verbose output and debug information.",
 )
 @click.pass_context
-def main_telegram(ctx, **kwds):
+def main_telegrambot(ctx, **kwds):
     """Send TelegramBot message.
 
     * [PROFILE]: Pre-configured user profile.

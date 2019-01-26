@@ -276,7 +276,7 @@ def test_create_config_profile_noAck(mocker):
     data_mock = mocker.patch.object(messages._config, 'get_data_from_user')
     auth_mock = mocker.patch.object(messages._config, 'get_auth_from_user')
     conf_mock = mocker.patch.object(messages._config, 'configure_profile')
-    create_config_profile('msg')
+    create_config_profile('email')
     assert display_mock.call_count == 1
     assert gack_mock.call_count == 1
     assert input_mock.call_count == 0
@@ -298,7 +298,7 @@ def test_create_config_profile_Ack(mocker):
     data_mock = mocker.patch.object(messages._config, 'get_data_from_user')
     auth_mock = mocker.patch.object(messages._config, 'get_auth_from_user')
     conf_mock = mocker.patch.object(messages._config, 'configure_profile')
-    create_config_profile('msg')
+    create_config_profile('email')
     assert display_mock.call_count == 1
     assert gack_mock.call_count == 1
     assert input_mock.call_count == 1
@@ -315,9 +315,10 @@ def test_create_config_profile_Ack(mocker):
     ('email', ['From email address', 'Email server url', 'Email server port number', 'Email service password']),
     ('slackpost', ['Name or alias of sender', 'Channel to post message to', 'Slack API authentication token']),
     ('slackwebhook', ['Name or alias of sender', 'Slack API Webhook URL']),
-    ('telegrambot', ['Telegram Channel ID of chat', 'Telegram authorization token']),
-    ('twilio', ['Twilio phone numbe', 'Twilio API account SID', 'Twilio API authorization token']),
-    ('whatsapp', ['Twilio phone numbe', 'Twilio API account SID', 'Twilio API authorization token'])
+    ('telegrambot', ['Telegram ID of chat', 'Telegram authorization token']),
+    ('twilio', ['Twilio phone number', 'Twilio API account SID', 'Twilio API authorization token']),
+    ('whatsapp', ['Twilio phone number', 'Twilio API account SID', 'Twilio API authorization token']),
+    ('facebook', ['Facebook login email address (e.g. you@here.com)', 'Facebook login password']),
 ])
 def test_display_required_items(msg, expected, capsys):
     """

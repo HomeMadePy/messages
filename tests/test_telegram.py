@@ -149,7 +149,7 @@ def test_tgram_send_content_msgBody_verbose_true(get_tgram, capsys, mocker):
     assert err == ''
 
 
-def test_tgram_send_content_attachments_verbose_true(get_tgram, capsys, mocker):
+def test_tgram_send_content_attachments_verbose_true_list(get_tgram, capsys, mocker):
     """
     GIVEN a valid TelegramBot object
     WHEN send_content() is called with verbose=True
@@ -215,6 +215,26 @@ def test_send_verbose_true(get_tgram, mocker, capsys):
     out, err = capsys.readouterr()
     assert con_mock.call_count == 1
     assert send_cont_mock.call_count == 3
+    assert 'Message sent.' in out
+    assert 'Debugging info' in out
+
+
+def test_send_attachmentStr(get_tgram, mocker, capsys):
+    """
+    GIVEN a TelegramBot instance
+    WHEN send() is called with verbose=True and an attachment as a string
+        instead of list of strings
+    THEN assert correct sequence is called and correct output printed
+    """
+    con_mock = mocker.patch.object(TelegramBot, '_construct_message')
+    send_cont_mock = mocker.patch.object(TelegramBot, '_send_content')
+    t = get_tgram
+    t.attachments = t.attachments[0]
+    t.verbose = True
+    t.send()
+    out, err = capsys.readouterr()
+    assert con_mock.call_count == 1
+    assert send_cont_mock.call_count == 2
     assert 'Message sent.' in out
     assert 'Debugging info' in out
 

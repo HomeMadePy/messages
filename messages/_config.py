@@ -12,6 +12,7 @@ from getpass import getpass
 import jsonconfig
 
 from ._exceptions import UnknownProfileError
+from ._exceptions import UnsupportedMessageTypeError
 
 
 ##############################################################################
@@ -180,6 +181,9 @@ def create_config_profile(msg_type):
         :msg_type: (str) message type to create config entry.
     """
     msg_type = msg_type.lower()
+
+    if msg_type not in CONFIG.keys():
+        raise UnsupportedMessageTypeError(msg_type)
 
     display_required_items(msg_type)
 

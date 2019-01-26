@@ -162,6 +162,17 @@ def test_main_configure(mocker):
     runner.invoke(main, ['configure', 'email'], catch_exceptions=False)
     assert config_mock.call_count == 1
 
+def test_main_configure_raisesExc(capsys):
+    """
+    GIVEN a call to messages via the CLI
+    WHEN subcommand = configure with an unsupported message type
+    THEN assert proper output prints
+    """
+    runner = CliRunner()
+    runner.invoke(main, ['configure', 'notSupportedMessage'], catch_exceptions=False)
+    out, err = capsys.readouterr()
+    #assert "Message type not supported: notSupportedMessage" in out
+
 
 @pytest.mark.parametrize('subcommand', [
     'email',
@@ -169,7 +180,7 @@ def test_main_configure(mocker):
     'twilio',
     'slackwebhook',
     'slackpost',
-    'telegram',
+    'telegrambot',
     'whatsapp'
 ])
 def test_main_message(subcommand, mocker):
