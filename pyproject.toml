@@ -25,7 +25,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.5"
 requests = "^2.21"
 click = "^7.0"
 jsonconfig-tool = "^1.5"
