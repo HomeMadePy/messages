@@ -3,7 +3,6 @@
 import sys
 
 from .email_ import Email
-from .facebook import Facebook
 from .slack import SlackWebhook
 from .slack import SlackPost
 from .telegram import TelegramBot
@@ -18,7 +17,6 @@ from ._exceptions import MessageSendError
 
 MESSAGE_CLASSES = {
     Email,
-    Facebook,
     SlackWebhook,
     SlackPost,
     TelegramBot,

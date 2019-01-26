@@ -318,7 +318,6 @@ def test_create_config_profile_Ack(mocker):
     ('telegrambot', ['Telegram ID of chat', 'Telegram authorization token']),
     ('twilio', ['Twilio phone number', 'Twilio API account SID', 'Twilio API authorization token']),
     ('whatsapp', ['Twilio phone number', 'Twilio API account SID', 'Twilio API authorization token']),
-    ('facebook', ['Facebook login email address (e.g. you@here.com)', 'Facebook login password']),
 ])
 def test_display_required_items(msg, expected, capsys):
     """

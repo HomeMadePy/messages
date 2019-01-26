@@ -54,7 +54,6 @@ def validate_input(msg_type, attr, value):
     try:
         valid = {
             "Email": validate_email,
-            "Facebook": validate_facebook,
             "Twilio": validate_twilio,
             "SlackWebhook": validate_slackwebhook,
             "SlackPost": validate_slackpost,
@@ -129,16 +128,6 @@ def validate_whatsapp(attr, value):
         )
     elif attr in ("attachments"):
         check_valid("WhatsApp", attr, value, validus.isurl, "url")
-
-
-def validate_facebook(attr, value):
-    """Facebook input validator function."""
-    if attr in "to":
-        check_valid("Facebook", attr, value, validus.isint, "integer as a string")
-    elif attr in "local_attachment":
-        check_valid("Facebook", attr, value, validus.isfilepath, "isfilepath")
-    elif attr in "remote_attachment":
-        check_valid("Facebook", attr, value, validus.isurl, "url")
 
 
 """

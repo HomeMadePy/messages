@@ -28,10 +28,6 @@ CONFIG = {
         },
         "auth": {"auth": "Email service password"},
     },
-    "facebook": {
-        "settings": {"from_": "Facebook login email address (e.g. you@here.com)"},
-        "auth": {"auth": "Facebook login password"},
-    },
     "slackwebhook": {
         "settings": {"from_": "Name or alias of sender (optional)"},
         "auth": {"auth": "Slack API Webhook URL"},

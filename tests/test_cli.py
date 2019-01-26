@@ -176,7 +176,6 @@ def test_main_configure_raisesExc(capsys):
 
 @pytest.mark.parametrize('subcommand', [
     'email',
-    'facebook',
     'twilio',
     'slackwebhook',
     'slackpost',

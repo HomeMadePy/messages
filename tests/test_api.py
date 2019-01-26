@@ -9,7 +9,6 @@ from messages.api import send
 from messages.api import message_factory
 from messages.api import err_exit
 from messages.email_ import Email
-from messages.facebook import Facebook
 from messages.slack import SlackWebhook
 from messages.slack import SlackPost
 from messages.telegram import TelegramBot
@@ -31,12 +30,6 @@ email_kwargs = {
     'to': 'you@there.com', 'cc': None, 'bcc': None,
     'subject': 'TEST', 'body': 'this is a message',
     'attachments': None
-}
-
-facebook_kwargs = {
-    'from_': 'testAccount@mail.com', 'auth': 'p@ssw0rd',
-    'to': '12345', 'thread_type': 'USER', 'body': 'test msg',
-    'local_attachment': None, 'remote_attachment': None,
 }
 
 slackwebhook_kwargs = {
@@ -107,7 +100,6 @@ def test_send_raisesMessSendErr(mocker):
 
 @pytest.mark.parametrize('msg_type, msg_class, msg_args', [
     ('email', Email, email_kwargs),
-    ('facebook', Facebook, facebook_kwargs),
     ('twilio', Twilio, twilio_kwargs),
     ('slackwebhook', SlackWebhook, slackwebhook_kwargs),
     ('slackpost', SlackPost, slackpost_kwargs),
