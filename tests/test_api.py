@@ -87,10 +87,10 @@ def test_send_raisesMessSendErr(mocker):
     WHEN a message encounters a send() error
     THEN assert SystemExit is raised
     """
-    kwargs = email_kwargs
     fact_mock = mocker.patch.object(messages.api, 'message_factory')
     fact_mock.return_value.send.side_effect = MessageSendError('login fail')
     with pytest.raises(SystemExit):
+        kwargs = email_kwargs
         send('email', **kwargs)
 
 
@@ -123,8 +123,8 @@ def test_message_factory_keyerror(cfg_mock):
     WHEN message_factory is called with an unsupported message type
     THEN assert UnsupportedMessageTypeError is raised
     """
-    kwargs = email_kwargs
     with pytest.raises(UnsupportedMessageTypeError):
+        kwargs = email_kwargs
         msg = message_factory('bad', **kwargs)
 
 

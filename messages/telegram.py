@@ -154,10 +154,10 @@ class TelegramBot(Message):
             raise MessageSendError(e)
 
         if self.verbose:
-            if method == "/sendMessage":
-                content_type = "Message body"
-            elif method == "/sendDocument":
+            if method == "/sendDocument":
                 content_type = "Attachment: " + self.message["document"]
+            elif method == "/sendMessage":
+                content_type = "Message body"
             print(timestamp(), content_type, "sent.")
 
     def send(self):
