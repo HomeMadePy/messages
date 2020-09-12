@@ -127,10 +127,7 @@ def retrieve_pwd_from_config(msg, cfg):
     msg_type = msg.__class__.__name__.lower()
     key_fmt = msg.profile + "_" + msg_type
     pwd = cfg.pwd[key_fmt].split(" :: ")
-    if len(pwd) == 1:
-        msg.auth = pwd[0]
-    else:
-        msg.auth = tuple(pwd)
+    msg.auth = pwd[0] if len(pwd) == 1 else tuple(pwd)
 
 
 def update_config_data(msg, cfg):
@@ -227,9 +224,7 @@ def get_data_from_user(msg_type):
 
 def get_auth_from_user(msg_type):
     """Get the required 'auth' from the user and return as a dict."""
-    auth = []
-    for k, v in CONFIG[msg_type]["auth"].items():
-        auth.append((k, getpass(v + ": ")))
+    auth = [(k, getpass(v + ": ")) for k, v in CONFIG[msg_type]["auth"].items()]
     return OrderedDict(auth)
 
 
@@ -277,11 +272,5 @@ def write_auth(msg_type, profile_name, auth, cfg):
         :cfg: (jsonconfig.Config) config instance.
     """
     key_fmt = profile_name + "_" + msg_type
-    pwd = []
-    for k, v in CONFIG[msg_type]["auth"].items():
-        pwd.append(auth[k])
-
-    if len(pwd) > 1:
-        cfg.pwd[key_fmt] = " :: ".join(pwd)
-    else:
-        cfg.pwd[key_fmt] = pwd[0]
+    pwd = [auth[k] for k, v in CONFIG[msg_type]["auth"].items()]
+    cfg.pwd[key_fmt] = " :: ".join(pwd) if len(pwd) > 1 else pwd[0]

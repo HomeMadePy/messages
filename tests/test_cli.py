@@ -79,7 +79,7 @@ def test_get_body_from_file_travis(mocker):
     kwds = {'file': 'file.txt'}
     get_body_from_file(kwds)
     assert kwds['file'] is None
-    assert 'body' in kwds.keys()
+    assert 'body' in kwds
 
 
 ##############################################################################
