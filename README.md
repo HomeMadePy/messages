@@ -28,7 +28,6 @@ $ pip install messages
 * [Email](https://github.com/trp07/messages/wiki/Email)
 * [Telegram](https://github.com/trp07/messages/wiki/TelegramBot)
 * [Twilio](https://github.com/trp07/messages/wiki/Twilio)
-* [Slack](https://github.com/trp07/messages/wiki/Slack)
 * [WhatsApp](https://github.com/trp07/messages/wiki/WhatsApp)
 * **Read the [Wiki](https://github.com/trp07/messages/wiki) for usage**.
 
@@ -89,4 +88,3 @@ Message sent...
 * All contributions are welcome to build upon the package!
 * If it's a **message**, add it to messages!
 * Read the [Wiki](https://github.com/trp07/messages/wiki) for guidelines.
-* Join the conversation in the [Messages Slack Team](https://messages-py.herokuapp.com)
