@@ -33,9 +33,6 @@ validus = "^0.3.0"
 pytest-cov = "^2.6"
 pytest-mock = "^1.10"
 
-[tool.poetry.scripts]
-messages = "messages.cli:main"
-
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
