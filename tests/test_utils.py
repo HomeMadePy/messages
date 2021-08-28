@@ -41,9 +41,7 @@ def get_test_class():
 
 def val_test_func(item):
     """Test func for check_valid."""
-    if item == 'BAD':
-        return False
-    return True
+    return item != 'BAD'
 
 
 ##############################################################################

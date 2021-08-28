@@ -16,12 +16,6 @@ def test_InvalidMessageInputError(capsys):
     """
     with pytest.raises(InvalidMessageInputError):
         raise InvalidMessageInputError('Email', 'from_', 'some_value', 'email address')
-        out, err = capsys.readouterr()
-        assert 'Invalid input for specified message class: Email' in out
-        assert '* argument: "from_"' in out
-        assert '* value given: some_value'
-        assert '* input type must be: email address' in out
-        assert err == ''
 
 
 def test_UnsupportedMessageTypeError_default(capsys):
@@ -32,9 +26,6 @@ def test_UnsupportedMessageTypeError_default(capsys):
     """
     with pytest.raises(UnsupportedMessageTypeError):
         raise UnsupportedMessageTypeError('BadType')
-        out, err = capsys.readouterr()
-        assert 'Invalid input for specified message class: BadType' in out
-        assert err == ''
 
 
 def test_UnsupportedMessageTypeError_listarg(capsys):
@@ -45,11 +36,6 @@ def test_UnsupportedMessageTypeError_listarg(capsys):
     """
     with pytest.raises(UnsupportedMessageTypeError):
         raise UnsupportedMessageTypeError('BadType', {'m1', 'm2'})
-        out, err = capsys.readouterr()
-        assert 'Invalid input for specified message class: BadType' in out
-        assert '* Supported message types:' in out
-        assert "{'m1', 'm2'}" in out
-        assert err == ''
 
 
 def test_UnknownProfileError(capsys):
@@ -60,9 +46,6 @@ def test_UnknownProfileError(capsys):
     """
     with pytest.raises(UnknownProfileError):
         raise UnknownProfileError('unknown_user')
-        out, err = capsys.readouterr()
-        assert 'Unknown Profile name: unknown_user' in out
-        assert err == ''
 
 
 def test_MessageSendError(capsys):
@@ -73,6 +56,3 @@ def test_MessageSendError(capsys):
     """
     with pytest.raises(MessageSendError):
         raise MessageSendError('login failed')
-        out, err = capsys.readouterr()
-        assert 'login failed' in out
-        assert err == ''
