@@ -35,7 +35,6 @@ $ pip install messages
 # Examples
 ## [Email](https://github.com/trp07/messages/wiki/Email)
 
-### REPL -- _before_ configuration
 ```python
 >>> from messages import Email
 >>> msg = 'Hello,\n\tBuy more Bitcoin!'
@@ -47,35 +46,9 @@ $ pip install messages
             auth='p@ssw0rd',       
             body=msg,
             attachments=['./file1.txt', '~/Documents/file2.pdf'],
-            profile='myProfileName',
-            save=True               # save user params for easier invocations later
    )
 >>>
 >>> m.send()        
-Message sent...
-```
-### REPL -- _after_ configuration
-Using the **_save_**=True keyword arg in the example above saves the _from__, _server_, _port_, and _auth_ params, under the profile name _myProfileName_ so you don't have include them in future calls, like below: 
-```python
->>> from messages import Email
->>> msg = 'Hello,\n\tBuy more Bitcoin!'
->>> m = Email(
-            to='you@there.com',      
-            body=msg,
-            attachments=['./file1.txt', '~/Documents/file2.pdf'],
-            profile='myProfileName',
-   )
->>>
->>> m.send()        
-Message sent...
-```
-
-### CLI
-```shell
-$ messages email myProfileName 'Hello,\n\tBuy more Bitcoin!' \
---to you@there.com \
---attach ./file.txt \
---attach ~/Documents/file2.pdf \
 Message sent...
 ```
 
