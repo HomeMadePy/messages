@@ -10,10 +10,7 @@
 ## Purpose
 - **Messages** is a package designed to make sending messages easy and efficient!
 - **Messages** intends to be a _lightweight_ package with minimal dependencies.
-- **Messages** wraps various standard library module, third-party module, web app API calls, etc. all in one package and with a **consistent API** across all message types.
-- **Messages** saves user parameters in config files and keyring backends to provide for easy invocation of all message types. 
-- **Messages** can send messages via the **command-line interface**.
-
+- **Messages** with a **consistent API** across all message types. 
 
 ## Installation
 **Python3 only**
