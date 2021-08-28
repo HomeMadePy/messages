@@ -9,7 +9,6 @@ Module designed to make creating and sending WhatsApp messages easy.
     - Go to https://www.twilio.com/whatsapp to register.
 """
 
-from ._config import check_config_file
 from ._utils import credential_property
 from ._utils import validate_property
 from .text import Twilio
@@ -30,10 +29,6 @@ class WhatsApp(Twilio):
         :auth: (list or tuple) twilio api credentials: (acct_sid, auth_token)
         :body: (str) message to send
         :attachments: (str) url of any image to send along with message
-        :profile: (str) use a separate account profile specified by name
-        :save: (bool) save pertinent values in the messages config file,
-            such as from_, acct_sid, auth_token (encrypted keyring) to make
-            sending messages faster.
 
     Attributes:
         :sid: (str) return value from send, record of sent message
@@ -46,7 +41,7 @@ class WhatsApp(Twilio):
 
     Usage:
         Create a WhatsApp message instance with required Args above.
-        Send message with self.send() or self.send_async() methods.
+        Send message with self.send() method.
 
     Notes:
         For API description:
@@ -65,23 +60,14 @@ class WhatsApp(Twilio):
         auth=None,
         body="",
         attachments=None,
-        profile=None,
-        save=False,
         verbose=False,
     ):
 
-        self.from_ = from_
-        self.to = to
+        self.from_ = "whatsapp:" + from_
+        self.to = "whatsapp:" + to
         self.auth = auth
         self.body = body
         self.attachments = attachments
-        self.profile = profile
-        self.save = save
         self.verbose = verbose
         self.sid = None
 
-        if self.profile:
-            check_config_file(self)
-
-        self.from_ = "whatsapp:" + self.from_
-        self.to = "whatsapp:" + self.to

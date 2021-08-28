@@ -12,8 +12,6 @@ import reprlib
 
 import requests
 
-from ._config import check_config_file
-from ._eventloop import MESSAGELOOP
 from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
@@ -32,10 +30,6 @@ class Twilio(Message):
         :body: (str) message to send.  Defaults to body=" " (one space) since
             Twilio doesn't allow an empty body to be sent
         :attachments: (str) url of any image to send along with message
-        :profile: (str) use a separate account profile specified by name
-        :save: (bool) save pertinent values in the messages config file,
-            such as from_, acct_sid, auth_token (encrypted keyring) to make
-            sending messages faster.
 
     Attributes:
         :sid: (str) return value from send, record of sent message
@@ -48,7 +42,7 @@ class Twilio(Message):
 
     Usage:
         Create a text message (SMS/MMS) object with required Args above.
-        Send text message with self.send() or self.send_async() methods.
+        Send text message with self.send() method.
 
     Notes:
         For API description:
@@ -67,8 +61,6 @@ class Twilio(Message):
         auth=None,
         body=" ",
         attachments=None,
-        profile=None,
-        save=False,
         verbose=False,
     ):
 
@@ -77,13 +69,8 @@ class Twilio(Message):
         self.auth = auth
         self.body = body
         self.attachments = attachments
-        self.profile = profile
-        self.save = save
         self.verbose = verbose
         self.sid = None
-
-        if self.profile:
-            check_config_file(self)
 
     def __str__(self, indentation="\n"):
         """print(Email(**args)) method.
@@ -153,7 +140,3 @@ class Twilio(Message):
         print("Message sent.")
 
         return resp
-
-    def send_async(self):
-        """Send message asynchronously."""
-        MESSAGELOOP.add_message(self)

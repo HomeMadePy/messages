@@ -6,7 +6,6 @@ import requests
 import messages.slack
 from messages.slack import SlackWebhook
 from messages.slack import SlackPost
-from messages._eventloop import MESSAGELOOP
 from messages._exceptions import MessageSendError
 
 
@@ -15,21 +14,17 @@ from messages._exceptions import MessageSendError
 ##############################################################################
 
 @pytest.fixture()
-def get_slackWH(cfg_mock, mocker):
+def get_slackWH():
     """Return a valid SlackWebhook object."""
-    mocker.patch.object(messages.slack, 'check_config_file')
     return SlackWebhook(auth='https://testurl.com', body='message',
-            attachments=['https://url1.com', 'https://url2.com'],
-            profile='myProfile')
+            attachments=['https://url1.com', 'https://url2.com'])
 
 
 @pytest.fixture()
-def get_slackP(cfg_mock, mocker):
+def get_slackP():
     """Return a valid SlackPost object."""
-    mocker.patch.object(messages.slack, 'check_config_file')
     return SlackPost(auth='1234:ABCD', channel='general',
-            body='message', attachments=['https://url1.com', 'https://url2.com'],
-            profile='myProfile')
+            body='message', attachments=['https://url1.com', 'https://url2.com'])
 
 
 ##############################################################################
@@ -412,30 +407,3 @@ def test_slackP_send_BadAuth(get_slackP, mocker):
     s = get_slackP
     with pytest.raises(MessageSendError):
         s.send()
-
-##############################################################################
-# TESTS: Slack*.send_async
-##############################################################################
-
-def test_slackWH_send_async(get_slackWH, mocker):
-    """
-    GIVEN a valid SlackWebhook object
-    WHEN send_async() is called
-    THEN assert the proper send sequence occurs
-    """
-    msgloop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
-    s = get_slackWH
-    s.send_async()
-    assert msgloop_mock.call_count == 1
-
-
-def test_slackP_send_async(get_slackP, mocker):
-    """
-    GIVEN a valid SlackPost object
-    WHEN send_async() is called
-    THEN assert the proper send sequence occurs
-    """
-    msgloop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
-    s = get_slackP
-    s.send_async()
-    assert msgloop_mock.call_count == 1

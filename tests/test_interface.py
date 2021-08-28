@@ -18,16 +18,9 @@ class MsgGood(Message):
     def send_async(self): pass
 
 
-class MsgBad1(Message):
+class MsgBad(Message):
     """Bad Message class since it is missing one required abstract methods."""
     def __init__(self): pass
-    def send(self): pass
-
-
-class MsgBad2(Message):
-    """Bad Message class since it is missing one required abstract methods."""
-    def __init__(self): pass
-    def send_async(self): pass
 
 
 ##############################################################################
@@ -44,24 +37,14 @@ def test_MsgGood():
     assert msg is not None
 
 
-def test_MsgBad1():
+def test_MsgBad():
     """
     GIVEN a message class that inherits from 'Message'
     WHEN instantiated with missing required abstract methods
     THEN assert
     """
     with pytest.raises(TypeError):
-        msg = MsgBad1()
-
-
-def test_MsgBad2():
-    """
-    GIVEN a message class that inherits from 'Message'
-    WHEN instantiated with missing required abstract methods
-    THEN assert
-    """
-    with pytest.raises(TypeError):
-        msg = MsgBad2()
+        msg = MsgBad()
 
 
 ##############################################################################

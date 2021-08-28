@@ -1,10 +1,10 @@
 Change Log
 ==========
 
-Upcoming
+0.7.0
 --------
 - Adds Poetry as the package installer/manager.
-- Improved and more robust exception handling to handle events like login failure, incorrect profile names, etc. in a more graceful manner.
+- Removes CLI, API, CONFIG modules and features due to unstable dependencies and feature creep
 - Working to migrate documentation from the github wiki to readthedocs.
 
 

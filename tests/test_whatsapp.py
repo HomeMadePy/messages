@@ -5,8 +5,6 @@ import requests
 
 import messages.whatsapp
 from messages.whatsapp import WhatsApp
-from messages.whatsapp import check_config_file
-from messages._eventloop import MESSAGELOOP
 
 
 ##############################################################################
@@ -14,20 +12,18 @@ from messages._eventloop import MESSAGELOOP
 ##############################################################################
 
 @pytest.fixture()
-def get_whap(mocker):
+def get_whap():
     """Return a valid WhatsApp instance."""
-    configure_mock = mocker.patch.object(messages.whatsapp, 'check_config_file')
     return WhatsApp(from_='+16198675309', to='+16195551212',
             auth=('test_sid', 'test_token'), body='test text!',
-            attachments='https://imgs.xkcd.com/comics/python.png',
-            profile='tester', save=False)
+            attachments='https://imgs.xkcd.com/comics/python.png')
 
 
 ##############################################################################
 # TESTS: WhatsApp.__init__
 ##############################################################################
 
-def test_whatsapp_init(get_whap, cfg_mock):
+def test_whatsapp_init(get_whap):
     """
     GIVEN a need to create an WhatsApp object
     WHEN the user instantiates a new object with required args

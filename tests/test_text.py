@@ -5,8 +5,6 @@ import requests
 
 import messages.text
 from messages.text import Twilio
-from messages.text import check_config_file
-from messages._eventloop import MESSAGELOOP
 from messages._exceptions import MessageSendError
 
 
@@ -15,16 +13,13 @@ from messages._exceptions import MessageSendError
 ##############################################################################
 
 @pytest.fixture()
-def get_twilio(mocker):
+def get_twilio():
     """Return a valid Twilio object."""
-    configure_mock = mocker.patch.object(messages.text, 'check_config_file')
     t = Twilio(from_='+16198675309', to='+16195551212',
             auth=('test_sid', 'test_token'), body='test text!',
-            attachments='https://imgs.xkcd.com/comics/python.png',
-            profile='tester', save=False)
+            attachments='https://imgs.xkcd.com/comics/python.png')
     t.from_ = '+16198675309'
     t.auth = ('test_sid', 'test_token')
-    t.profile = 'tester'
     return t
 
 
@@ -32,7 +27,7 @@ def get_twilio(mocker):
 # TESTS: Twilio.__init__
 ##############################################################################
 
-def test_twilio_init(get_twilio, cfg_mock):
+def test_twilio_init(get_twilio):
     """
     GIVEN a need to create an Twilio object
     WHEN the user instantiates a new object with required args
@@ -52,7 +47,7 @@ def test_twilio_init(get_twilio, cfg_mock):
 # TESTS: Twilio.__str__
 ##############################################################################
 
-def test_twilio_str(get_twilio,cfg_mock, capsys):
+def test_twilio_str(get_twilio, capsys):
     """
     GIVEN a valid Twilio object
     WHEN the user calls print() on the Twilio object
@@ -74,7 +69,7 @@ def test_twilio_str(get_twilio,cfg_mock, capsys):
 # TESTS: Twilio.send
 ##############################################################################
 
-def test_send_verbose_false_status201(get_twilio, cfg_mock, capsys, mocker):
+def test_send_verbose_false_status201(get_twilio, capsys, mocker):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() is called
@@ -100,7 +95,7 @@ def test_send_verbose_false_status201(get_twilio, cfg_mock, capsys, mocker):
     assert err == ''
 
 
-def test_send_verbose_true_status201(get_twilio, cfg_mock, capsys, mocker):
+def test_send_verbose_true_status201(get_twilio, capsys, mocker):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() is called
@@ -126,7 +121,7 @@ def test_send_verbose_true_status201(get_twilio, cfg_mock, capsys, mocker):
     assert err == ''
 
 
-def test_send_status_raisesMessSendErr(get_twilio, cfg_mock, mocker):
+def test_send_status_raisesMessSendErr(get_twilio, mocker):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() causes an http error
@@ -137,19 +132,3 @@ def test_send_status_raisesMessSendErr(get_twilio, cfg_mock, mocker):
     t = get_twilio
     with pytest.raises(MessageSendError):
         t.send()
-
-
-##############################################################################
-# TESTS: Twilio.send_async
-##############################################################################
-
-def test_send_async(cfg_mock, get_twilio, mocker):
-    """
-    GIVEN a valid Twilio object
-    WHEN Twilio.send_async() is called
-    THEN assert it is added to the event loop for async sending
-    """
-    msg_loop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
-    t = get_twilio
-    t.send_async()
-    assert msg_loop_mock.call_count == 1

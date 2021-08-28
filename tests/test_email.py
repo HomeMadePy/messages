@@ -10,8 +10,6 @@ import pytest
 
 import messages
 from messages.email_ import Email
-from messages.email_ import check_config_file
-from messages._eventloop import MESSAGELOOP
 from messages._exceptions import MessageSendError
 
 from conftest import skip_if_on_travisCI
@@ -27,12 +25,10 @@ TESTDIR = pathlib.Path(__file__).absolute().parent.joinpath('data')
 @pytest.fixture()
 def get_email(mocker):
     """Return a valid Email object."""
-    config_mock = mocker.patch.object(messages.email_, 'check_config_file')
     e = Email(from_='me@here.com', to='you@there.com',
               server='smtp.gmail.com', port=465, auth='password',
               cc='someone@there.com', bcc=['them@there.com'],
-              subject='subject', body='message', attachments=['file1', 'file2'],
-              profile='myName', save=False)
+              subject='subject', body='message', attachments=['file1', 'file2'])
     e.from_ = 'me@here.com'
     e.server = 'smtp.gmail.com'
     e.port = 465
@@ -469,32 +465,3 @@ def test_send_verbose_false(get_email, capsys, mocker):
     assert ' * Server: smtp.gmail.com:465' not in out
     assert ' * From: me@here.com' not in out
     assert err == ''
-
-
-##############################################################################
-# TESTS: Email.send_async
-##############################################################################
-
-def test_send_async(get_email, mocker):
-    """
-    GIVEN a valid Email object
-    WHEN Email.send_async() is called
-    THEN assert it is added to the event loop for async sending
-    """
-    msg_loop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
-    e = get_email
-    e.send_async()
-    assert msg_loop_mock.call_count == 1
-
-
-def test_send_async_verbose_true(get_email, mocker):
-    """
-    GIVEN a valid Email object
-    WHEN Email.send_async() is called
-    THEN assert it is added to the event loop for async sending
-    """
-    msg_loop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
-    e = get_email
-    e.verbose = True
-    e.send_async()
-    assert msg_loop_mock.call_count == 1

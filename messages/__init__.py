@@ -4,8 +4,6 @@ messages - A package designed to make sending various types of messages easy.
 
 import logging
 
-from .api import send
-
 from .email_ import Email
 from .slack import SlackWebhook
 from .slack import SlackPost
@@ -16,7 +14,7 @@ from .whatsapp import WhatsApp
 from ._exceptions import MessageSendError
 
 
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 
 
 # Setup logger

@@ -12,10 +12,6 @@ class Message(metaclass=ABCMeta):
     def send(self):
         """Send message synchronously."""
 
-    @abstractmethod
-    def send_async(self):
-        """Send message asynchronously."""
-
     def __repr__(self):
         """repr(self) in debugging format with auth attr obfuscated."""
         class_name = type(self).__name__

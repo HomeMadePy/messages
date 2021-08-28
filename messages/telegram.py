@@ -10,8 +10,6 @@ import reprlib
 
 import requests
 
-from ._config import check_config_file
-from ._eventloop import MESSAGELOOP
 from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
@@ -39,10 +37,6 @@ class TelegramBot(Message):
         :params: (dict) additional attributes to add to message,
             i.e. parse_mode (HTML or Markdown, see API for information
             on which attributes are possible.
-        :profile: (str) use a separate account profile specified by name
-        :save: (bool) save pertinent values in the messages config file,
-            such as from_, chat_id, bot_token (encrypted keyring) to make
-            sending messages faster.
 
     Attributes:
         :message: (dict) current form of the message to be constructed
@@ -53,7 +47,7 @@ class TelegramBot(Message):
 
     Usage:
         Create a TelegramBot object with required Args above.
-        Send message with self.send() or self.send_async() methods.
+        Send message with self.send() method.
 
     Note:
         For API description:
@@ -73,8 +67,6 @@ class TelegramBot(Message):
         body="",
         attachments=None,
         params=None,
-        profile=None,
-        save=False,
         verbose=False,
     ):
 
@@ -86,14 +78,8 @@ class TelegramBot(Message):
         self.body = body
         self.attachments = attachments or []
         self.params = params or {}
-        self.profile = profile
-        self.save = save
         self.verbose = verbose
         self.message = {}
-
-        if self.profile:
-            check_config_file(self)
-
         self.base_url = "https://api.telegram.org/bot" + self._auth
 
     def __str__(self, indentation="\n"):
@@ -188,7 +174,3 @@ class TelegramBot(Message):
             )
 
         print("Message sent.")
-
-    def send_async(self):
-        """Send message asynchronously."""
-        MESSAGELOOP.add_message(self)

@@ -5,7 +5,6 @@ import requests
 
 import messages.telegram
 from messages.telegram import TelegramBot
-from messages._eventloop import MESSAGELOOP
 from messages._exceptions import MessageSendError
 
 
@@ -14,12 +13,10 @@ from messages._exceptions import MessageSendError
 ##############################################################################
 
 @pytest.fixture()
-def get_tgram(cfg_mock, mocker):
+def get_tgram():
     """Return a valid TelegramBot object."""
-    mocker.patch.object(messages.telegram, 'check_config_file')
     return TelegramBot(auth='34563:ABCDEFG', chat_id='123456', body='message',
-                attachments=['https://url1.com', 'https://url2.com'],
-                profile='myProfile')
+                attachments=['https://url1.com', 'https://url2.com'])
 
 
 ##############################################################################
@@ -237,19 +234,3 @@ def test_send_attachmentStr(get_tgram, mocker, capsys):
     assert send_cont_mock.call_count == 2
     assert 'Message sent.' in out
     assert 'Debugging info' in out
-
-
-##############################################################################
-# TESTS: TelegramBot.send_async
-##############################################################################
-
-def test_tgram_send_async(get_tgram, mocker):
-    """
-    GIVEN a valid TelegramBot object
-    WHEN send_async() is called
-    THEN assert the proper send sequence occurs
-    """
-    msgloop_mock = mocker.patch.object(MESSAGELOOP, 'add_message')
-    t = get_tgram
-    t.send_async()
-    assert msgloop_mock.call_count == 1

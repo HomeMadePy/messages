@@ -15,8 +15,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 
-from ._config import check_config_file
-from ._eventloop import MESSAGELOOP
 from ._exceptions import MessageSendError
 from ._interface import Message
 from ._utils import credential_property
@@ -61,10 +59,6 @@ class Email(Message):
         :attachments: (str or list) files to attach
             i.e. './file1', or
                 ['/home/you/file1.txt', '/home/you/file2.pdf']
-        :profile: (str) use an account profile specified by name
-        :save: (bool) save pertinent values in the messages config.json file,
-            such as from_, server, port, auth (encrypted keyring) to make
-            sending messages faster.
 
     Attributes:
         :message: (MIMEMultipart) current form of the message to be constructed
@@ -78,7 +72,7 @@ class Email(Message):
 
     Usage:
         Create an email object with required Args above.
-        Send email with self.send() or self.send_async() methods.
+        Send email with self.send() method.
 
     Note:
         Some email servers may require you to modify security setting, such as
@@ -104,8 +98,6 @@ class Email(Message):
         subject="",
         body="",
         attachments=None,
-        profile=None,
-        save=False,
         verbose=False,
     ):
 
@@ -116,13 +108,8 @@ class Email(Message):
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
-        self.profile = profile
-        self.save = save
         self.verbose = verbose
         self.message = None
-
-        if self.profile:
-            check_config_file(self)
 
     def __str__(self, indentation="\n"):
         """print(Email(**args)) method.
@@ -291,7 +278,3 @@ class Email(Message):
             )
 
         print("Message sent.")
-
-    def send_async(self):
-        """Send message asynchronously."""
-        MESSAGELOOP.add_message(self)
