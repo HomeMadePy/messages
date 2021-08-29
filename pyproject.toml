@@ -9,6 +9,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
@@ -21,7 +22,6 @@ classifiers = [
     "Topic :: Communications :: Chat",
     "Topic :: Communications :: Email",
     "Topic :: Education :: Testing",
-    "Topic :: License :: OSI Approved :: MIT License",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities",
 ]
