@@ -14,7 +14,7 @@ from .whatsapp import WhatsApp
 from ._exceptions import MessageSendError
 
 
-__version__ = "0.7.0"
+__version__ = "0.7.1"
 
 
 # Setup logger

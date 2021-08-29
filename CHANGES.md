@@ -1,6 +1,10 @@
 Change Log
 ==========
 
+0.7.1
+--------
+- Updates documentation
+
 0.7.0
 --------
 - Adds Poetry as the package installer/manager.
