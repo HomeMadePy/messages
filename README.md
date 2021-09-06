@@ -2,7 +2,7 @@
 [![](https://img.shields.io/badge/built%20with-Python3-red.svg)](https://www.python.org/)
 [![PyPI version](https://badge.fury.io/py/messages.svg)](https://badge.fury.io/py/messages)
 [![](https://app.travis-ci.com/HomeMadePy/messages.svg?branch=master)](https://app.travis-ci.com/github/HomeMadePy/messages)
-[![](https://coveralls.io/repos/github/HomeMadePy/messages/badge.svg?branch=master)](https://coveralls.io/github/HomeMadePy/messages?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/HomeMadePy/messages/badge.svg?branch=master)](https://coveralls.io/github/HomeMadePy/messages?branch=master)
 [![](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/HomeMadePy/messages/blob/master/LICENSE)
 
 ![messages_words](https://user-images.githubusercontent.com/18299151/48576493-c0a68380-e925-11e8-9322-eb5bd67858a4.png)
