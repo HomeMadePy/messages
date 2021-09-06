@@ -5,6 +5,8 @@ import pytest
 from messages.whatsapp import WhatsApp
 from messages._exceptions import MessageSendError
 
+from conftest import skip_if_on_travisCI
+
 
 ##############################################################################
 # FIXTURES
@@ -15,14 +17,14 @@ def get_whatsapp():
     """Return a valid WhatsApp instance."""
     return WhatsApp(to='+14159999999',
                body='[Messages] integration test',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='integration_tester', save=False)
+               attachments='https://imgs.xkcd.com/comics/python.png')
 
 
 ##############################################################################
 # TESTS: Send from
 ##############################################################################
 
+@skip_if_on_travisCI
 def test_whatsapp_normal_execution(get_whatsapp):
     """
     GIVEN a valid whatsapp object
@@ -33,7 +35,7 @@ def test_whatsapp_normal_execution(get_whatsapp):
     resp = t.send()
 
 
-
+@skip_if_on_travisCI
 def test_whatsapp_with_empty_body(get_whatsapp):
     """
     GIVEN a valid whatsapp object
@@ -51,6 +53,7 @@ def test_whatsapp_with_empty_body(get_whatsapp):
     assert '400' in response
 
 
+@skip_if_on_travisCI
 def test_whatsapp_send_from_unavailable_number(get_whatsapp):
     """
     GIVEN a valid whatsapp object
@@ -67,6 +70,7 @@ def test_whatsapp_send_from_unavailable_number(get_whatsapp):
     assert '400' in response
 
 
+@skip_if_on_travisCI
 def test_whatsapp_send_from_invalid_number(get_whatsapp):
     """
     GIVEN a valid whatsapp object
@@ -83,6 +87,7 @@ def test_whatsapp_send_from_invalid_number(get_whatsapp):
     assert '400' in response
 
 
+@skip_if_on_travisCI
 def test_whatsapp_send_from_another_invalid_number(get_whatsapp):
     """
     GIVEN a valid whatsapp object
@@ -99,6 +104,7 @@ def test_whatsapp_send_from_another_invalid_number(get_whatsapp):
     assert '400' in response
 
 
+@skip_if_on_travisCI
 def test_whatsapp_from_number_that_is_not_owned_by_your_account(get_whatsapp):
     """
     GIVEN a valid whatsapp object
@@ -119,7 +125,7 @@ def test_whatsapp_from_number_that_is_not_owned_by_your_account(get_whatsapp):
 # TESTS: Send to
 ##############################################################################
 
-
+@skip_if_on_travisCI
 def test_whatsapp_cant_route_to_number(get_whatsapp):
     """
     GIVEN a valid whatsapp object
@@ -142,6 +148,7 @@ def test_whatsapp_cant_route_to_number(get_whatsapp):
 # TESTS: Authentication
 ##############################################################################
 
+@skip_if_on_travisCI
 def test_whatsapp_invalid_account_sid(get_whatsapp):
     """
     GIVEN a valid whatsapp object
@@ -161,6 +168,7 @@ def test_whatsapp_invalid_account_sid(get_whatsapp):
            'was not found') in response
 
 
+@skip_if_on_travisCI
 def test_whatsapp_invalid_auth_token(get_whatsapp):
     """
     GIVEN a valid whatsapp object

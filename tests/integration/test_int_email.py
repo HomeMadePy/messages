@@ -7,6 +7,8 @@ import pytest
 from messages.email_ import Email
 from messages._exceptions import MessageSendError
 
+from conftest import skip_if_on_travisCI
+
 
 #############################################################################
 # FIXTURES
@@ -20,15 +22,14 @@ def get_email():
     return Email(
         subject='[Messages] Integration Test',
         body='Conducting Integration Testing',
-        profile='integration_tester',
-        attachments=str(TESTDIR.joinpath('file2.png')),
-        save=False)
+        attachments=str(TESTDIR.joinpath('file2.png')))
 
 
 ##############################################################################
 # TESTS: Email.send()
 ##############################################################################
 
+@skip_if_on_travisCI
 def test_email_good(get_email, capsys):
     """
     GIVEN a good email instance
@@ -41,6 +42,7 @@ def test_email_good(get_email, capsys):
     assert "Message sent" in out
 
 
+@skip_if_on_travisCI
 def test_email_badAuth(get_email):
     """
     GIVEN a email with the wrong password

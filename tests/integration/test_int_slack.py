@@ -5,6 +5,7 @@ import pytest
 from messages.slack import SlackWebhook, SlackPost
 from messages._exceptions import MessageSendError
 
+from conftest import skip_if_on_travisCI
 
 
 #############################################################################
@@ -17,9 +18,7 @@ def get_slackwebhook():
     return SlackWebhook(
         subject='[Messages] Integration Test',
         body='Conducting Integration Testing',
-        profile='integration_tester',
-        attachments='https://imgs.xkcd.com/comics/python.png',
-        save=False)
+        attachments='https://imgs.xkcd.com/comics/python.png')
 
 
 @pytest.fixture()
@@ -29,17 +28,14 @@ def get_slackpost():
         channel='#tester',
         subject='[Messages] Integration Test',
         body='Conducting Integration Testing',
-        profile='integration_tester',
-        attachments='https://imgs.xkcd.com/comics/python.png',
-        save=False)
+        attachments='https://imgs.xkcd.com/comics/python.png')
 
 
 ##############################################################################
 # TESTS: Slack*.send()
 ##############################################################################
 
-@pytest.mark.skipif(not int_setup.integration_test_configured('slackwebhook'),
-    reason='Tester not configured for messages.slack.SlackWebhook')
+@skip_if_on_travisCI
 def test_slackWH_send_good(get_slackwebhook, capsys):
     """
     GIVEN a valid SlackWebhook instance
@@ -52,8 +48,7 @@ def test_slackWH_send_good(get_slackwebhook, capsys):
     assert "Message sent" in out
 
 
-@pytest.mark.skipif(not int_setup.integration_test_configured('slackwebhook'),
-    reason='Tester not configured for messages.slack.SlackWebhook')
+@skip_if_on_travisCI
 def test_slackWH_send_badAuth(get_slackwebhook):
     """
     GIVEN a valid SlackWebhook instance
@@ -66,8 +61,7 @@ def test_slackWH_send_badAuth(get_slackwebhook):
         s.send()
 
 
-@pytest.mark.skipif(not int_setup.integration_test_configured('slackpost'),
-    reason='Tester not configured for messages.slack.SlackPost')
+@skip_if_on_travisCI
 def test_slackP_send(get_slackpost, capsys):
     """
     GIVEN a valid SlackPost instance

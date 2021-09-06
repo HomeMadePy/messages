@@ -5,6 +5,8 @@ import pytest
 from messages.text import Twilio
 from messages._exceptions import MessageSendError
 
+from conftest import skip_if_on_travisCI
+
 
 ##############################################################################
 # FIXTURES
@@ -15,14 +17,14 @@ def get_twilio():
     """Return a valid Twilio instance."""
     return Twilio(from_='+15005550006', to='+14159999999',
                body='[Messages] integration test',
-               attachments='https://imgs.xkcd.com/comics/python.png',
-               profile='integration_tester', save=False)
+               attachments='https://imgs.xkcd.com/comics/python.png')
 
 
 ##############################################################################
 # TESTS: Send from
 ##############################################################################
 
+@skip_if_on_travisCI
 def test_twilio_normal_execution(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -42,6 +44,7 @@ def test_twilio_normal_execution(get_twilio):
     assert 'media' in resp_dict['subresource_uris']
 
 
+@skip_if_on_travisCI
 def test_twilio_with_empty_body(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -60,6 +63,7 @@ def test_twilio_with_empty_body(get_twilio):
     assert 'Message body is required.' in response
 
 
+@skip_if_on_travisCI
 def test_twilio_send_from_unavailable_number(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -78,6 +82,7 @@ def test_twilio_send_from_unavailable_number(get_twilio):
            'phone number or short code for your account.'.format(t.from_)) in response
 
 
+@skip_if_on_travisCI
 def test_twilio_send_from_invalid_number(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -96,6 +101,7 @@ def test_twilio_send_from_invalid_number(get_twilio):
            "shortcode, or alphanumeric sender ID.".format(t.from_)) in response
 
 
+@skip_if_on_travisCI
 def test_twilio_send_from_another_invalid_number(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -114,6 +120,7 @@ def test_twilio_send_from_another_invalid_number(get_twilio):
            'phone number or short code for your account.'.format(t.from_)) in response
 
 
+@skip_if_on_travisCI
 def test_twilio_from_number_that_is_not_owned_by_your_account(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -132,6 +139,7 @@ def test_twilio_from_number_that_is_not_owned_by_your_account(get_twilio):
            'phone number or short code for your account.'.format(t.from_)) in response
 
 
+@skip_if_on_travisCI
 def test_twilio_from_full_sms_queue(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -153,6 +161,7 @@ def test_twilio_from_full_sms_queue(get_twilio):
 # TESTS: Send to
 ##############################################################################
 
+@skip_if_on_travisCI
 def test_twilio_to_non_mobile_number(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -170,6 +179,7 @@ def test_twilio_to_non_mobile_number(get_twilio):
     assert 'To number: {}, is not a mobile number'.format(t.to) in response
 
 
+@skip_if_on_travisCI
 def test_twilio_cant_route_to_number(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -192,6 +202,7 @@ def test_twilio_cant_route_to_number(get_twilio):
 # TESTS: Authentication
 ##############################################################################
 
+@skip_if_on_travisCI
 def test_twilio_invalid_account_sid(get_twilio):
     """
     GIVEN a valid Twilio object
@@ -211,6 +222,7 @@ def test_twilio_invalid_account_sid(get_twilio):
            'was not found') in response
 
 
+@skip_if_on_travisCI
 def test_twilio_invalid_auth_token(get_twilio):
     """
     GIVEN a valid Twilio object

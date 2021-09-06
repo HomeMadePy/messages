@@ -5,6 +5,8 @@ import pytest
 from messages.telegram import TelegramBot
 from messages._exceptions import MessageSendError
 
+from conftest import skip_if_on_travisCI
+
 
 #############################################################################
 # FIXTURES
@@ -13,18 +15,17 @@ from messages._exceptions import MessageSendError
 @pytest.fixture()
 def get_tgram():
     return TelegramBot(
-            profile='integration_tester',
             from_='Integration Tester',
             subject='[Messages] Integration Testing',
             body='Conducting Integration Testing',
             attachments='https://imgs.xkcd.com/comics/python.png',
-            save=False,
         )
 
 ##############################################################################
 # TESTS: TelegramBot.send()
 ##############################################################################
 
+@skip_if_on_travisCI
 def test_tgram_send_good(get_tgram):
     """
     GIVEN a message to send on Telegram
@@ -35,6 +36,7 @@ def test_tgram_send_good(get_tgram):
     t.send()
 
 
+@skip_if_on_travisCI
 def test_tgram_send_raisesExc(get_tgram):
     """
     GIVEN a message to send on Telegram
