@@ -230,7 +230,7 @@ def test_add_attachments_list_travis(get_email, mocker):
     body_mock = mocker.patch.object(Email, '_add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
-    PATH = '/home/travis/build/trp07/messages/tests/data/'
+    PATH = '/home/travis/build/HomeMadePy/messages/tests/data/'
     e.attachments = [PATH + 'file1.txt', PATH + 'file2.png',
                      PATH + 'file3.pdf', PATH + 'file4.xlsx']
     e._generate_email()
@@ -266,7 +266,7 @@ def test_add_attachments_str_travis(get_email, mocker):
     body_mock = mocker.patch.object(Email, '_add_body')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
-    PATH = '/home/travis/build/trp07/messages/tests/data/'
+    PATH = '/home/travis/build/HomeMadePy/messages/tests/data/'
     e.attachments = PATH + 'file1.txt'
     e._generate_email()
     assert mime_attach_mock.call_count == 1
