@@ -1,7 +1,7 @@
 """messages.text tests."""
 
 import pytest
-import requests
+import httpx
 
 import messages.text
 from messages.text import Twilio
@@ -77,7 +77,7 @@ def test_send_verbose_false_status201(get_twilio, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to False)
     """
-    msg_mock = mocker.patch.object(requests, 'post')
+    msg_mock = mocker.patch.object(httpx, 'post')
     msg_mock.return_value.status_code = 201
     t = get_twilio
     t.send()
@@ -103,7 +103,7 @@ def test_send_verbose_true_status201(get_twilio, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to True)
     """
-    msg_mock = mocker.patch.object(requests, 'post')
+    msg_mock = mocker.patch.object(httpx, 'post')
     msg_mock.return_value.status_code = 201
     t = get_twilio
     t.verbose = True
@@ -127,8 +127,8 @@ def test_send_status_raisesMessSendErr(get_twilio, mocker):
     WHEN Twilio.send() causes an http error
     THEN assert MessageSendError is raised
     """
-    msg_mock = mocker.patch.object(requests, 'post')
-    msg_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
+    msg_mock = mocker.patch.object(httpx, 'post')
+    msg_mock.return_value.raise_for_status.side_effect = httpx.RequestError("error")
     t = get_twilio
     with pytest.raises(MessageSendError):
         t.send()

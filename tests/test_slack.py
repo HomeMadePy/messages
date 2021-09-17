@@ -1,7 +1,7 @@
 """messages.slack tests."""
 
 import pytest
-import requests
+import httpx
 
 import messages.slack
 from messages.slack import SlackWebhook
@@ -252,7 +252,7 @@ def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
         set to True)
     """
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     req_mock.return_value.status_code = 201
     req_mock.return_value.history = []
     s = get_slackWH
@@ -280,7 +280,7 @@ def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
         set to False)
     """
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     req_mock.return_value.status_code = 201
     req_mock.return_value.history = []
     s = get_slackWH
@@ -305,8 +305,8 @@ def test_slackWH_send_HTTPError(get_slackWH, mocker):
     THEN assert MessageSendError is raised
     """
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
+    req_mock = mocker.patch.object(httpx, 'post')
+    req_mock.return_value.raise_for_status.side_effect = httpx.RequestError("error")
     s = get_slackWH
     with pytest.raises(MessageSendError):
         s.send()
@@ -321,7 +321,7 @@ def test_slackWH_send_BadAuth(get_slackWH, mocker):
         status_code = 301
 
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     req_mock.return_value.history = [BadStatusCode()]
     s = get_slackWH
     with pytest.raises(MessageSendError):
@@ -336,7 +336,7 @@ def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to True)
     """
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     req_mock.return_value.status_code = 201
     req_mock.return_value.history = []
     s = get_slackP
@@ -362,7 +362,7 @@ def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
         updated and correct debug output is generated (using verbose flag
         set to False)
     """
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     req_mock.return_value.status_code = 201
     req_mock.return_value.history = []
     s = get_slackP
@@ -387,8 +387,8 @@ def test_slackP_send_HTTPError(get_slackP, mocker):
     THEN assert MessageSendError is raised
     """
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
+    req_mock = mocker.patch.object(httpx, 'post')
+    req_mock.return_value.raise_for_status.side_effect = httpx.RequestError("error")
     s = get_slackP
     with pytest.raises(MessageSendError):
         s.send()
@@ -401,7 +401,7 @@ def test_slackP_send_BadAuth(get_slackP, mocker):
     THEN assert MessageSendError is raised
     """
     con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     req_mock.return_value.history = []
     req_mock.return_value.text = 'invalid_auth'
     s = get_slackP

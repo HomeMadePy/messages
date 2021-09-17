@@ -8,7 +8,7 @@ Module designed to make creating and sending chat messages easy.
 
 import reprlib
 
-import requests
+import httpx
 
 from ._exceptions import MessageSendError
 from ._interface import Message
@@ -23,14 +23,14 @@ class TelegramBot(Message):
 
     Args:
         :from_: (str) optional arg to specify who message is from.
+        :to: (str) if chat_id is unknown, can specify username of
+            recipient to lookup via API call.  This may return None if
+            chat is older than 24-hours old.
         :auth: (str) auth token for bot for access.
         :chat_id: (str) chat_id for already-intiated chat.
             chat_id is an integer represented as a string.
             Recipient must have already initiated chat at some
             point in the past for bot to send message.
-        :to: (str) if chat_id is unknown, can specify username of
-            recipient to lookup via API call.  This may return None if
-            chat is older than 24-hours old.
         :subject: (str) optional arg to specify message subject.
         :body: (str) message to send.
         :attachments: (str or list) each item is a url to attach
@@ -60,9 +60,9 @@ class TelegramBot(Message):
     def __init__(
         self,
         from_=None,
+        to=None,
         auth=None,
         chat_id=None,
-        to=None,
         subject=None,
         body="",
         attachments=None,
@@ -71,9 +71,9 @@ class TelegramBot(Message):
     ):
 
         self.from_ = from_
+        self.to = to
         self.auth = auth
         self.chat_id = chat_id
-        self.to = to
         self.subject = subject
         self.body = body
         self.attachments = attachments or []
@@ -111,7 +111,7 @@ class TelegramBot(Message):
     def get_chat_id(self, username):
         """Lookup chat_id of username if chat_id is unknown via API call."""
         if username is not None:
-            chats = requests.get(self.base_url + "/getUpdates").json()
+            chats = httpx.get(self.base_url + "/getUpdates").json()
             user = username.split("@")[-1]
             for chat in chats["result"]:
                 if chat["message"]["from"]["username"] == user:
@@ -134,9 +134,9 @@ class TelegramBot(Message):
         url = self.base_url + method
 
         try:
-            resp = requests.post(url, json=self.message)
+            resp = httpx.post(url, json=self.message)
             resp.raise_for_status()
-        except requests.exceptions.HTTPError as e:
+        except httpx.RequestError as e:
             raise MessageSendError(e)
 
         if self.verbose:

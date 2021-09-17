@@ -1,7 +1,7 @@
 """messages.slack tests."""
 
 import pytest
-import requests
+import httpx
 
 import messages.telegram
 from messages.telegram import TelegramBot
@@ -72,7 +72,7 @@ def test_tgram_getChatID(get_tgram, mocker):
     WHEN get_chat_id() is called
     THEN assert proper data is returned
     """
-    req_mock = mocker.patch.object(requests, 'get')
+    req_mock = mocker.patch.object(httpx, 'get')
     req_mock.return_value.json.return_value = {'result': [{'message':{
         'from':{'username': 'YOU', 'id': '123456'}}}]}
     t = get_tgram
@@ -119,7 +119,7 @@ def test_tgram_send_content_verbose_false(get_tgram, capsys, mocker):
     WHEN send_content() is called with verbose=False
     THEN assert the proper send sequence occurs
     """
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     t = get_tgram
     t._send_content()
     out, err = capsys.readouterr()
@@ -134,7 +134,7 @@ def test_tgram_send_content_msgBody_verbose_true(get_tgram, capsys, mocker):
     WHEN send_content() is called with verbose=True
     THEN assert the proper send sequence occurs
     """
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     t = get_tgram
     t.verbose = True
     t._send_content()
@@ -152,7 +152,7 @@ def test_tgram_send_content_attachments_verbose_true_list(get_tgram, capsys, moc
     WHEN send_content() is called with verbose=True
     THEN assert the proper send sequence occurs
     """
-    req_mock = mocker.patch.object(requests, 'post')
+    req_mock = mocker.patch.object(httpx, 'post')
     t = get_tgram
     t.verbose = True
     t.message['document'] = 'https://url1.com'
@@ -170,8 +170,8 @@ def test_tgram_send_content_raisesMessSendErr(get_tgram, mocker):
     WHEN send_content() is called but an http error occurs
     THEN assert MessageSendError is raised
     """
-    req_mock = mocker.patch.object(requests, 'post')
-    req_mock.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError()
+    req_mock = mocker.patch.object(httpx, 'post')
+    req_mock.return_value.raise_for_status.side_effect = httpx.RequestError("error")
     t = get_tgram
     with pytest.raises(MessageSendError):
         t._send_content()

@@ -19,7 +19,7 @@ Module designed to make creating and sending chat messages easy.
 
 import reprlib
 
-import requests
+import httpx
 
 from ._exceptions import MessageSendError
 from ._interface import Message
@@ -66,9 +66,9 @@ class Slack(Message):
             )
 
         if encoding == "json":
-            resp = requests.post(self.url, json=self.message)
+            resp = httpx.post(self.url, json=self.message)
         elif encoding == "url":
-            resp = requests.post(self.url, data=self.message)
+            resp = httpx.post(self.url, data=self.message)
 
         try:
             resp.raise_for_status()
@@ -76,7 +76,7 @@ class Slack(Message):
                 raise MessageSendError("HTTP Redirect: Possibly Invalid authentication")
             elif "invalid_auth" in resp.text:
                 raise MessageSendError("Invalid Auth: Possibly Bad Auth Token")
-        except (requests.exceptions.HTTPError, MessageSendError) as e:
+        except (httpx.RequestError, MessageSendError) as e:
             raise MessageSendError(e)
 
         if self.verbose:

@@ -10,7 +10,7 @@ Module designed to make creating and sending text messages easy.
 
 import reprlib
 
-import requests
+import httpx
 
 from ._exceptions import MessageSendError
 from ._interface import Message
@@ -109,8 +109,10 @@ class Twilio(Message):
             "From": self.from_,
             "To": self.to,
             "Body": self.body,
-            "MediaUrl": self.attachments,
         }
+
+        if self.attachments:
+            data.update({"MediaUrl": self.attachments,})
 
         if self.verbose:
             print(
@@ -120,9 +122,9 @@ class Twilio(Message):
             )
 
         try:
-            resp = requests.post(url, data=data, auth=(self._auth[0], self._auth[1]))
+            resp = httpx.post(url, data=data, auth=(self._auth[0], self._auth[1]))
             resp.raise_for_status()
-        except requests.exceptions.RequestException as e:
+        except httpx.RequestError as e:
             exc = "{}\n{}".format(e, resp.json()["message"])
             raise MessageSendError(exc)
 

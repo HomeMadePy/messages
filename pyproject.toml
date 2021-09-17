@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "messages"
-version = "0.7.1"
+version = "0.7.2"
 description = "Easy and efficient messaging."
 readme = "README.md"
 authors = ["Tim Phillips <phillipstr@gmail.com>"]
@@ -14,8 +14,6 @@ classifiers = [
     "Natural Language :: English",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.5",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -29,9 +27,9 @@ classifiers = [
 include = ["CHANGES.md"]
 
 [tool.poetry.dependencies]
-python = "^3.5"
-requests = "^2.21"
+python = "^3.7"
 validus = "^0.3.0"
+httpx = "^0.19.0"
 
 [tool.poetry.dev-dependencies]
 pytest-cov = "^2.6"
