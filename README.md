@@ -36,8 +36,6 @@ $ pip install messages
 >>> msg = 'Hello,\n\tBuy more Bitcoin!'
 >>> m = Email(
             from_='me@here.com',
-            server='smtp.here.com',
-            port=465,
             to='you@there.com',
             auth='p@ssw0rd',       
             body=msg,
