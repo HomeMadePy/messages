@@ -1,5 +1,10 @@
 Change Log
 ==========
+0.7.2
+--------
+- Replaces **requests** with "httpx" as a dependency
+- Requires **python 3.7+** from here on out
+
 
 0.7.1
 --------
