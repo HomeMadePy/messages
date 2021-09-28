@@ -95,24 +95,21 @@ class Twilio(Message):
             )
         )
 
-    def send(self):
-        """
-        Send the SMS/MMS message.
-        Set self.sid to return code of message.
-        """
-        url = (
+    def create_message(self):
+        """Format message params."""
+        self.url = (
             "https://api.twilio.com/2010-04-01/Accounts/"
             + self._auth[0]
             + "/Messages.json"
         )
-        data = {
+        self.data = {
             "From": self.from_,
             "To": self.to,
             "Body": self.body,
         }
 
         if self.attachments:
-            data.update({"MediaUrl": self.attachments,})
+            self.data.update({"MediaUrl": self.attachments,})
 
         if self.verbose:
             print(
@@ -121,11 +118,17 @@ class Twilio(Message):
                 "\n{} Message created.".format(timestamp())
             )
 
+    def send(self):
+        """
+        Send the SMS/MMS message synchronously.
+        Set self.sid to return code of message.
+        """
+        self.create_message()
         try:
-            resp = httpx.post(url, data=data, auth=(self._auth[0], self._auth[1]))
+            resp = httpx.post(self.url, data=self.data, auth=(self._auth[0], self._auth[1]))
             resp.raise_for_status()
-        except httpx.RequestError as e:
-            exc = "{}\n{}".format(e, resp.json()["message"])
+        except httpx.HTTPStatusError as e:
+            exc = "{}".format(e)
             raise MessageSendError(exc)
 
         self.sid = resp.json()["sid"]
@@ -141,4 +144,22 @@ class Twilio(Message):
 
         print("Message sent.")
 
+        return resp
+
+
+    async def send_async(self):
+        """
+        Send the SMS/MMS message asynchronously.
+        Set self.sid to return code of message.
+        """
+        self.create_message()
+        try:
+            async with httpx.AsyncClient(timeout=None) as client:
+                resp = await client.post(self.url, data=self.data, auth=(self._auth[0], self._auth[1]))
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            exc = "{}".format(e)
+            raise MessageSendError(exc)
+
+        self.sid = resp.json()["sid"]
         return resp
