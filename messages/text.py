@@ -95,7 +95,7 @@ class Twilio(Message):
             )
         )
 
-    def create_message(self):
+    def _construct_message(self):
         """Format message params."""
         self.url = (
             "https://api.twilio.com/2010-04-01/Accounts/"
@@ -123,7 +123,7 @@ class Twilio(Message):
         Send the SMS/MMS message synchronously.
         Set self.sid to return code of message.
         """
-        self.create_message()
+        self._construct_message()
         try:
             resp = httpx.post(self.url, data=self.data, auth=(self._auth[0], self._auth[1]))
             resp.raise_for_status()
@@ -152,7 +152,7 @@ class Twilio(Message):
         Send the SMS/MMS message asynchronously.
         Set self.sid to return code of message.
         """
-        self.create_message()
+        self._construct_message()
         try:
             async with httpx.AsyncClient(timeout=None) as client:
                 resp = await client.post(self.url, data=self.data, auth=(self._auth[0], self._auth[1]))
