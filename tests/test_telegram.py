@@ -66,15 +66,17 @@ def test_tgram_str(get_tgram, capsys):
 # TESTS: TelegramBot.get_chat_id
 ##############################################################################
 
-def test_tgram_getChatID(get_tgram, mocker):
+def test_tgram_getChatID(get_tgram, httpx_mock):
     """
     GIVEN a TelegramBot instance with unknown chat_id of recipient
     WHEN get_chat_id() is called
     THEN assert proper data is returned
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    req_mock = mocker.patch.object(httpx, 'get')
-    req_mock.return_value.json.return_value = {'result': [{'message':{
+    json_response = {'result': [{'message':{
         'from':{'username': 'YOU', 'id': '123456'}}}]}
+    httpx_mock.add_response(json=json_response, status_code=201)
     t = get_tgram
     id = t.get_chat_id('@YOU')
     assert id == '123456'
@@ -113,65 +115,69 @@ def test_tgram_construct_message_withFromSub(get_tgram):
 # TESTS: TelegramBot._send_content
 ##############################################################################
 
-def test_tgram_send_content_verbose_false(get_tgram, capsys, mocker):
+def test_tgram_send_content_verbose_false(get_tgram, capsys, httpx_mock):
     """
     GIVEN a valid TelegramBot object
-    WHEN send_content() is called with verbose=False
+    WHEN _send_content() is called with verbose=False
     THEN assert the proper send sequence occurs
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    req_mock = mocker.patch.object(httpx, 'post')
+    httpx_mock.add_response(status_code=201)
     t = get_tgram
     t._send_content()
     out, err = capsys.readouterr()
-    assert req_mock.call_count == 1
     assert out == ''
     assert err == ''
 
 
-def test_tgram_send_content_msgBody_verbose_true(get_tgram, capsys, mocker):
+def test_tgram_send_content_msgBody_verbose_true(get_tgram, capsys, httpx_mock):
     """
     GIVEN a valid TelegramBot object
-    WHEN send_content() is called with verbose=True
+    WHEN _send_content() is called with verbose=True
     THEN assert the proper send sequence occurs
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    req_mock = mocker.patch.object(httpx, 'post')
+    httpx_mock.add_response(status_code=201)
     t = get_tgram
     t.verbose = True
     t._send_content()
     out, err = capsys.readouterr()
-    assert req_mock.call_count == 1
     assert 'Message body sent' in out
     assert 'Attachment: https://url1.com' not in out
     assert 'Attachment: https://url2.com' not in out
     assert err == ''
 
 
-def test_tgram_send_content_attachments_verbose_true_list(get_tgram, capsys, mocker):
+def test_tgram_send_content_attachments_verbose_true_list(get_tgram, capsys, httpx_mock):
     """
     GIVEN a valid TelegramBot object
-    WHEN send_content() is called with verbose=True
+    WHEN _send_content() is called with verbose=True
     THEN assert the proper send sequence occurs
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    req_mock = mocker.patch.object(httpx, 'post')
+    httpx_mock.add_response(status_code=201)
     t = get_tgram
     t.verbose = True
     t.message['document'] = 'https://url1.com'
     t._send_content(method='/sendDocument')
     out, err = capsys.readouterr()
-    assert req_mock.call_count == 1
     assert 'Message body sent' not in out
     assert 'Attachment: https://url1.com' in out
     assert err == ''
 
 
-def test_tgram_send_content_raisesMessSendErr(get_tgram, mocker):
+def test_tgram_send_content_raisesMessSendErr(get_tgram, httpx_mock):
     """
     GIVEN a valid TelegramBot object
-    WHEN send_content() is called but an http error occurs
+    WHEN _send_content() is called but an http error occurs
     THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.raise_for_status.side_effect = httpx.RequestError("error")
+    httpx_mock.add_response(status_code=404)
     t = get_tgram
     with pytest.raises(MessageSendError):
         t._send_content()
@@ -181,7 +187,7 @@ def test_tgram_send_content_raisesMessSendErr(get_tgram, mocker):
 # TESTS: TelegramBot.send
 ##############################################################################
 
-def test_send_verbose_false(get_tgram, mocker, capsys):
+def test_tgram_send_verbose_false(get_tgram, mocker, capsys):
     """
     GIVEN a TelegramBot instance
     WHEN send() is called with verbose=False
@@ -198,7 +204,7 @@ def test_send_verbose_false(get_tgram, mocker, capsys):
     assert 'Debugging info' not in out
 
 
-def test_send_verbose_true(get_tgram, mocker, capsys):
+def test_tgram_send_verbose_true(get_tgram, mocker, capsys):
     """
     GIVEN a TelegramBot instance
     WHEN send() is called with verbose=True
@@ -213,10 +219,9 @@ def test_send_verbose_true(get_tgram, mocker, capsys):
     assert con_mock.call_count == 1
     assert send_cont_mock.call_count == 3
     assert 'Message sent.' in out
-    assert 'Debugging info' in out
 
 
-def test_send_attachmentStr(get_tgram, mocker, capsys):
+def test_tgram_send_attachmentStr(get_tgram, mocker, capsys):
     """
     GIVEN a TelegramBot instance
     WHEN send() is called with verbose=True and an attachment as a string
@@ -233,4 +238,93 @@ def test_send_attachmentStr(get_tgram, mocker, capsys):
     assert con_mock.call_count == 1
     assert send_cont_mock.call_count == 2
     assert 'Message sent.' in out
-    assert 'Debugging info' in out
+
+
+##############################################################################
+# TESTS: TelegramBot._send_content_async
+##############################################################################
+
+@pytest.mark.asyncio
+async def test_tgram_send_content_async(get_tgram, capsys, httpx_mock):
+    """
+    GIVEN a valid TelegramBot object
+    WHEN _send_content_async() is called
+    THEN assert the proper send sequence occurs
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=201)
+    t = get_tgram
+    await t._send_content_async()
+    out, err = capsys.readouterr()
+    assert out == ''
+    assert err == ''
+
+
+@pytest.mark.asyncio
+async def test_tgram_send_content_async_attachments_list(get_tgram, capsys, httpx_mock):
+    """
+    GIVEN a valid TelegramBot object
+    WHEN _send_content_async() is called
+    THEN assert the proper send sequence occurs
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=201)
+    t = get_tgram
+    t.verbose = True
+    t.message['document'] = 'https://url1.com'
+    await t._send_content_async(method='/sendDocument')
+    out, err = capsys.readouterr()
+    assert err == ''
+
+
+@pytest.mark.asyncio
+async def test_tgram_send_content_async_raisesMessSendErr(get_tgram, httpx_mock):
+    """
+    GIVEN a valid TelegramBot object
+    WHEN _send_content_async() is called but an http error occurs
+    THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=404)
+    t = get_tgram
+    with pytest.raises(MessageSendError):
+        await t._send_content_async()
+
+
+##############################################################################
+# TESTS: TelegramBot.send_async
+##############################################################################
+
+@pytest.mark.asyncio
+async def test_tgram_send_async(get_tgram, mocker, capsys, httpx_mock):
+    """
+    GIVEN a TelegramBot instance
+    WHEN send_async() is called
+    THEN assert correct sequence is called
+    """
+    con_mock = mocker.patch.object(TelegramBot, '_construct_message')
+    httpx_mock.add_response(status_code=201)
+    t = get_tgram
+    await t.send_async()
+    out, err = capsys.readouterr()
+    assert err == ''
+
+
+@pytest.mark.asyncio
+async def test_tgram_send_async_attachmentStr(get_tgram, mocker, capsys, httpx_mock):
+    """
+    GIVEN a TelegramBot instance
+    WHEN send_async() is called with attachments as a string
+        instead of list of strings
+    THEN assert correct sequence is called
+    """
+    con_mock = mocker.patch.object(TelegramBot, '_construct_message')
+    httpx_mock.add_response(status_code=201)
+    t = get_tgram
+    t.attachments = t.attachments[0]
+    await t.send_async()
+    out, err = capsys.readouterr()
+    assert err == ''
