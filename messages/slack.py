@@ -136,7 +136,7 @@ class SlackWebhook(Slack):
 
     Usage:
         Create a SlackWebhook object with required Args above.
-        Send message with self.send() method.
+        Send message with self.send() or self.send_async() methods.
 
     Note:
         For API description:
@@ -216,7 +216,7 @@ class SlackPost(Slack):
 
     Usage:
         Create a SlackPost object with required Args above.
-        Send message with self.send() method.
+        Send message with self.send() or self.send_async() methods.
 
     Note:
         For API description:

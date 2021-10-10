@@ -47,7 +47,7 @@ class TelegramBot(Message):
 
     Usage:
         Create a TelegramBot object with required Args above.
-        Send message with self.send() method.
+        Send message with self.send() or self.send_async() methods.
 
     Note:
         For API description:

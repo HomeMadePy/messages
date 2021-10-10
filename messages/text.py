@@ -42,7 +42,7 @@ class Twilio(Message):
 
     Usage:
         Create a text message (SMS/MMS) object with required Args above.
-        Send text message with self.send() method.
+        Send text message with self.send() self.send_async() methods.
 
     Notes:
         For API description:
