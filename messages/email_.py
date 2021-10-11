@@ -2,8 +2,8 @@
 Module designed to make creating and sending emails easy.
 
 1.  Email
-    - Uses the Python 3 standard library MIMEMultipart email
-      object to construct the email.
+    - Uses the Python 3 standard library email.message.EmailMessage
+      class to construct the email.
 """
 
 import reprlib
@@ -11,9 +11,12 @@ import smtplib
 import ssl
 from smtplib import SMTPResponseException
 from collections.abc import MutableSequence
+from email.message import EmailMessage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+
+import aiosmtplib
 
 from ._exceptions import MessageSendError
 from ._interface import Message
@@ -72,7 +75,7 @@ class Email(Message):
 
     Usage:
         Create an email object with required Args above.
-        Send email with self.send() method.
+        Send email with self.send() or self.send_async() methods.
 
     Note:
         Some email servers may require you to modify security setting, such as
@@ -169,7 +172,7 @@ class Email(Message):
                 return ", ".join(recipient)
             return recipient
 
-    def _generate_email(self):
+    def _construct_message(self):
         """Put the parts of the email together."""
         self.message = MIMEMultipart()
         self._add_header()
@@ -238,12 +241,12 @@ class Email(Message):
 
     def send(self):
         """
-        Send the message.
+        Send the message synchronously.
         First, a message is constructed, then a session with the email
         servers is created, finally the message is sent and the session
         is stopped.
         """
-        self._generate_email()
+        self._construct_message()
 
         if self.verbose:
             print(
@@ -278,3 +281,30 @@ class Email(Message):
             )
 
         print("Message sent.")
+
+
+    async def send_async(self):
+        """
+        Send the message synchronously.
+        """
+        self._construct_message()
+
+        if self.port in (465, "465"):
+            await aiosmtplib.send(
+                message=self.message,
+                hostname=self.server,
+                port=self.port,
+                username=self.from_,
+                password=self._auth,
+                use_tls=True,
+                )
+        elif self.port in (587, "587"):
+            await aiosmtplib.send(
+                message=self.message,
+                hostname=self.server,
+                port=self.port,
+                username=self.from_,
+                password=self._auth,
+                start_tls=True,
+                )
+

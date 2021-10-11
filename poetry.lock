@@ -1,4 +1,16 @@
 [[package]]
+name = "aiosmtplib"
+version = "1.1.6"
+description = "asyncio SMTP client"
+category = "main"
+optional = false
+python-versions = ">=3.5.2,<4.0.0"
+
+[package.extras]
+uvloop = ["uvloop (>=0.13,<0.15)"]
+docs = ["sphinx (>=2,<4)", "sphinx_autodoc_typehints (>=1.7.0,<2.0.0)"]
+
+[[package]]
 name = "anyio"
 version = "3.3.1"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
@@ -312,9 +324,13 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "26d0a3101e0ff206a54b76e5ab0266f5ea4803a2c3826e792e41b9083832fe83"
+content-hash = "d7cdc4f636443bfc3a6ae615c77ac8c77c4a02f577bf0cd55cfe4311b5c23a6e"
 
 [metadata.files]
+aiosmtplib = [
+    {file = "aiosmtplib-1.1.6-py3-none-any.whl", hash = "sha256:84174765778b2c5e0e207fbce0a769202fcf0c3de81faa87cc03551a6333bfa9"},
+    {file = "aiosmtplib-1.1.6.tar.gz", hash = "sha256:d138fe6ffecbc9e6320269690b9ac0b75e540ef96e8f5c77d4a306760014dce2"},
+]
 anyio = [
     {file = "anyio-3.3.1-py3-none-any.whl", hash = "sha256:d7c604dd491eca70e19c78664d685d5e4337612d574419d503e76f5d7d1590bd"},
     {file = "anyio-3.3.1.tar.gz", hash = "sha256:85913b4e2fec030e8c72a8f9f98092eeb9e25847a6e00d567751b77e34f856fe"},

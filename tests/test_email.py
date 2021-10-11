@@ -1,6 +1,6 @@
 """messages.email_ tests."""
 
-import getpass
+import asyncio
 import pathlib
 import smtplib
 from smtplib import SMTPResponseException
@@ -12,6 +12,7 @@ import messages
 from messages.email_ import Email
 from messages._exceptions import MessageSendError
 
+from conftest import AsyncMock
 from conftest import skip_if_on_travisCI
 from conftest import skip_if_not_on_travisCI
 
@@ -140,20 +141,20 @@ def test_list_to_string(get_email):
 
 
 ##############################################################################
-# TESTS: Email._generate_email
+# TESTS: Email._construct_message
 ##############################################################################
 
-def test_generate_email(get_email, mocker):
+def test_construct_message(get_email, mocker):
     """
     GIVEN a valid Email object
-    WHEN Email.generate_email() is called
+    WHEN Email._construct_message() is called
     THEN assert the email structure is created
     """
     header_mock = mocker.patch.object(Email, '_add_header')
     body_mock = mocker.patch.object(Email, '_add_body')
     attach_mock = mocker.patch.object(Email, '_add_attachments')
     e = get_email
-    e._generate_email()
+    e._construct_message()
     assert isinstance(e.message, MIMEMultipart)
     assert header_mock.call_count == 1
     assert body_mock.call_count == 1
@@ -166,14 +167,14 @@ def test_generate_email(get_email, mocker):
 
 def test_add_header(get_email, mocker):
     """
-    GIVEN a valid Email object, where Email.generate_email() has been called
+    GIVEN a valid Email object, where Email._construct_message() has been called
     WHEN Email.add_header() is called
     THEN assert correct parameters are set
     """
     body_mock = mocker.patch.object(Email, '_add_body')
     attach_mock = mocker.patch.object(Email, '_add_attachments')
     e = get_email
-    e._generate_email()
+    e._construct_message()
     assert e.message['From'] == 'me@here.com'
     assert e.message['Subject'] == 'subject'
 
@@ -184,7 +185,7 @@ def test_add_header(get_email, mocker):
 
 def test_add_body(get_email, mocker):
     """
-    GIVEN a valid Email object, where Email.generate_email() has been called
+    GIVEN a valid Email object, where Email._construct_message() has been called
     WHEN Email.add_body() is called
     THEN assert body_text is attached
     """
@@ -192,7 +193,7 @@ def test_add_body(get_email, mocker):
     header_mock = mocker.patch.object(Email, '_add_header')
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
-    e._generate_email()
+    e._construct_message()
     assert mime_attach_mock.call_count == 1
 
 
@@ -203,7 +204,7 @@ def test_add_body(get_email, mocker):
 @skip_if_on_travisCI
 def test_add_attachments_list_local(get_email, mocker):
     """
-    GIVEN a valid Email object, where Email.generate_email() has been called
+    GIVEN a valid Email object, where Email._construct_message() has been called
         and Email.attachments is a list
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
@@ -214,14 +215,14 @@ def test_add_attachments_list_local(get_email, mocker):
     e = get_email
     e.attachments = [str(TESTDIR.joinpath('file1.txt')), str(TESTDIR.joinpath('file2.png')),
                      str(TESTDIR.joinpath('file3.pdf')), str(TESTDIR.joinpath('file4.xlsx'))]
-    e._generate_email()
+    e._construct_message()
     assert mime_attach_mock.call_count == 4
 
 
 @skip_if_not_on_travisCI
 def test_add_attachments_list_travis(get_email, mocker):
     """
-    GIVEN a valid Email object, where Email.generate_email() has been called
+    GIVEN a valid Email object, where Email._construct_message() has been called
          and Email.attachments is a list
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
@@ -233,14 +234,14 @@ def test_add_attachments_list_travis(get_email, mocker):
     PATH = '/home/travis/build/HomeMadePy/messages/tests/data/'
     e.attachments = [PATH + 'file1.txt', PATH + 'file2.png',
                      PATH + 'file3.pdf', PATH + 'file4.xlsx']
-    e._generate_email()
+    e._construct_message()
     assert mime_attach_mock.call_count == 4
 
 
 @skip_if_on_travisCI
 def test_add_attachments_str_local(get_email, mocker):
     """
-    GIVEN a valid Email object, where Email.generate_email() has been called
+    GIVEN a valid Email object, where Email._construct_message() has been called
         and Email.attachments is a str
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
@@ -250,14 +251,14 @@ def test_add_attachments_str_local(get_email, mocker):
     mime_attach_mock = mocker.patch.object(MIMEMultipart, 'attach')
     e = get_email
     e.attachments = str(TESTDIR.joinpath('file1.txt'))
-    e._generate_email()
+    e._construct_message()
     assert mime_attach_mock.call_count == 1
 
 
 @skip_if_not_on_travisCI
 def test_add_attachments_str_travis(get_email, mocker):
     """
-    GIVEN a valid Email object, where Email.generate_email() has been called
+    GIVEN a valid Email object, where Email._construct_message() has been called
          and Email.attachments is a str
     WHEN Email.add_attachments() is called
     THEN assert correct attachments are attached
@@ -268,7 +269,7 @@ def test_add_attachments_str_travis(get_email, mocker):
     e = get_email
     PATH = '/home/travis/build/HomeMadePy/messages/tests/data/'
     e.attachments = PATH + 'file1.txt'
-    e._generate_email()
+    e._construct_message()
     assert mime_attach_mock.call_count == 1
 
 
@@ -465,3 +466,54 @@ def test_send_verbose_false(get_email, capsys, mocker):
     assert ' * Server: smtp.gmail.com:465' not in out
     assert ' * From: me@here.com' not in out
     assert err == ''
+
+
+##############################################################################
+# TESTS: Email.send_async
+##############################################################################
+
+@pytest.mark.asyncio
+async def test_send_async_ssl(get_email, mocker):
+    """
+    GIVEN a valid Email object with port=465
+    WHEN Email.send_async() is called
+    THEN assert calls aiosmtplib.send with ssl
+
+    AsyncMock found in conftest.py
+    """
+    async_mock = mocker.patch("aiosmtplib.send", new_callable=AsyncMock)
+    e = get_email
+    e.attachments = None
+    await e.send_async()
+    async_mock.assert_called_with(
+            message=e.message,
+            hostname=e.server,
+            port=e.port,
+            username=e.from_,
+            password=e._auth,
+            use_tls=True,
+        )
+
+
+@pytest.mark.asyncio
+async def test_send_async_tls(get_email, mocker):
+    """
+    GIVEN a valid Email object with port=587
+    WHEN Email.send_async() is called
+    THEN assert calls aiosmtplib.send with TLS
+
+    AsyncMock found in conftest.py
+    """
+    async_mock = mocker.patch("aiosmtplib.send", new_callable=AsyncMock)
+    e = get_email
+    e.attachments = None
+    e.port = 587
+    await e.send_async()
+    async_mock.assert_called_with(
+            message=e.message,
+            hostname=e.server,
+            port=e.port,
+            username=e.from_,
+            password=e._auth,
+            start_tls=True,
+        )
