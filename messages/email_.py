@@ -284,9 +284,7 @@ class Email(Message):
 
 
     async def send_async(self):
-        """
-        Send the message synchronously.
-        """
+        """Send the message asynchronously."""
         self._construct_message()
 
         if self.port in (465, "465"):
