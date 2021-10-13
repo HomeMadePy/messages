@@ -1,5 +1,10 @@
 Change Log
 ==========
+0.8.0
+--------
+- Reintegrates **async** messages sending with the *.send_async() method for each message type
+
+
 0.7.2
 --------
 - Replaces **requests** with **httpx** as a dependency
