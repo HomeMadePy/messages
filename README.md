@@ -40,7 +40,7 @@ $ pip install messages
             from_ = "me@here.com",
             to = "you@there.com",
             auth = "p@ssw0rd",   
-            subject: "Good Advice"
+            subject = "Good Advice",
             body = "Hello,\n\tBuy more Bitcoin!",
             attachments = ["./file1.txt", "~/Documents/file2.pdf"],
    )
