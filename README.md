@@ -11,6 +11,7 @@
 - **Messages** is a package designed to make sending messages easy and efficient!
 - **Messages** intends to be a _lightweight_ package with minimal dependencies.
 - **Messages** with a **consistent API** across all message types. 
+- **Messages** includes **asynchronous** support for fast message handling.
 
 ## Installation
 **Python3 only**
@@ -29,21 +30,58 @@ $ pip install messages
 
 
 # Examples
-## [Email](https://github.com/HomeMadePy/messages/wiki/Email)
+### Synchronous Execution
+```python3
+# You can send messages right in the REPL
 
-```python
 >>> from messages import Email
->>> msg = 'Hello,\n\tBuy more Bitcoin!'
+>>> 
 >>> m = Email(
-            from_='me@here.com',
-            to='you@there.com',
-            auth='p@ssw0rd',       
-            body=msg,
-            attachments=['./file1.txt', '~/Documents/file2.pdf'],
+            from_ = "me@here.com",
+            to = "you@there.com",
+            auth = "p@ssw0rd",   
+            subject: "Good Advice"
+            body = "Hello,\n\tBuy more Bitcoin!",
+            attachments = ["./file1.txt", "~/Documents/file2.pdf"],
    )
 >>>
 >>> m.send()        
 Message sent...
+```
+
+### Asynchronous Execution
+```python3
+# You can also send messages inside a script
+
+import asyncio
+
+from messages import Email
+
+RECIPIENTS = [
+    "you@mail.com",
+    "him@mail.com",
+    "her@mail.com",
+    "doglover@mail.com",
+]
+
+
+
+loop = asyncio.get_event_loop()
+
+for r in RECIPIENTS
+    e = Email(
+        from_ = "me@gmail.com",
+        to = r,
+        auth = "p@ssw0rd",
+        subject = "Good Advice",
+        body = "This is an asynchronous email.\nContinue buying more Bitcoin!",
+        attachments = ["./file1.txt", "~/Documents/file2.pdf"],
+    )
+    
+loop.create_task(e.send_async())
+tasks = asyncio.all_tasks(loop=loop)
+group = asyncio.gather(*tasks)
+loop.run_until_complete(group)
 ```
 
 ### **Read** the [Wiki](https://github.com/HomeMadePy/messages/wiki) for **more examples**
