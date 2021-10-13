@@ -69,16 +69,17 @@ def test_twilio_str(get_twilio, capsys):
 # TESTS: Twilio.send
 ##############################################################################
 
-def test_send_verbose_false_status201(get_twilio, capsys, mocker):
+def test_send_verbose_false_status201(get_twilio, capsys, httpx_mock):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() is called
     THEN assert the correct functions are called, correct attributes
         updated and correct debug output is generated (using verbose flag
         set to False)
+
+    httpx_mock is a built-in fixture with pytest-httpx
     """
-    msg_mock = mocker.patch.object(httpx, 'post')
-    msg_mock.return_value.status_code = 201
+    httpx_mock.add_response(json={"sid": "test"}, status_code=201)
     t = get_twilio
     t.send()
     t.sid = 12345
@@ -95,16 +96,17 @@ def test_send_verbose_false_status201(get_twilio, capsys, mocker):
     assert err == ''
 
 
-def test_send_verbose_true_status201(get_twilio, capsys, mocker):
+def test_send_verbose_true_status201(get_twilio, capsys, httpx_mock):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() is called
     THEN assert the correct functions are called, correct attributes
         updated and correct debug output is generated (using verbose flag
         set to True)
+
+    httpx_mock is a built-in fixture with pytest-httpx
     """
-    msg_mock = mocker.patch.object(httpx, 'post')
-    msg_mock.return_value.status_code = 201
+    httpx_mock.add_response(json={"sid": "test"}, status_code=201)
     t = get_twilio
     t.verbose = True
     t.send()
@@ -121,14 +123,48 @@ def test_send_verbose_true_status201(get_twilio, capsys, mocker):
     assert err == ''
 
 
-def test_send_status_raisesMessSendErr(get_twilio, mocker):
+def test_send_status_raisesMessSendErr(get_twilio, httpx_mock):
     """
     GIVEN a valid Twilio object
     WHEN Twilio.send() causes an http error
     THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture with pytest-httpx
     """
-    msg_mock = mocker.patch.object(httpx, 'post')
-    msg_mock.return_value.raise_for_status.side_effect = httpx.RequestError("error")
+    httpx_mock.add_response(json={"sid": "test"}, status_code=404)
     t = get_twilio
     with pytest.raises(MessageSendError):
         t.send()
+
+
+##############################################################################
+# TESTS: Twilio.send_async
+##############################################################################
+
+@pytest.mark.asyncio
+async def test_send_async_200(get_twilio, httpx_mock):
+    """
+    GIVEN a valid Twilio object
+    WHEN Twilio.send_async() is called
+    THEN assert no errors and proper response is generated
+
+    httpx_mock is a built-in fixture with pytest-httpx
+    """
+    httpx_mock.add_response(json={"sid": "test"}, status_code=201)
+    t = get_twilio
+    resp = await t.send_async()
+
+
+@pytest.mark.asyncio
+async def test_send_async_400(get_twilio, httpx_mock):
+    """
+    GIVEN a valid Twilio object
+    WHEN Twilio.send_async() is called that returns an HTTP error
+    THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture with pytest-httpx
+    """
+    httpx_mock.add_response(json={"sid": "test"}, status_code=404)
+    t = get_twilio
+    with pytest.raises(MessageSendError):
+        resp = await t.send_async()

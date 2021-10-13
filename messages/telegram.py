@@ -47,7 +47,7 @@ class TelegramBot(Message):
 
     Usage:
         Create a TelegramBot object with required Args above.
-        Send message with self.send() method.
+        Send message with self.send() or self.send_async() methods.
 
     Note:
         For API description:
@@ -130,14 +130,15 @@ class TelegramBot(Message):
         self.message.update(self.params)
 
     def _send_content(self, method="/sendMessage"):
-        """send via HTTP Post."""
+        """send synchronously via HTTP Post."""
         url = self.base_url + method
 
         try:
             resp = httpx.post(url, json=self.message)
             resp.raise_for_status()
-        except httpx.RequestError as e:
-            raise MessageSendError(e)
+        except httpx.HTTPStatusError as e:
+            exc = "{}".format(e)
+            raise MessageSendError(exc)
 
         if self.verbose:
             if method == "/sendDocument":
@@ -174,3 +175,28 @@ class TelegramBot(Message):
             )
 
         print("Message sent.")
+
+    async def _send_content_async(self, method="/sendMessage"):
+        """send asynchronously via HTTP Post."""
+        url = self.base_url + method
+
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.post(url, json=self.message)
+            resp.raise_for_status()
+        except httpx.HTTPStatusError as e:
+            exc = "{}".format(e)
+            raise MessageSendError(exc)
+
+    async def send_async(self):
+        """Start sending the message and attachments."""
+        self._construct_message()
+
+        await self._send_content_async("/sendMessage")
+
+        if self.attachments:
+            if isinstance(self.attachments, str):
+                self.attachments = [self.attachments]
+            for a in self.attachments:
+                self.message["document"] = a
+                await self._send_content_async(method="/sendDocument")

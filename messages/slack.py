@@ -56,7 +56,7 @@ class Slack(Message):
                     attachment.update(self.params)
 
     def send(self, encoding="json"):
-        """Send the message via HTTP POST, default is json-encoded."""
+        """Send the message synchronously via HTTP POST, default is json-encoded."""
         self._construct_message()
         if self.verbose:
             print(
@@ -72,12 +72,13 @@ class Slack(Message):
 
         try:
             resp.raise_for_status()
-            if resp.history and resp.history[0].status_code >= 300:
+            if resp.status_code >= 300:
                 raise MessageSendError("HTTP Redirect: Possibly Invalid authentication")
             elif "invalid_auth" in resp.text:
                 raise MessageSendError("Invalid Auth: Possibly Bad Auth Token")
-        except (httpx.RequestError, MessageSendError) as e:
-            raise MessageSendError(e)
+        except httpx.HTTPStatusError as e:
+            exc = "{}".format(e)
+            raise MessageSendError(exc)
 
         if self.verbose:
             print(
@@ -90,6 +91,26 @@ class Slack(Message):
             )
 
         print("Message sent.")
+
+    async def send_async(self, encoding="json"):
+        """Send the message asynchronously via HTTP POST, default is json-encoded."""
+        self._construct_message()
+
+        try:
+            async with httpx.AsyncClient() as client:
+                if encoding == "json":
+                    resp = await client.post(self.url, json=self.message)
+                elif encoding == "url":
+                    resp = await client.post(self.url, data=self.message)
+
+            resp.raise_for_status()
+            if resp.status_code >= 300:
+                raise MessageSendError("HTTP Redirect: Possibly Invalid authentication")
+            elif "invalid_auth" in resp.text:
+                raise MessageSendError("Invalid Auth: Possibly Bad Auth Token")
+        except httpx.HTTPStatusError as e:
+            exc = "{}".format(e)
+            raise MessageSendError(exc)
 
 
 class SlackWebhook(Slack):
@@ -115,7 +136,7 @@ class SlackWebhook(Slack):
 
     Usage:
         Create a SlackWebhook object with required Args above.
-        Send message with self.send() method.
+        Send message with self.send() or self.send_async() methods.
 
     Note:
         For API description:
@@ -195,7 +216,7 @@ class SlackPost(Slack):
 
     Usage:
         Create a SlackPost object with required Args above.
-        Send message with self.send() method.
+        Send message with self.send() or self.send_async() methods.
 
     Note:
         For API description:
@@ -252,10 +273,14 @@ class SlackPost(Slack):
         )
 
     def _construct_message(self):
-        """Set the message token/channel, then call the bas class constructor."""
+        """Set the message token/channel, then call the base class constructor."""
         self.message = {"token": self._auth, "channel": self.channel}
         super()._construct_message()
 
     def send(self):
-        """Send the message via HTTP POST, url-encoded."""
+        """Send the message synchronously via HTTP POST, url-encoded."""
         super().send(encoding="url")
+
+    async def send_async(self):
+        """Send the message asynchronously via HTTP POST, url-encoded."""
+        await super().send_async(encoding="url")

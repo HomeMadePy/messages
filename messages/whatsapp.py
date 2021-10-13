@@ -41,7 +41,7 @@ class WhatsApp(Twilio):
 
     Usage:
         Create a WhatsApp message instance with required Args above.
-        Send message with self.send() method.
+        Send message with self.send() self.send_async() methods.
 
     Notes:
         For API description:

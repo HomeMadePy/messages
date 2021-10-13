@@ -243,18 +243,17 @@ def test_slackP_add_attachments_with_params(get_slackP):
 # TESTS: Slack*.send
 ##############################################################################
 
-def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
+def test_slackWH_send_verbose_true(get_slackWH, capsys, httpx_mock):
     """
     GIVEN a valid SlackWebhook object
     WHEN *.send() is called
     THEN assert the correct functions are called, correct attributes
         updated and correct debug output is generated (using verbose flag
         set to True)
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.status_code = 201
-    req_mock.return_value.history = []
+    httpx_mock.add_response(status_code=201)
     s = get_slackWH
     s.verbose = True
     s.send()
@@ -271,18 +270,17 @@ def test_slackWH_send_verbose_true(get_slackWH, capsys, mocker):
     assert err == ''
 
 
-def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
+def test_slackWH_send_verbose_false(get_slackWH, capsys, httpx_mock):
     """
     GIVEN a valid SlackWebhook object
     WHEN *.send() is called
     THEN assert the correct functions are called, correct attributes
         updated and correct debug output is generated (using verbose flag
         set to False)
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.status_code = 201
-    req_mock.return_value.history = []
+    httpx_mock.add_response(status_code=201)
     s = get_slackWH
     s.verbose = False
     s.send()
@@ -298,47 +296,44 @@ def test_slackWH_send_verbose_false(get_slackWH, capsys, mocker):
     assert err == ''
 
 
-def test_slackWH_send_HTTPError(get_slackWH, mocker):
+def test_slackWH_send_HTTPError(get_slackWH, httpx_mock):
     """
     GIVEN a valid SlackWebhook object
     WHEN *.send() is called and a http error occurs
     THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.raise_for_status.side_effect = httpx.RequestError("error")
+    httpx_mock.add_response(status_code=404)
     s = get_slackWH
     with pytest.raises(MessageSendError):
         s.send()
 
-def test_slackWH_send_BadAuth(get_slackWH, mocker):
+def test_slackWH_send_BadAuth(get_slackWH, httpx_mock):
     """
     GIVEN a valid SlackWebhook object
     WHEN *.send() is called with a bad auth param
     THEN assert MessageSendError is raised
-    """
-    class BadStatusCode:
-        status_code = 301
 
-    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.history = [BadStatusCode()]
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=301)
     s = get_slackWH
     with pytest.raises(MessageSendError):
         s.send()
 
 
-def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
+def test_slackP_send_verbose_true(get_slackP, capsys, httpx_mock):
     """
     GIVEN a valid SlackPost object
     WHEN *.send() is called
     THEN assert the correct functions are called, correct attributes
         updated and correct debug output is generated (using verbose flag
         set to True)
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.status_code = 201
-    req_mock.return_value.history = []
+    httpx_mock.add_response(status_code=201)
     s = get_slackP
     s.verbose = True
     s.send()
@@ -354,17 +349,17 @@ def test_slackP_send_verbose_true(get_slackP, capsys, mocker):
     assert err == ''
 
 
-def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
+def test_slackP_send_verbose_false(get_slackP, capsys, httpx_mock):
     """
     GIVEN a valid SlackPost object
     WHEN *.send() is called
     THEN assert the correct functions are called, correct attributes
         updated and correct debug output is generated (using verbose flag
         set to False)
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.status_code = 201
-    req_mock.return_value.history = []
+    httpx_mock.add_response(status_code=201)
     s = get_slackP
     s.verbose = False
     s.send()
@@ -380,30 +375,124 @@ def test_slackP_send_verbose_false(get_slackP, capsys, mocker):
     assert err == ''
 
 
-def test_slackP_send_HTTPError(get_slackP, mocker):
+def test_slackP_send_HTTPError(get_slackP, httpx_mock):
     """
     GIVEN a valid SlackPost object
     WHEN *.send() is called and a http error occurs
     THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.raise_for_status.side_effect = httpx.RequestError("error")
+    httpx_mock.add_response(status_code=404)
     s = get_slackP
     with pytest.raises(MessageSendError):
         s.send()
 
 
-def test_slackP_send_BadAuth(get_slackP, mocker):
+def test_slackP_send_BadAuth(get_slackP, httpx_mock):
     """
     GIVEN a valid SlackPost object
     WHEN *.send() is called with a bad auth param
     THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
     """
-    con_mock = mocker.patch.object(SlackWebhook, '_construct_message')
-    req_mock = mocker.patch.object(httpx, 'post')
-    req_mock.return_value.history = []
-    req_mock.return_value.text = 'invalid_auth'
+    httpx_mock.add_response(data="invalid_auth")
     s = get_slackP
     with pytest.raises(MessageSendError):
         s.send()
+
+
+##############################################################################
+# TESTS: Slack*.send_async
+##############################################################################
+
+@pytest.mark.asyncio
+async def test_slackWH_send_async(get_slackWH, capsys, httpx_mock):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN *.send_async() is called
+    THEN assert the correct functions are called, correct attributes updated
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=201)
+    s = get_slackWH
+    await s.send_async()
+    out, err = capsys.readouterr()
+    assert err == ''
+
+
+@pytest.mark.asyncio
+async def test_slackWH_send_async_HTTPError(get_slackWH, httpx_mock):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN *.send_async() is called and a http error occurs
+    THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=404)
+    s = get_slackWH
+    with pytest.raises(MessageSendError):
+        await s.send_async()
+
+@pytest.mark.asyncio
+async def test_slackWH_send_async_BadAuth(get_slackWH, httpx_mock):
+    """
+    GIVEN a valid SlackWebhook object
+    WHEN *.send_async() is called with a bad auth param
+    THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=301)
+    s = get_slackWH
+    with pytest.raises(MessageSendError):
+        await s.send_async()
+
+
+@pytest.mark.asyncio
+async def test_slackP_send_async(get_slackP, capsys, httpx_mock):
+    """
+    GIVEN a valid SlackPost object
+    WHEN *.send_async() is called
+    THEN assert the correct functions are called, correct attributes updated
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=201)
+    s = get_slackP
+    await s.send_async()
+    out, err = capsys.readouterr()
+    assert err == ''
+
+
+@pytest.mark.asyncio
+async def test_slackP_send_async_HTTPError(get_slackP, httpx_mock):
+    """
+    GIVEN a valid SlackPost object
+    WHEN *.send_async() is called and a http error occurs
+    THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(status_code=404)
+    s = get_slackP
+    with pytest.raises(MessageSendError):
+        await s.send_async()
+
+
+@pytest.mark.asyncio
+async def test_slackP_send_async_BadAuth(get_slackP, httpx_mock):
+    """
+    GIVEN a valid SlackPost object
+    WHEN *.send_async() is called with a bad auth param
+    THEN assert MessageSendError is raised
+
+    httpx_mock is a built-in fixture from pytest-httpx
+    """
+    httpx_mock.add_response(data="invalid_auth")
+    s = get_slackP
+    with pytest.raises(MessageSendError):
+        await s.send_async()
