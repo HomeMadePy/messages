@@ -78,7 +78,8 @@ for r in RECIPIENTS
         attachments = ["./file1.txt", "~/Documents/file2.pdf"],
     )
     
-loop.create_task(e.send_async())
+    loop.create_task(e.send_async())
+
 tasks = asyncio.all_tasks(loop=loop)
 group = asyncio.gather(*tasks)
 loop.run_until_complete(group)
